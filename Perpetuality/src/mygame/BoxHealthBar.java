@@ -127,7 +127,7 @@ public class BoxHealthBar extends SimpleApplication {
             
             // Add the good geom
             Geometry goodgeom = myBox("GoodBox" + i, loc, ColorRGBA.Yellow);
-            goodgeom.addControl(new ChangeHealthBarControl(cam, rootNode));
+            // goodgeom.addControl(new ChangeHealthBarControl(cam, rootNode));
             rootNode.attachChild(goodgeom);
             
             // Add the goodgeom to good_geoms
@@ -148,7 +148,7 @@ public class BoxHealthBar extends SimpleApplication {
             
             // Add the bad geom
             Geometry badgeom = myBox("BadBox" + i, loc, ColorRGBA.Pink);
-            badgeom.addControl(new ChangeHealthBarControl(cam, rootNode));
+            // badgeom.addControl(new ChangeHealthBarControl(cam, rootNode));
             rootNode.attachChild(badgeom);
             
             // Add the badgeom to bad_geoms
