@@ -20,6 +20,8 @@ import java.util.ArrayList;
 
 import com.jme3.input.*;
 import com.jme3.input.controls.*;
+import com.jme3.light.DirectionalLight;
+import com.jme3.scene.Spatial;
 
 
 /**
@@ -54,9 +56,10 @@ public class BoxHealthBar extends SimpleApplication {
     public static void main(String[] args) {
         // TODO code application logic here
         BoxHealthBar app = new BoxHealthBar();
-        
-        
+       
         app.start();
+        
+        
     }
     
     
@@ -99,11 +102,19 @@ public class BoxHealthBar extends SimpleApplication {
                 loc2, ColorRGBA.Red));
 
         
-        
         // To make camera runs faster 
         flyCam.setMoveSpeed(50f);
         
         
+        /* SCENE LOADING */
+        SceneLoader sceneLoader = new SceneLoader(assetManager, rootNode);
+        sceneLoader.loadScene("Models/bathroom/bathroom.j3o");
+        
+        DirectionalLight sun = new DirectionalLight();
+        sun.setDirection(new Vector3f(-0.5f, -1.0f, -0.5f).normalizeLocal());  // Direction of the light
+        sun.setColor(ColorRGBA.White);  // Color of the light
+        rootNode.addLight(sun);  // Attach the light to the rootNode
+
         attachCenterMark();
        
     }
