@@ -108,7 +108,7 @@ public class BoxHealthBar extends SimpleApplication {
         
         /* SCENE LOADING */
         SceneLoader sceneLoader = new SceneLoader(assetManager, rootNode);
-        sceneLoader.loadScene("Models/bathroom/bathroom.j3o");
+        sceneLoader.loadScene("Scenes/Bathroom.j3o");
         
         DirectionalLight sun = new DirectionalLight();
         sun.setDirection(new Vector3f(-0.5f, -1.0f, -0.5f).normalizeLocal());  // Direction of the light
