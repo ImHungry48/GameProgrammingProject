@@ -39,8 +39,8 @@ public class BoxHealthBar extends SimpleApplication {
     private static Box mesh = new Box(Vector3f.ZERO, 1, 1, 1);
     
     // There are some cache related issues, need to ask
-    // private ArrayList<Geometry> good_geoms;
-    // private ArrayList<Geometry> bad_geoms;
+     private ArrayList<Geometry> good_geoms;
+     private ArrayList<Geometry> bad_geoms;
     // Solution for now: just have a few interactable objects
     private Geometry good_geom1;
     private Geometry bad_geom1;
@@ -71,8 +71,8 @@ public class BoxHealthBar extends SimpleApplication {
         inputManager.addListener(analogListener, new String[] {MAPPING_ROTATE});
         
         // Cache Issue
-        //good_geoms = new ArrayList<>();
-        //bad_geoms = new ArrayList<>();
+        good_geoms = new ArrayList<>();
+        bad_geoms = new ArrayList<>();
         
         
         health = 100;
@@ -143,7 +143,7 @@ public class BoxHealthBar extends SimpleApplication {
             
             // Add the goodgeom to good_geoms
             // Cache ISSUE
-            // good_geoms.add(goodgeom);
+             good_geoms.add(goodgeom);
             
             
         }
@@ -164,7 +164,7 @@ public class BoxHealthBar extends SimpleApplication {
             
             // Add the badgeom to bad_geoms
             // Cache ISSUE
-            //bad_geoms.add(badgeom);
+            bad_geoms.add(badgeom);
         }
     }
         
@@ -202,7 +202,6 @@ public class BoxHealthBar extends SimpleApplication {
                         target.getMaterial().setColor("Color", ColorRGBA.LightGray);
                     }
                     
-                    /* Cache Issue
                     if (good_geoms.contains(target)) {
                         health += 1;
                         target.getMaterial().setColor("Color", ColorRGBA.LightGray);
@@ -213,7 +212,7 @@ public class BoxHealthBar extends SimpleApplication {
                         target.getMaterial().setColor("Color", ColorRGBA.LightGray);
                         bad_geoms.remove(target);
                         // delete the obj instance as a bad geom
-                    } */
+                    }
                 } else {
                     System.out.println("Selection: Nothing");
                 }
