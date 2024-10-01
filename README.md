@@ -39,30 +39,30 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
 
 **As development progresses, additional mechanics and story elements will be introduced to enhance gameplay depth and narrative cohesion.**
 
-### Development
- - Game Manager
+## Development
+ ### Game Manager
     - Maps out the controls of the game
     - Renders the scenes we would want to display in our game
         - Bathroom (Reset, Rest point) 
             - A possible save point for the user to stay in
             - A custom asset that has a light source in the scene
     - Loads in cubes that would soon be interactable objects which would increase or decrease sanity
- - Game State
+ ### Game State
     - Keep track of the sanity bar
     - Will keep track if the game is over or not
         - Game will be over when sanity reaches 0
         - 1st iteration: sanity bar implemented, but UI is not implemented yet
- - Game Control
+ ### Game Control
     - Cause the boxes to respond when they are interacted with
     - Shows interaction between the player and game
- - Ways to increase sanity
+ ### Ways to increase sanity
     - Interacting with objects
         - 1st iteration: interacting with good boxes
     - Standing on a light source
         - 1st iteration: light source implemented, but the sanity bar increasing not implemented
     - Consuming item in the inventory system
         - 1st iteration: inventory system not implemented yet
- - Ways to decrease sanity
+ ### Ways to decrease sanity
     - Interacting with objects
         - 1st iteration: interacting with bad boxes
     - Standing in darkness
