@@ -31,18 +31,8 @@ import java.util.ArrayList;
  * Game Manager that maps the controls, set the scene up, and populate the game with interactable objects
  */
 public class GameManager extends SimpleApplication {    
-    // Mappings
-    private final static Trigger TRIGGER_CHANGEHEALTH = new MouseButtonTrigger(MouseInput.BUTTON_LEFT);
-    private final static Trigger TRIGGER_ROTATE = new MouseButtonTrigger(MouseInput.BUTTON_LEFT);
-    private final static Trigger TRIGGER_ITEM1 = new KeyTrigger(KeyInput.KEY_1);
-    private final static Trigger TRIGGER_ITEM2 = new KeyTrigger(KeyInput.KEY_2);
-    private final static Trigger TRIGGER_ITEM3 = new KeyTrigger(KeyInput.KEY_3);
-    private final static String MAPPING_CHANGEHEALTH = "Change Health";
-    private final static String MAPPING_ROTATE = "Rotate";
-    private final static String MAPPING_ITEM1 = "Use Item 1";
-    private final static String MAPPING_ITEM2 = "Use Item 2";
-    private final static String MAPPING_ITEM3 = "Use Item 3";
-    
+    // Maintain the game controls
+    private GameInputManager gameInputManager;
     // Maintain the state of the game
     private GameState gameState;
     // Inventory system to manage sanity
@@ -58,15 +48,7 @@ public class GameManager extends SimpleApplication {
     // Field for Game Logic
     @Override
     public void simpleInitApp() {
-        inputManager.addMapping(MAPPING_CHANGEHEALTH, TRIGGER_CHANGEHEALTH);
-        inputManager.addMapping(MAPPING_ROTATE, TRIGGER_ROTATE);
-        
-        inputManager.addMapping(MAPPING_ITEM1, TRIGGER_ITEM1);
-        inputManager.addMapping(MAPPING_ITEM2, TRIGGER_ITEM2);
-        inputManager.addMapping(MAPPING_ITEM3, TRIGGER_ITEM3);
-        inputManager.addListener(actionListener, MAPPING_CHANGEHEALTH, MAPPING_ITEM1, MAPPING_ITEM2, MAPPING_ITEM3);
-        inputManager.addListener(analogListener, MAPPING_ROTATE);
-        
+
         // Cache Issue
         good_geoms = new ArrayList<>();
         bad_geoms = new ArrayList<>();
@@ -96,6 +78,10 @@ public class GameManager extends SimpleApplication {
                 loc2, ColorRGBA.Red));
 
         // Initialize the game state
+        gameInputManager = new GameInputManager(inputManager);
+        gameInputManager.setActionListener(actionListener);
+        gameInputManager.setAnalogListener(analogListener);
+        gameInputManager.initInputMappings();
         gameState = new GameState();
         stateManager.attach(gameState);
         
@@ -192,7 +178,9 @@ public class GameManager extends SimpleApplication {
             // implement action here
             if (target.getName().equals("Good Box")) {
                 gameState.increaseHealth(10);
+                inventory.addItem(new Item("Apple", "A delicious apple",10));
                 target.getMaterial().setColor("Color", ColorRGBA.LightGray);
+                rootNode.detachChild(target);
             } else if (target.getName().equals("Bad Box")) {
                 gameState.decreaseHealth(10);
                 target.getMaterial().setColor("Color", ColorRGBA.LightGray);
@@ -212,39 +200,34 @@ public class GameManager extends SimpleApplication {
         }
     }
     
-    // Maps out controls of what the player is able to do
+    // ActionListener to handle actions
     private ActionListener actionListener = new ActionListener() {
         @Override
         public void onAction(String name, boolean isPressed, float tpf) {
-            if (isPressed) { // Handle only when the key is pressed down
+            if (isPressed) {
                 switch (name) {
-                    case MAPPING_CHANGEHEALTH:
+                    case "Change Health":
                         handleChangeHealth();
                         break;
-                    case MAPPING_ITEM1:
+                    case "Use Item 1":
                         if (inventory.checkItemExists(1)) {
                             gameState.applyHealth(inventory.useItem(1));
-                            System.out.println("item 1 used");
                         }
-                            
                         break;
-                    case MAPPING_ITEM2:
+                    case "Use Item 2":
                         if (inventory.checkItemExists(2)) {
                             gameState.applyHealth(inventory.useItem(2));
-                            System.out.println("item 2 used");
                         }
                         break;
-                    case MAPPING_ITEM3:
+                    case "Use Item 3":
                         if (inventory.checkItemExists(3)) {
                             gameState.applyHealth(inventory.useItem(3));
-                            System.out.println("item 3 used");
                         }
                         break;
                     default:
                         break;
-                    }
                 }
-           
+            }
         }
     };
     
@@ -252,7 +235,7 @@ public class GameManager extends SimpleApplication {
     private AnalogListener analogListener = new AnalogListener() {
         @Override
         public void onAnalog(String name, float intensity, float tpf) {
-            if (name.equals(MAPPING_ROTATE)) {
+            if (name.equals("Rotate")) {
                 // implement action here
                 CollisionResults results = new CollisionResults();
                 Ray ray = new Ray(cam.getLocation(), cam.getDirection());

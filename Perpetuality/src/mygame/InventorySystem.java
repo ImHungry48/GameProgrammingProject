@@ -6,6 +6,7 @@
 package mygame;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -15,67 +16,40 @@ import java.util.List;
  */
 public class InventorySystem {
     private final int MAX_CAPACITY = 3;
-    private List<Item> items;
+    private Item[] items;
 
     // Constructor
     public InventorySystem() {
-        items = new ArrayList<>();
+        items = new Item[MAX_CAPACITY];
+        Arrays.fill(items, null); // Initialize each slot to null
     }
 
     // Add an item to the inventory
     public boolean addItem(Item item) {
-        if (isFull()) {
-            System.out.println("Cannot add \"" + item.getName() + "\". Inventory is full.");
-            return false;
+        for (int i = 0; i < MAX_CAPACITY; i++) {
+            if (items[i] == null) {
+                items[i] = item;
+                System.out.println("\"" + item.getName() + "\" has been added to the inventory.");
+                return true;
+            }
         }
-        items.add(item);
-        System.out.println("\"" + item.getName() + "\" has been added to the inventory.");
-        return true;
+        System.out.println("Cannot add \"" + item.getName() + "\". Inventory is full.");
+        return false;
     }
 
     // Check if an item exists at the given slot number (index)
     public boolean checkItemExists(int slot) {
-        if (slot < 0 || slot >= items.size()) {
-            System.out.println("Out of bounds.");
-            return false;
-        }
-        if (items.get(slot - 1) == null)
+        if (items[slot - 1] == null)
         {
             System.out.println("No items");
+            return false;
         }
-        return items.get(slot - 1) != null;
+        return true;
     }
     
     // Return the item's score
     public int useItem(int slot) {
-        return items.get(slot - 1).getScore();
-    }
-
-
-    // View all items in the inventory
-    public void viewInventory() {
-        if (isEmpty()) {
-            System.out.println("Inventory is empty.");
-            return;
-        }
-        System.out.println("Inventory Contents:");
-        for (int i = 0; i < items.size(); i++) {
-            System.out.println((i + 1) + ". " + items.get(i));
-        }
-    }
-
-    // Check if inventory is full
-    public boolean isFull() {
-        return items.size() >= MAX_CAPACITY;
-    }
-
-    // Check if inventory is empty
-    public boolean isEmpty() {
-        return items.isEmpty();
-    }
-
-    // Get current number of items
-    public int getItemCount() {
-        return items.size();
+        System.out.println("item consumed");
+        return items[slot - 1].getScore();
     }
 }
