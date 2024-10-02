@@ -1,3 +1,4 @@
+// Michael Kim, Alaisha Barber, Chenjia Zhang
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -39,17 +40,23 @@ public class GameState extends AbstractAppState {
         // Constantly decrease health 
         health -= 0.001;
         
-        System.out.println(health);
     }
     
+    // Increase health
     public void increaseHealth(int value) {
         health -= value;
     }
     
+    // Decrease health
     public void decreaseHealth(int value) {
         health += value;
     }
-
+    
+    // Increase or decrease health
+    public void applyHealth(int value) {
+        health += value;
+    }
+    
     @Override
     public void cleanup() {
         // Optional cleanup logic

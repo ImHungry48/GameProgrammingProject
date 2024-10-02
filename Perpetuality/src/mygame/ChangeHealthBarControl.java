@@ -1,3 +1,4 @@
+// Michael Kim, Alaisha Barber, Chenjia Zhang
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JME3 Classes/Control.java to edit this template
@@ -33,6 +34,7 @@ public class ChangeHealthBarControl extends AbstractControl {
     private final Camera cam;
     private final Node rootNode;
     
+    // Default constructor
     public ChangeHealthBarControl(Camera cam, Node rootNode) {
         this.cam = cam;
         this.rootNode = rootNode;

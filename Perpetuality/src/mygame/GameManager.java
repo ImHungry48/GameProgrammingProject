@@ -1,3 +1,4 @@
+// Michael Kim, Alaisha Barber, Chenjia Zhang
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -6,9 +7,11 @@ package mygame;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.collision.CollisionResults;
+import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
+import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.input.controls.Trigger;
 import com.jme3.light.DirectionalLight;
@@ -25,32 +28,44 @@ import java.util.ArrayList;
 /**
  *
  * @author mike0
+ * Game Manager that maps the controls, set the scene up, and populate the game with interactable objects
  */
 public class GameManager extends SimpleApplication {    
+    // Mappings
     private final static Trigger TRIGGER_CHANGEHEALTH = new MouseButtonTrigger(MouseInput.BUTTON_LEFT);
     private final static Trigger TRIGGER_ROTATE = new MouseButtonTrigger(MouseInput.BUTTON_LEFT);
+    private final static Trigger TRIGGER_ITEM1 = new KeyTrigger(KeyInput.KEY_1);
+    private final static Trigger TRIGGER_ITEM2 = new KeyTrigger(KeyInput.KEY_2);
+    private final static Trigger TRIGGER_ITEM3 = new KeyTrigger(KeyInput.KEY_3);
     private final static String MAPPING_CHANGEHEALTH = "Change Health";
     private final static String MAPPING_ROTATE = "Rotate";
+    private final static String MAPPING_ITEM1 = "Use Item 1";
+    private final static String MAPPING_ITEM2 = "Use Item 2";
+    private final static String MAPPING_ITEM3 = "Use Item 3";
     
+    // Maintain the state of the game
     private GameState gameState;
+    // Inventory system to manage sanity
+    private InventorySystem inventory;
     
     // Mesh potentially
     private static Box mesh = new Box(Vector3f.ZERO, 1, 1, 1);
     
-    // There are some cache related issues, need to ask
+    // Objects that are populated in our game
      private ArrayList<Geometry> good_geoms;
      private ArrayList<Geometry> bad_geoms;
-    // Solution for now: just have a few interactable objects
 
-  
-    
     // Field for Game Logic
     @Override
     public void simpleInitApp() {
         inputManager.addMapping(MAPPING_CHANGEHEALTH, TRIGGER_CHANGEHEALTH);
         inputManager.addMapping(MAPPING_ROTATE, TRIGGER_ROTATE);
-        inputManager.addListener(actionListener, new String[] {MAPPING_CHANGEHEALTH});
-        inputManager.addListener(analogListener, new String[] {MAPPING_ROTATE});
+        
+        inputManager.addMapping(MAPPING_ITEM1, TRIGGER_ITEM1);
+        inputManager.addMapping(MAPPING_ITEM2, TRIGGER_ITEM2);
+        inputManager.addMapping(MAPPING_ITEM3, TRIGGER_ITEM3);
+        inputManager.addListener(actionListener, MAPPING_CHANGEHEALTH, MAPPING_ITEM1, MAPPING_ITEM2, MAPPING_ITEM3);
+        inputManager.addListener(analogListener, MAPPING_ROTATE);
         
         // Cache Issue
         good_geoms = new ArrayList<>();
@@ -74,15 +89,17 @@ public class GameManager extends SimpleApplication {
                 FastMath.nextRandomInt(-50,50) 
         );
         
-        // Current Approach is limited
         rootNode.attachChild(myBox("Good Box",
                 loc1, ColorRGBA.Green));
         
         rootNode.attachChild(myBox("Bad Box", 
                 loc2, ColorRGBA.Red));
 
+        // Initialize the game state
         gameState = new GameState();
         stateManager.attach(gameState);
+        
+        inventory = new InventorySystem();
         
         // To make camera runs faster 
         flyCam.setMoveSpeed(50f);
@@ -100,6 +117,7 @@ public class GameManager extends SimpleApplication {
         attachCenterMark();
     } 
     
+    // Crosshair for our game :)
     private void attachCenterMark() {
         Geometry c = myBox("center mark", 
             Vector3f.ZERO, ColorRGBA.White);
@@ -109,6 +127,7 @@ public class GameManager extends SimpleApplication {
         guiNode.attachChild(c); // attach to 2D user interface
     }
     
+    // Interactable cubes that can increase sanity
     private void makeGoodCubes(int number) {
         for (int i = 0; i < number; i++) {
             Vector3f loc = new Vector3f(
@@ -130,6 +149,7 @@ public class GameManager extends SimpleApplication {
         }
     }
     
+    // Interactable cubes that can increase sanity
     private void makeBadCubes(int number) {
         for (int i = 0; i < number; i++) {
             Vector3f loc = new Vector3f(
@@ -149,7 +169,7 @@ public class GameManager extends SimpleApplication {
         }
     }
         
-    
+    // Box constructor
     public Geometry myBox(String name, Vector3f loc, ColorRGBA color) {
         Geometry local_geom = new Geometry(name, mesh);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -159,49 +179,76 @@ public class GameManager extends SimpleApplication {
         return local_geom;
     }
     
+    // Manage health when an object is interacted
+    private void handleChangeHealth() {
+        // implement action here
+        CollisionResults results = new CollisionResults();
+        Ray ray = new Ray(cam.getLocation(), cam.getDirection());
+        rootNode.collideWith(ray, results);
+
+
+        if (results.size() > 0) {
+            Geometry target = results.getClosestCollision().getGeometry();
+            // implement action here
+            if (target.getName().equals("Good Box")) {
+                gameState.increaseHealth(10);
+                target.getMaterial().setColor("Color", ColorRGBA.LightGray);
+            } else if (target.getName().equals("Bad Box")) {
+                gameState.decreaseHealth(10);
+                target.getMaterial().setColor("Color", ColorRGBA.LightGray);
+            }
+
+            if (good_geoms.contains(target)) {
+                gameState.increaseHealth(10);
+                target.getMaterial().setColor("Color", ColorRGBA.LightGray);
+                good_geoms.remove(target); // delete the obj instance as a good geom
+                // 
+            } else if(bad_geoms.contains(target)) {
+                gameState.decreaseHealth(10);
+                target.getMaterial().setColor("Color", ColorRGBA.LightGray);
+                bad_geoms.remove(target);
+                // delete the obj instance as a bad geom
+            }
+        }
+    }
+    
+    // Maps out controls of what the player is able to do
     private ActionListener actionListener = new ActionListener() {
         @Override
         public void onAction(String name, boolean isPressed, float tpf) {
-            if (name.equals(MAPPING_CHANGEHEALTH) && !isPressed) {
-                // implement action here
-                CollisionResults results = new CollisionResults();
-                Ray ray = new Ray(cam.getLocation(), cam.getDirection());
-                rootNode.collideWith(ray, results);
-                
-                
-                if (results.size() > 0) {
-                    Geometry target = results.getClosestCollision().getGeometry();
-                    // implement action here
-                    if (target.getName().equals("Good Box")) {
-                        gameState.increaseHealth(10);
-                        target.getMaterial().setColor("Color", ColorRGBA.LightGray);
-                    } else if (target.getName().equals("Bad Box")) {
-                        gameState.decreaseHealth(10);
-                        target.getMaterial().setColor("Color", ColorRGBA.LightGray);
+            if (isPressed) { // Handle only when the key is pressed down
+                switch (name) {
+                    case MAPPING_CHANGEHEALTH:
+                        handleChangeHealth();
+                        break;
+                    case MAPPING_ITEM1:
+                        if (inventory.checkItemExists(1)) {
+                            gameState.applyHealth(inventory.useItem(1));
+                            System.out.println("item 1 used");
+                        }
+                            
+                        break;
+                    case MAPPING_ITEM2:
+                        if (inventory.checkItemExists(2)) {
+                            gameState.applyHealth(inventory.useItem(2));
+                            System.out.println("item 2 used");
+                        }
+                        break;
+                    case MAPPING_ITEM3:
+                        if (inventory.checkItemExists(3)) {
+                            gameState.applyHealth(inventory.useItem(3));
+                            System.out.println("item 3 used");
+                        }
+                        break;
+                    default:
+                        break;
                     }
-                    
-                    if (good_geoms.contains(target)) {
-                        gameState.increaseHealth(10);
-                        target.getMaterial().setColor("Color", ColorRGBA.LightGray);
-                        good_geoms.remove(target); // delete the obj instance as a good geom
-                        // 
-                    } else if(bad_geoms.contains(target)) {
-                        gameState.decreaseHealth(10);
-                        target.getMaterial().setColor("Color", ColorRGBA.LightGray);
-                        bad_geoms.remove(target);
-                        // delete the obj instance as a bad geom
-                    }
-                } else {
-                    System.out.println("Selection: Nothing");
                 }
-               
-            }
-            // System.out.println("You triggered: "+name);
            
         }
     };
     
-    
+    // Maps out reaction of when the player interacts with the object 
     private AnalogListener analogListener = new AnalogListener() {
         @Override
         public void onAnalog(String name, float intensity, float tpf) {
@@ -248,7 +295,6 @@ public class GameManager extends SimpleApplication {
 
     @Override
     public void simpleUpdate(float tpf) {
-        
         
     }
 

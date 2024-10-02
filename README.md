@@ -55,13 +55,14 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
  ### Game Control
     - Cause the boxes to respond when they are interacted with
     - Shows interaction between the player and game
+### Inventory System
+    - Inventory that is used to maintain sanity by consuming items
  ### Ways to increase sanity
     - Interacting with objects
         - 1st iteration: interacting with good boxes
     - Standing on a light source
         - 1st iteration: light source implemented, but the sanity bar increasing not implemented
     - Consuming item in the inventory system
-        - 1st iteration: inventory system not implemented yet
  ### Ways to decrease sanity
     - Interacting with objects
         - 1st iteration: interacting with bad boxes
