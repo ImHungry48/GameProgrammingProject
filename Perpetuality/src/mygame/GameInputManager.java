@@ -20,7 +20,7 @@ import com.jme3.input.controls.Trigger;
 public class GameInputManager {
 
     private final static Trigger TRIGGER_CHANGEHEALTH = new MouseButtonTrigger(MouseInput.BUTTON_LEFT);
-    private final static Trigger TRIGGER_ROTATE = new MouseButtonTrigger(MouseInput.BUTTON_LEFT);
+    private final static Trigger TRIGGER_ROTATE = new MouseButtonTrigger(MouseInput.BUTTON_RIGHT);
     private final static Trigger TRIGGER_ITEM1 = new KeyTrigger(KeyInput.KEY_1);
     private final static Trigger TRIGGER_ITEM2 = new KeyTrigger(KeyInput.KEY_2);
     private final static Trigger TRIGGER_ITEM3 = new KeyTrigger(KeyInput.KEY_3);

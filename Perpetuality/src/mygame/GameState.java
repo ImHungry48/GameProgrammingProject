@@ -44,18 +44,24 @@ public class GameState extends AbstractAppState {
     
     // Increase health
     public void increaseHealth(int value) {
-        health -= value;
+        health += value;
     }
     
     // Decrease health
     public void decreaseHealth(int value) {
-        health += value;
+        health -= value;
     }
     
     // Increase or decrease health
     public void applyHealth(int value) {
         health += value;
     }
+    
+    // Current Health Getter
+    public float getHealth() {
+        return health;
+    }
+    
     
     @Override
     public void cleanup() {
