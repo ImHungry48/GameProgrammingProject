@@ -40,17 +40,30 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
 **As development progresses, additional mechanics and story elements will be introduced to enhance gameplay depth and narrative cohesion.**
 
 ## Development (Submission 2 Progress)
- ### Game Manager
+ ### User Input
     - Maps out the controls of the game
+        - WASD: move
+        - Left click: interact
+        - Right click: inspect
+ ### Game Manager
     - Renders the scenes we would want to display in our game
         - Bathroom (Reset, Rest point) 
             - A possible save point for the user to stay in
             - A custom asset that has a light source in the scene
     - Loads in cubes that would soon be interactable objects which would increase or decrease sanity
+ ### Objects
+    - Interactable cubes
+        - Red and Green: collectable
+            - They will disappear once you collect them
+        - Yellow and Pink:
+            - Change color or shape
+ ### Scene Loader
+    - Loads a scene in the game
  ### Game State
     - Keep track of the sanity bar
     - Will keep track if the game is over or not
         - Game will be over when sanity reaches 0
+            - So far it would only print game over in the console, need to work on making a game over state
         - 1st iteration: sanity bar implemented, but UI is not implemented yet
  ### Game Control
     - Press using cursor to examine interactable object, selected object will rotate.
