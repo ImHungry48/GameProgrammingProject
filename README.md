@@ -21,16 +21,16 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
 
 ## Gameplay Mechanics
 ### Sanity Management
-- Increasing Sanity: Interact with objects that trigger calming memories, such as notes, photos, or music.
-- Decreasing Sanity: Encounter stressors common to computer science students, like challenging puzzles and difficult exams, which lower the sanity bar.
+- Increasing Sanity: Interact with objects that trigger calming memories, such as notes, photos, or music. Successfully figuring out the puzzle also increases sanity.
+- Decreasing Sanity: First, student is not in a safe room (the current saferoom is the bathroom). Second, if student interacts with objects in an incorrect way (or with an incorrect object). Third, if student encounters the monster.
 
 ### Progression
-- Navigate through multiple dream phases, each representing different psychological states.
+- Navigate through multiple dream phases, each representing different psychological states. Different dream phases likely correspond to different scenes.
 - Each phase may have unique mechanics affecting the player's sanity level.
 
 ### Special Events and Triggers
 - Certain events or objects may trigger the appearance of a monster, adding urgency to maintain sanity.
-- Lower sanity increases the frequency of these threats.
+- Lower sanity increases the frequency of these threats (potentially).
 
 ### User Interface and Controls
 - Sanity Bar: Displayed on-screen, updating in real-time based on player actions and in-game events.
@@ -39,7 +39,7 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
 
 **As development progresses, additional mechanics and story elements will be introduced to enhance gameplay depth and narrative cohesion.**
 
-## Development
+## Development (Submission 2 Progress)
  ### Game Manager
     - Maps out the controls of the game
     - Renders the scenes we would want to display in our game
@@ -53,8 +53,11 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
         - Game will be over when sanity reaches 0
         - 1st iteration: sanity bar implemented, but UI is not implemented yet
  ### Game Control
-    - Cause the boxes to respond when they are interacted with
-    - Shows interaction between the player and game
+    - Press using cursor to examine interactable object, selected object will rotate.
+    - Clicks on object to interact (object turns gray once interacted), this action 
+     will affect sanity value based on the type of object.
+    - Green Box as an example of collectable object: disappears upon click 
+     (collection)
 ### Inventory System
     - Inventory that is used to maintain sanity by consuming items
  ### Ways to increase sanity
