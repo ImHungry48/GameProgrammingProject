@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  *
@@ -24,6 +26,8 @@ public class EventSystem {
     
     public void loadEvents() {
         try {
+            String filePath = "EventManagement/EventList.xml";
+            
             // Create a DocumentBuilderFactory and DocumentBuilder
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -56,11 +60,11 @@ public class EventSystem {
                             System.out.println("Respawn in normal bathroom");
                             break;
                         case "respawnAltered":
-                            // Respawn the plyaer
+                            // Respawn the player
                             System.out.println("Respawn in altered bathroom");
                             break;
                         default:
-                            throw new Exception("Event at index " + i + " has no valid consequenceAction.")
+                            System.out.println("");
                     }
                 });
 

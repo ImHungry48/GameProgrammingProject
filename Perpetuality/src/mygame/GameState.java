@@ -45,6 +45,7 @@ public class GameState extends AbstractAppState {
     // Increase health
     public void increaseHealth(int value) {
         health += value;
+        System.out.println("Increasing");
     }
     
     // Decrease health

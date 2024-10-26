@@ -5,8 +5,10 @@
 package mygame;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.shape.Box;
 
 /**
  *
@@ -30,7 +32,7 @@ public class SceneLoader {
             rootNode.detachChild(currentScene);
         }
 
-        // Load the new scene
+        // Load the new scened
         currentScene = assetManager.loadModel(scenePath);
 
         // Attach it to the root node

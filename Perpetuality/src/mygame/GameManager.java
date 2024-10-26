@@ -6,6 +6,7 @@
 package mygame;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.bounding.BoundingBox;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
@@ -37,6 +38,10 @@ public class GameManager extends SimpleApplication {
     private GameState gameState;
     // Inventory system to manage sanity
     private InventorySystem inventory;
+    
+    private final Player player = new Player();
+    
+    private BoundingBox bathroomTriggerBox;
     
     // Mesh potentially
     private static Box mesh = new Box(Vector3f.ZERO, 1, 1, 1);
@@ -109,6 +114,16 @@ public class GameManager extends SimpleApplication {
         lamp.setDirection(new Vector3f(0, 10f, 0f).normalizeLocal());  // Direction of the light
         lamp.setColor(ColorRGBA.fromRGBA255(138, 3, 12, 5));  // Color of the light
         rootNode.addLight(lamp);  // Attach the light to the rootNode
+        
+        // Define the center and size of the bathroom trigger area
+        Vector3f bathroomCenter = new Vector3f(0f, 0f, 0f); // TODO: Adjust to match bathroom position
+        float bathroomHalfExtent = 5f; // TODO: Adjust size to cover the bathroom
+
+        // Initialize bathroom trigger box
+        bathroomTriggerBox = new BoundingBox(bathroomCenter, bathroomHalfExtent, bathroomHalfExtent, bathroomHalfExtent);
+    
+        /* Player Bounds */
+        player.playerBounds = new BoundingBox(cam.getLocation(), player.playerBoxHalfExtent, player.playerBoxHalfExtent, player.playerBoxHalfExtent);
         
         // Attach a cursor to the screen
         attachCenterMark();
@@ -300,6 +315,12 @@ public class GameManager extends SimpleApplication {
     public void simpleUpdate(float tpf) {
         if (gameState.getHealth() == 0) {
             System.out.println("It is easier to die than live, huh?");
+        }
+        
+        player.playerBounds.setCenter(cam.getLocation());
+        
+        if (player.playerBounds.intersects(bathroomTriggerBox)) {
+            gameState.increaseHealth(1);
         }
     }
 
