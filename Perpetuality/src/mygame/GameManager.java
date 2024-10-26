@@ -23,6 +23,7 @@ import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import java.util.ArrayList;
 
@@ -44,7 +45,8 @@ public class GameManager extends SimpleApplication {
     
     private final Player player = new Player();
     
-    private BoundingBox bathroomTriggerBox;
+    // For Bathroom Sanity Mechanics
+    private Spatial bathroomModel;      
     
     // Mesh potentially
     private static Box mesh = new Box(Vector3f.ZERO, 1, 1, 1);
@@ -117,16 +119,20 @@ public class GameManager extends SimpleApplication {
         lamp.setDirection(new Vector3f(0, 10f, 0f).normalizeLocal());  // Direction of the light
         lamp.setColor(ColorRGBA.fromRGBA255(138, 3, 12, 5));  // Color of the light
         rootNode.addLight(lamp);  // Attach the light to the rootNode
-        
-        // Define the center and size of the bathroom trigger area
-        Vector3f bathroomCenter = new Vector3f(0f, 0f, 0f); // TODO: Adjust to match bathroom position
-        float bathroomHalfExtent = 5f; // TODO: Adjust size to cover the bathroom
 
-        // Initialize bathroom trigger box
-        bathroomTriggerBox = new BoundingBox(bathroomCenter, bathroomHalfExtent, bathroomHalfExtent, bathroomHalfExtent);
-    
-        /* Player Bounds */
-        player.playerBounds = new BoundingBox(cam.getLocation(), player.playerBoxHalfExtent, player.playerBoxHalfExtent, player.playerBoxHalfExtent);
+        // Load the bathroom model from the scene
+        bathroomModel = rootNode.getChild("Bathroom"); // Replace with the name of your bathroom node
+        if (bathroomModel != null && bathroomModel.getWorldBound() instanceof BoundingBox) {
+            BoundingBox bathroomBounds = (BoundingBox) bathroomModel.getWorldBound();
+            // Log bounding box details for debugging
+            System.out.println("Bathroom Center: " + bathroomBounds.getCenter());
+            System.out.println("Bathroom Extents: " + bathroomBounds.getXExtent() + ", " +
+                    bathroomBounds.getYExtent() + ", " + bathroomBounds.getZExtent());
+        }
+
+        // Initialize the player bounds as a bounding box centered on the camera location
+        float playerBoxHalfExtent = 1f; // Adjust the size as needed
+        this.player.playerBounds = new BoundingBox(cam.getLocation(), playerBoxHalfExtent, playerBoxHalfExtent, playerBoxHalfExtent);
 
         sanityBarUI = new SanityBarUI(this);
         stateManager.attach(sanityBarUI);
@@ -323,16 +329,16 @@ public class GameManager extends SimpleApplication {
         // Update the sanity bar based on the GameState’s health value
         sanityBarUI.setSanity(gameState.getHealth());
         
-        System.out.println(gameState.getHealth());
-        
         if (gameState.getHealth() <= 0) {
             System.out.println("It is easier to die than live, huh?");
         }
         
-        player.playerBounds.setCenter(cam.getLocation());
+        this.player.playerBounds.setCenter(cam.getLocation());
         
-        if (player.playerBounds.intersects(bathroomTriggerBox)) {
-            gameState.increaseHealth(1);
+        if (bathroomModel != null && this.player.playerBounds != null) {
+            if (this.player.playerBounds.intersects((BoundingBox) bathroomModel.getWorldBound())) {
+                gameState.increaseHealth(1);
+            }
         }
     }
 
