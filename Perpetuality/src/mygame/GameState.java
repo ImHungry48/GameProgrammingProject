@@ -38,29 +38,36 @@ public class GameState extends AbstractAppState {
         //TODO: add update code
         
         // Constantly decrease health 
-        health -= 0.001;
+        if (this.health > 0) {
+            this.health -= .01;
+        }
         
     }
     
     // Increase health
     public void increaseHealth(int value) {
-        health += value;
-        System.out.println("Increasing");
+        if (this.health < 100) {
+            this.health += value;
+        }
     }
     
     // Decrease health
     public void decreaseHealth(int value) {
-        health -= value;
+        if (this.health > 0) {
+            this.health -= value;
+        }
     }
     
     // Increase or decrease health
     public void applyHealth(int value) {
-        health += value;
+        if (this.health + value <= 100) {
+            this.health += value;
+        }
     }
     
     // Current Health Getter
     public float getHealth() {
-        return health;
+        return this.health;
     }
     
     

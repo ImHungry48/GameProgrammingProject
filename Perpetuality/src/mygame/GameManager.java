@@ -39,6 +39,9 @@ public class GameManager extends SimpleApplication {
     // Inventory system to manage sanity
     private InventorySystem inventory;
     
+    // Sanity Bar UI
+    private SanityBarUI sanityBarUI;
+    
     private final Player player = new Player();
     
     private BoundingBox bathroomTriggerBox;
@@ -124,6 +127,9 @@ public class GameManager extends SimpleApplication {
     
         /* Player Bounds */
         player.playerBounds = new BoundingBox(cam.getLocation(), player.playerBoxHalfExtent, player.playerBoxHalfExtent, player.playerBoxHalfExtent);
+
+        sanityBarUI = new SanityBarUI(this);
+        stateManager.attach(sanityBarUI);
         
         // Attach a cursor to the screen
         attachCenterMark();
@@ -313,7 +319,13 @@ public class GameManager extends SimpleApplication {
 
     @Override
     public void simpleUpdate(float tpf) {
-        if (gameState.getHealth() == 0) {
+        
+        // Update the sanity bar based on the GameState’s health value
+        sanityBarUI.setSanity(gameState.getHealth());
+        
+        System.out.println(gameState.getHealth());
+        
+        if (gameState.getHealth() <= 0) {
             System.out.println("It is easier to die than live, huh?");
         }
         
