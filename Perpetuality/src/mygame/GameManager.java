@@ -5,7 +5,9 @@
  */
 package mygame;
 
+import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
+import com.jme3.asset.plugins.FileLocator;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.KeyInput;
@@ -16,6 +18,7 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.input.controls.Trigger;
 import com.jme3.light.DirectionalLight;
+import com.jme3.light.PointLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
@@ -23,16 +26,21 @@ import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import java.util.ArrayList;
+import mygame.EventManagement.Event;
+import mygame.EventManagement.EventSystem;
+import mygame.GameInputManager.ActionHandler;
+import mygame.GameInputManager.AnalogHandler;
 
 /**
  *
  * @author mike0
  * Game Manager that maps the controls, set the scene up, and populate the game with interactable objects
  */
-public class GameManager extends SimpleApplication {    
+public class GameManager extends SimpleApplication implements ActionHandler, AnalogHandler, GameInputManager.MovementHandler{    
     // Maintain the game controls
     private GameInputManager gameInputManager;
     // Maintain the state of the game
@@ -43,21 +51,70 @@ public class GameManager extends SimpleApplication {
     // Sanity Bar UI
     private SanityBarUI sanityBarUI;
     
-    private final Player player = new Player();
+    // Event System
+    private EventSystem eventSystem;
+    
+    protected Player player;
     
     // For Bathroom Sanity Mechanics
-    private Spatial bathroomModel;      
+    private Spatial bathroomModel; 
+    protected BoundingBox bathroomBounds;
     
     // Mesh potentially
     private static Box mesh = new Box(Vector3f.ZERO, 1, 1, 1);
     
     // Objects that are populated in our game
-     private ArrayList<Geometry> good_interact_geoms;
-     private ArrayList<Geometry> bad_interact_geoms;
+    private ArrayList<Geometry> good_interact_geoms;
+    private ArrayList<Geometry> bad_interact_geoms;
+    private Node pitchNode;
+    private Node yawNode;
 
     // Field for Game Logic
     @Override
     public void simpleInitApp() {
+        
+        // Detach FlyCamAppState to prevent it from interfering with cursor visibility
+        stateManager.detach(stateManager.getState(FlyCamAppState.class));
+        
+        // Initialize player spatial
+        Spatial playerSpatial = assetManager.loadModel("/Models/male_base_mesh/male_base_mesh.j3o");
+        playerSpatial.setLocalTranslation(new Vector3f(0, 1, 0)); // Initial position
+        rootNode.attachChild(playerSpatial);
+
+        // Initialize the player with its model and attach to root node
+        player = new Player(playerSpatial);
+        rootNode.attachChild(player.getPlayerNode());
+
+        // Disable default flyCam behavior and make the camera follow the camera node
+        flyCam.setEnabled(false);
+        
+        // Hide the cursor to capture mouse movement
+        inputManager.setCursorVisible(false);
+        inputManager.setMouseCursor(null); // Hides system cursor
+
+        // Create a yaw node and attach it to the player's node
+        yawNode = new Node("YawNode");
+        player.getPlayerNode().attachChild(yawNode);
+        yawNode.setLocalTranslation(0, 1.5f, 0); // Adjust to the height of the player's "eyes"
+
+        // Create a pitch node and attach it to the yaw node
+        pitchNode = new Node("PitchNode");
+        yawNode.attachChild(pitchNode);
+
+        // Since we don't have a camNode, we need to simulate attaching the camera to the pitchNode
+        // While we can't attach 'cam' directly to the scene graph, we'll store the pitchNode for camera synchronization
+        this.pitchNode = pitchNode; // Add 'pitchNode' as a field in GameManager
+        
+        // Set up GameInputManager for camera controls
+        gameInputManager = new GameInputManager(inputManager, yawNode, pitchNode);
+        gameInputManager.setActionHandler(this);
+        gameInputManager.setAnalogHandler(this);
+        gameInputManager.setMovementHandler(this);
+        gameInputManager.initInputMappings();
+
+        // Synchronize the camera with the camera node in simpleUpdate
+        //cam.setLocation(cameraNode.getWorldTranslation());
+        //cam.lookAt(player.getPlayerNode().getWorldTranslation(), Vector3f.UNIT_Y);
 
         // Potential Cache Issue
         good_interact_geoms = new ArrayList<>();
@@ -91,18 +148,17 @@ public class GameManager extends SimpleApplication {
                 loc2, ColorRGBA.Red));
 
         // Initialize the game state
-        gameInputManager = new GameInputManager(inputManager);
-        gameInputManager.setActionListener(actionListener);
-        gameInputManager.setAnalogListener(analogListener);
-        gameInputManager.initInputMappings();
         gameState = new GameState();
         stateManager.attach(gameState);
       
         inventory = new InventorySystem();
         
         // To make camera (the character) runs faster 
-        flyCam.setMoveSpeed(50f);
+        // TODO: Disabled for first-person testing since it's redundant
+        // flyCam.setMoveSpeed(50f);
         
+        /* EVENT SYSTEM */
+        this.eventSystem = new EventSystem();
         
         /* SCENE LOADING */
         SceneLoader sceneLoader = new SceneLoader(assetManager, rootNode);
@@ -110,20 +166,20 @@ public class GameManager extends SimpleApplication {
         
         DirectionalLight sun = new DirectionalLight();
         sun.setDirection(new Vector3f(-0.5f, -1.0f, -0.5f).normalizeLocal());  // Direction of the light
-        sun.setColor(ColorRGBA.fromRGBA255(32, 51, 74, 5));  // Color of the light
+        sun.setColor(ColorRGBA.fromRGBA255(255, 255, 255, 5));  // Color of the light
         rootNode.addLight(sun);  // Attach the light to the rootNode
         // Yellow light: 245, 205, 86
         
         // General Light
         DirectionalLight lamp = new DirectionalLight();
         lamp.setDirection(new Vector3f(0, 10f, 0f).normalizeLocal());  // Direction of the light
-        lamp.setColor(ColorRGBA.fromRGBA255(138, 3, 12, 5));  // Color of the light
+        lamp.setColor(ColorRGBA.fromRGBA255(255, 255, 255, 5));  // Color of the light
         rootNode.addLight(lamp);  // Attach the light to the rootNode
 
         // Load the bathroom model from the scene
         bathroomModel = rootNode.getChild("Bathroom"); // Replace with the name of your bathroom node
         if (bathroomModel != null && bathroomModel.getWorldBound() instanceof BoundingBox) {
-            BoundingBox bathroomBounds = (BoundingBox) bathroomModel.getWorldBound();
+            this.bathroomBounds = (BoundingBox) bathroomModel.getWorldBound();
             // Log bounding box details for debugging
             System.out.println("Bathroom Center: " + bathroomBounds.getCenter());
             System.out.println("Bathroom Extents: " + bathroomBounds.getXExtent() + ", " +
@@ -203,6 +259,84 @@ public class GameManager extends SimpleApplication {
         return local_geom;
     }
     
+    
+    // ActionListener to handle actions
+    private ActionListener actionListener = new ActionListener() {
+        @Override
+        public void onAction(String name, boolean isPressed, float tpf) {
+            if (isPressed) {
+                switch (name) {
+                    case "Change Health":
+                        handleChangeHealth();
+                        break;
+                    case "Use Item 1":
+                        if (inventory.checkItemExists(1)) {
+                            gameState.applyHealth(inventory.useItem(1));
+                        }
+                        break;
+                    case "Use Item 2":
+                        if (inventory.checkItemExists(2)) {
+                            gameState.applyHealth(inventory.useItem(2));
+                        }
+                        break;
+                    case "Use Item 3":
+                        if (inventory.checkItemExists(3)) {
+                            gameState.applyHealth(inventory.useItem(3));
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    };    
+
+    @Override
+    public void simpleUpdate(float tpf) {
+        
+        // Synchronize the camera position and rotation with the pitch node
+        if (pitchNode != null) {
+            cam.setLocation(pitchNode.getWorldTranslation());
+            cam.setRotation(pitchNode.getWorldRotation());
+        }
+        
+        // Update the sanity bar based on the GameState’s health value
+        sanityBarUI.setSanity(gameState.getHealth());
+        
+        if (gameState.getHealth() <= 0) {
+            System.out.println("It is easier to die than live, huh?");
+            
+            try {
+                // Trigger respawn event based on current state (altered or normal)
+                Event respawnEvent = eventSystem.getEventByName("respawnNormal");
+                if (respawnEvent != null) {
+                    respawnEvent.triggerEvent();
+                }
+            } catch (Exception e) {
+                System.out.println("Failed to respawn.");
+            }
+        }
+        
+        this.player.playerBounds.setCenter(cam.getLocation());
+        
+        if (bathroomModel != null && this.player.playerBounds != null) {
+            if (this.player.playerBounds.intersects((BoundingBox) bathroomModel.getWorldBound())) {
+                gameState.increaseHealth(1);
+            }
+        }
+    }
+
+    @Override
+    public void simpleRender(RenderManager rm) {
+        //TODO: add render code
+    }
+
+    /* ActionHandler Methods */
+    @Override
+    public void onChangeHealth() {
+        handleChangeHealth();
+    }
+
     // Manage health when an object is interacted
     private void handleChangeHealth() {
         // implement action here
@@ -238,112 +372,93 @@ public class GameManager extends SimpleApplication {
             }
         }
     }
-    
-    // ActionListener to handle actions
-    private ActionListener actionListener = new ActionListener() {
-        @Override
-        public void onAction(String name, boolean isPressed, float tpf) {
-            if (isPressed) {
-                switch (name) {
-                    case "Change Health":
-                        handleChangeHealth();
-                        break;
-                    case "Use Item 1":
-                        if (inventory.checkItemExists(1)) {
-                            gameState.applyHealth(inventory.useItem(1));
-                        }
-                        break;
-                    case "Use Item 2":
-                        if (inventory.checkItemExists(2)) {
-                            gameState.applyHealth(inventory.useItem(2));
-                        }
-                        break;
-                    case "Use Item 3":
-                        if (inventory.checkItemExists(3)) {
-                            gameState.applyHealth(inventory.useItem(3));
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-    };
-    
-    // Maps out reaction of when the player interacts with the object 
-    private AnalogListener analogListener = new AnalogListener() {
-        @Override
-        public void onAnalog(String name, float intensity, float tpf) {
-            if (name.equals("Rotate")) {
-                
-                // implement action here
-                CollisionResults results = new CollisionResults();
-                Ray ray = new Ray(cam.getLocation(), cam.getDirection());
-                rootNode.collideWith(ray, results);
-                /* For printing out result, but don't need this
-                for (int i = 0; i < results.size(); i++){
-                    float dist = results.getCollision(i).getDistance();
-                    Vector3f pt = results.getCollision(i).getContactPoint();
-                    String target = results.getCollision(i).getGeometry().getName();
-                    System.out.println("Selection: #" + i + ": " + target +
-                    " at " + pt + ", " + dist + " WU away.");
-                } */ 
-                if (results.size() > 0) {
-                    Geometry target = results.getClosestCollision().getGeometry();
-                    // implement action here
-                    if (target.getName().equals("Good Box")) {
-                        target.rotate(tpf,tpf,tpf);
-                        System.out.println("You are selecting the good box");
-                        // for future work, should showcase description of the target to user
-                    } else if (target.getName().equals("Bad Box")) {
-                        target.rotate(tpf,tpf,tpf);
-                        System.out.println("Hmm, you are selecting the bad box");
-                        // for future work, should showcase description of the target to user
-                    }
-                    
-                    //----------------------------------
-                    
-                    //Potential Cache issue
-                    // Some other potentially neutral objects
-                    if (good_interact_geoms.contains(target)) {
-                        // the good geom rotates as if being selected, but no effects on health yet (just like an inspection)
-                        // future Implementation: might have a text box pop out with instructions about the interaction with the object
-                        target.rotate(tpf,tpf,tpf);
-                        System.out.println("This could be helpful?");
-                    } else if(bad_interact_geoms.contains(target)) {
-                        target.rotate(tpf,tpf,tpf);
-                        System.out.println("This could be harmful?");
-                    }
-                } else {
-                    System.out.println("Selection: Nothing");
-                }
-            }
-            // System.out.println("You triggered: "+name);
-        }
-   };
-    
 
     @Override
-    public void simpleUpdate(float tpf) {
-        
-        // Update the sanity bar based on the GameState’s health value
-        sanityBarUI.setSanity(gameState.getHealth());
-        
-        if (gameState.getHealth() <= 0) {
-            System.out.println("It is easier to die than live, huh?");
+    public void onUseItem(int itemNumber) {
+        if (inventory.checkItemExists(itemNumber)) {
+            gameState.applyHealth(inventory.useItem(itemNumber));
         }
-        
-        this.player.playerBounds.setCenter(cam.getLocation());
-        
-        if (bathroomModel != null && this.player.playerBounds != null) {
-            if (this.player.playerBounds.intersects((BoundingBox) bathroomModel.getWorldBound())) {
-                gameState.increaseHealth(1);
+    }
+    
+    public void handleRotate(float intensity, float tpf) {
+        // implement action here
+        CollisionResults results = new CollisionResults();
+        Ray ray = new Ray(cam.getLocation(), cam.getDirection());
+        rootNode.collideWith(ray, results);
+        /* For printing out result, but don't need this
+        for (int i = 0; i < results.size(); i++){
+            float dist = results.getCollision(i).getDistance();
+            Vector3f pt = results.getCollision(i).getContactPoint();
+            String target = results.getCollision(i).getGeometry().getName();
+            System.out.println("Selection: #" + i + ": " + target +
+            " at " + pt + ", " + dist + " WU away.");
+        } */ 
+        if (results.size() > 0) {
+            Geometry target = results.getClosestCollision().getGeometry();
+            // implement action here
+            if (target.getName().equals("Good Box")) {
+                target.rotate(tpf,tpf,tpf);
+                System.out.println("You are selecting the good box");
+                // for future work, should showcase description of the target to user
+            } else if (target.getName().equals("Bad Box")) {
+                target.rotate(tpf,tpf,tpf);
+                System.out.println("Hmm, you are selecting the bad box");
+                // for future work, should showcase description of the target to user
             }
+
+            //----------------------------------
+
+            //Potential Cache issue
+            // Some other potentially neutral objects
+            if (good_interact_geoms.contains(target)) {
+                // the good geom rotates as if being selected, but no effects on health yet (just like an inspection)
+                // future Implementation: might have a text box pop out with instructions about the interaction with the object
+                target.rotate(tpf,tpf,tpf);
+                System.out.println("This could be helpful?");
+            } else if(bad_interact_geoms.contains(target)) {
+                target.rotate(tpf,tpf,tpf);
+                System.out.println("This could be harmful?");
+            }
+        } else {
+            System.out.println("Selection: Nothing");
         }
+        // System.out.println("You triggered: "+name);
     }
 
     @Override
-    public void simpleRender(RenderManager rm) {
-        //TODO: add render code
+    public void onRotate(float intensity, float tpf) {
+        handleRotate(intensity, tpf);
     }
+    
+    public void onMove(String name, float value, float tpf) {
+        System.out.println("[GameManager] onMove called.");
+        handleMovement(name, value, tpf);
+    }
+    
+    // Implement movement logic
+    private void handleMovement(String name, float value, float tpf) {
+        Node playerNode = player.getPlayerNode();
+        if (playerNode != null) {
+            // Use yawNode's rotation to determine movement direction
+            Vector3f dir = yawNode.getWorldRotation().mult(Vector3f.UNIT_Z).normalizeLocal();
+            Vector3f left = yawNode.getWorldRotation().mult(Vector3f.UNIT_X).normalizeLocal();
+            float moveSpeed = 5f; // Adjust as needed
+
+            switch (name) {
+                case GameInputManager.MAPPING_FORWARD:
+                    playerNode.move(dir.mult(value * moveSpeed));
+                    break;
+                case GameInputManager.MAPPING_BACKWARD:
+                    playerNode.move(dir.mult(-value * moveSpeed));
+                    break;
+                case GameInputManager.MAPPING_LEFT:
+                    playerNode.move(left.mult(value * moveSpeed));
+                    break;
+                case GameInputManager.MAPPING_RIGHT:
+                    playerNode.move(left.mult(-value * moveSpeed));
+                    break;
+            }
+        }
+    }
+    
 }

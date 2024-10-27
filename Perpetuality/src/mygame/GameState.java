@@ -39,7 +39,7 @@ public class GameState extends AbstractAppState {
         
         // Constantly decrease health 
         if (this.health > 0) {
-            this.health -= .01;
+            this.health -= .1;
         }
         
     }

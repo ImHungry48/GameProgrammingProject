@@ -4,11 +4,14 @@
  */
 package mygame.EventManagement;
 
+import com.jme3.bounding.BoundingBox;
+import com.jme3.math.Vector3f;
 import java.io.File;
 import java.util.List;
 import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import mygame.GameManager;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -17,8 +20,10 @@ import org.w3c.dom.Element;
  *
  * @author alais
  */
-public class EventSystem {
+public class EventSystem extends GameManager {
     private List<Event> events;
+    
+    // Specific Event Fields
     
     public EventSystem() {
         events = new ArrayList<>();
@@ -58,6 +63,8 @@ public class EventSystem {
                         case "respawnNormal":
                             // Respawn the player
                             System.out.println("Respawn in normal bathroom");
+                            Vector3f bathroomPosition = this.bathroomBounds.getCenter();
+                            this.respawnPlayer(bathroomPosition);
                             break;
                         case "respawnAltered":
                             // Respawn the player
@@ -108,5 +115,11 @@ public class EventSystem {
             eventNames.add(event.getName());
         }
         return eventNames;
+    }
+    
+    // Event Functions
+    public void respawnPlayer(Vector3f bathroomPosition) {
+        this.player.setPosition(bathroomPosition);
+        System.out.println("Respawned player in bathroom.");
     }
 }
