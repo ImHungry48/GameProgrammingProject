@@ -36,7 +36,6 @@ public class Player {
     }
     
     public float getPlayerHeight() {
-        System.out.println("Player height is " + this.playerHeight);
         return this.playerHeight;
     }
     

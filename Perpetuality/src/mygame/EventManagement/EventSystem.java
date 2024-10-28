@@ -30,13 +30,15 @@ public class EventSystem {
     // Specific Event Fields
     private Player player;
     private BoundingBox bathroomBounds;
+    private Vector3f respawnPosition;
     
-    public EventSystem(Player player, BoundingBox bathroomBounds) {
+    public EventSystem(Player player, BoundingBox bathroomBounds, Vector3f respawnPosition) {
         events = new ArrayList<>();
         
         // Specific event field initialization
         this.player = player;
         this.bathroomBounds = bathroomBounds;
+        this.respawnPosition = respawnPosition;
     }
     
     public void loadEvents() {
@@ -73,7 +75,7 @@ public class EventSystem {
                         case "RespawnNormal":
                             // Respawn the player
                             System.out.println("Respawn in normal bathroom");
-                            this.respawnPlayer();
+                            this.respawnPlayer(this.respawnPosition);
                             break;
                         case "RespawnAltered":
                             // Respawn the player
@@ -106,8 +108,6 @@ public class EventSystem {
         for (Event event : events) {
             if (event.getName().equals(name)) {
                 return event;
-            } else {
-                System.out.println(event.getName());
             }
         }
         return null;
@@ -122,7 +122,7 @@ public class EventSystem {
     
     public void triggerEvent(String eventName) {
         if (eventName.equals("RespawnNormal")) {
-            this.respawnPlayer();
+            this.respawnPlayer(this.respawnPosition);
         }
     }
     
@@ -148,20 +148,25 @@ public class EventSystem {
     }
     
     // Event Functions
-    public void respawnPlayer() {
+    public void respawnPlayer(Vector3f spawnPosition) {
         if (this.bathroomBounds != null) {
-            // Get the center of the bathroom bounding box
-            Vector3f bathroomCenter = this.bathroomBounds.getCenter();
-            
-            // Offset slightly to ensure the player is above the ground
-            float offsetHeight = this.bathroomBounds.getYExtent() / 2 + player.getPlayerHeight() / 2;
-            
-            // Create a position vector inside the bathroom bounds
-            Vector3f spawnPosition = new Vector3f(
-                    bathroomCenter.x,
-                    bathroomCenter.y + offsetHeight,
-                    bathroomCenter.z
-            );
+//            // Get the center of the bathroom bounding box
+//            Vector3f bathroomCenter = this.bathroomBounds.getCenter();
+//            
+//            // Offset slightly to ensure the player is above the ground
+//            float offsetHeight = this.bathroomBounds.getYExtent() / 2 + player.getPlayerHeight() / 2;
+//            
+//            // A custom offset to place the player inside
+//            float yOffset = -this.bathroomBounds.getYExtent() / 4;  // TODO: Adjust to place player inside
+//            float xOffset = 0; // TODO: Adjust if necessary to avoid walls
+//            float zOffset = 0; // TODO: Adjust if necessary to avoid walls
+//            
+//            // Create a position vector inside the bathroom bounds
+//            Vector3f spawnPosition = new Vector3f(
+//                    bathroomCenter.x + xOffset,
+//                    bathroomCenter.y + offsetHeight + yOffset,
+//                    bathroomCenter.z + zOffset
+//            );
             
             // Set the player's position to the spawn location
             player.setPosition(spawnPosition);
@@ -172,4 +177,8 @@ public class EventSystem {
         }
         
     }
+    
+    
+    
+    
 }

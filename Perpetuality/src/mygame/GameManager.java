@@ -20,6 +20,7 @@ import com.jme3.input.controls.Trigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.light.PointLight;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Ray;
@@ -70,6 +71,7 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     private ArrayList<Geometry> bad_interact_geoms;
     private Node pitchNode;
     private Node yawNode;
+    private final Vector3f respawnPosition = new Vector3f(0f, 0f, 0f);
 
     // Field for Game Logic
     @Override
@@ -198,7 +200,7 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         stateManager.attach(sanityBarUI);
         
         /* EVENT SYSTEM */
-        this.eventSystem = new EventSystem(this.player, this.bathroomBounds);
+        this.eventSystem = new EventSystem(this.player, this.bathroomBounds, this.respawnPosition);
         this.eventSystem.loadEvents();
         
         // Attach a cursor to the screen
@@ -232,7 +234,6 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
             // Add the goodgeom to good_geoms
             // Potential Cache ISSUE
             good_interact_geoms.add(goodgeom);
-            
             
         }
     }
@@ -453,6 +454,7 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
             switch (name) {
                 case GameInputManager.MAPPING_FORWARD:
                     playerNode.move(dir.mult(value * moveSpeed));
+                    System.out.println("Player is moving forward.");
                     break;
                 case GameInputManager.MAPPING_BACKWARD:
                     playerNode.move(dir.mult(-value * moveSpeed));
