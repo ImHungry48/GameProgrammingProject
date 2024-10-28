@@ -25,9 +25,11 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
+import com.jme3.scene.CameraNode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.control.CameraControl.ControlDirection;
 import com.jme3.scene.shape.Box;
 import java.util.ArrayList;
 import mygame.EventManagement.Event;
@@ -78,11 +80,10 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         
         // Initialize player spatial
         Spatial playerSpatial = assetManager.loadModel("/Models/male_base_mesh/male_base_mesh.j3o");
-        playerSpatial.setLocalTranslation(new Vector3f(0, 1, 0)); // Initial position
-        rootNode.attachChild(playerSpatial);
 
         // Initialize the player with its model and attach to root node
         player = new Player(playerSpatial);
+        player.getPlayerNode().setLocalTranslation(0,1,0);
         rootNode.attachChild(player.getPlayerNode());
 
         // Disable default flyCam behavior and make the camera follow the camera node
@@ -95,11 +96,17 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         // Create a yaw node and attach it to the player's node
         yawNode = new Node("YawNode");
         player.getPlayerNode().attachChild(yawNode);
-        yawNode.setLocalTranslation(0, 1.5f, 0); // Adjust to the height of the player's "eyes"
+        yawNode.setLocalTranslation(0, this.player.getPlayerHeight() / 2, 0); // Adjust to the height of the player's "eyes"
 
         // Create a pitch node and attach it to the yaw node
         pitchNode = new Node("PitchNode");
         yawNode.attachChild(pitchNode);
+        
+        // Create a CameraNode and attach it to the pitchNode
+        CameraNode camNode = new CameraNode("CameraNode", cam);
+        camNode.setControlDir(ControlDirection.SpatialToCamera); // Control the camera based on the spatial's transforms
+        pitchNode.attachChild(camNode);
+        camNode.setLocalTranslation(0, 0, 0.1f); // TODO: Adjust as needed to align with the eyes
 
         // Since we don't have a camNode, we need to simulate attaching the camera to the pitchNode
         // While we can't attach 'cam' directly to the scene graph, we'll store the pitchNode for camera synchronization
@@ -157,9 +164,6 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         // TODO: Disabled for first-person testing since it's redundant
         // flyCam.setMoveSpeed(50f);
         
-        /* EVENT SYSTEM */
-        this.eventSystem = new EventSystem();
-        
         /* SCENE LOADING */
         SceneLoader sceneLoader = new SceneLoader(assetManager, rootNode);
         sceneLoader.loadScene("Scenes/Bathroom.j3o");
@@ -192,6 +196,10 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
 
         sanityBarUI = new SanityBarUI(this);
         stateManager.attach(sanityBarUI);
+        
+        /* EVENT SYSTEM */
+        this.eventSystem = new EventSystem(this.player, this.bathroomBounds);
+        this.eventSystem.loadEvents();
         
         // Attach a cursor to the screen
         attachCenterMark();
@@ -294,24 +302,22 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     @Override
     public void simpleUpdate(float tpf) {
         
-        // Synchronize the camera position and rotation with the pitch node
-        if (pitchNode != null) {
-            cam.setLocation(pitchNode.getWorldTranslation());
-            cam.setRotation(pitchNode.getWorldRotation());
-        }
-        
         // Update the sanity bar based on the GameState’s health value
         sanityBarUI.setSanity(gameState.getHealth());
         
         if (gameState.getHealth() <= 0) {
-            System.out.println("It is easier to die than live, huh?");
+            // System.out.println("It is easier to die than live, huh?");
             
             try {
                 // Trigger respawn event based on current state (altered or normal)
-                Event respawnEvent = eventSystem.getEventByName("respawnNormal");
+                Event respawnEvent = eventSystem.getEventByName("RespawnNormal");
                 if (respawnEvent != null) {
-                    respawnEvent.triggerEvent();
+                    eventSystem.triggerEvent("RespawnNormal");
+                } else {
+                    throw new NullPointerException();
                 }
+            } catch (NullPointerException a) {
+                //System.out.println("The bathroom is null.");
             } catch (Exception e) {
                 System.out.println("Failed to respawn.");
             }
@@ -430,8 +436,8 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         handleRotate(intensity, tpf);
     }
     
+    @Override
     public void onMove(String name, float value, float tpf) {
-        System.out.println("[GameManager] onMove called.");
         handleMovement(name, value, tpf);
     }
     

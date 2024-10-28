@@ -7,31 +7,41 @@ package mygame.EventManagement;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.math.Vector3f;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import mygame.GameManager;
+import mygame.Player;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 /**
  *
  * @author alais
  */
-public class EventSystem extends GameManager {
+public class EventSystem {
     private List<Event> events;
     
     // Specific Event Fields
+    private Player player;
+    private BoundingBox bathroomBounds;
     
-    public EventSystem() {
+    public EventSystem(Player player, BoundingBox bathroomBounds) {
         events = new ArrayList<>();
+        
+        // Specific event field initialization
+        this.player = player;
+        this.bathroomBounds = bathroomBounds;
     }
     
     public void loadEvents() {
         try {
-            String filePath = "EventManagement/EventList.xml";
+            String filePath = "src/mygame/EventManagement/EventList.xml";
             
             // Create a DocumentBuilderFactory and DocumentBuilder
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -56,30 +66,35 @@ public class EventSystem extends GameManager {
                 Event event = new Event(name, description, () -> {
                     // You can map actions here based on consequenceAction string
                     switch (consequenceAction) {
-                        case "lightFlickering":
+                        case "BathroomLightFlickering":
                             // Run flashback sequence
                             System.out.println("The lights are flickering");
                             break;
-                        case "respawnNormal":
+                        case "RespawnNormal":
                             // Respawn the player
                             System.out.println("Respawn in normal bathroom");
-                            Vector3f bathroomPosition = this.bathroomBounds.getCenter();
-                            this.respawnPlayer(bathroomPosition);
+                            this.respawnPlayer();
                             break;
-                        case "respawnAltered":
+                        case "RespawnAltered":
                             // Respawn the player
                             System.out.println("Respawn in altered bathroom");
                             break;
                         default:
-                            System.out.println("");
+                            System.out.println("No event.");
                     }
                 });
 
                 // Add the event to the list
                 events.add(event);
+                
+                System.out.println("Successfully added an event.");
             }
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            System.out.println("Error loading events: " + e.getMessage());
+            e.printStackTrace();
         } catch (Exception e) {
-            System.out.println("Cannot load events");
+                System.out.println("Cannot load events");
+                e.printStackTrace();
         }
     }
     
@@ -91,6 +106,8 @@ public class EventSystem extends GameManager {
         for (Event event : events) {
             if (event.getName().equals(name)) {
                 return event;
+            } else {
+                System.out.println(event.getName());
             }
         }
         return null;
@@ -99,7 +116,20 @@ public class EventSystem extends GameManager {
     // For testing purposes
     public void triggerAllEvents() {
         for (Event event:events) {
-            event.triggerEvent();
+            this.triggerEvent(event.getName());
+        }
+    }
+    
+    public void triggerEvent(String eventName) {
+        if (eventName.equals("RespawnNormal")) {
+            this.respawnPlayer();
+        }
+    }
+    
+    // For testing purposes
+    public void displayEvents() {
+        for (Event event:events) {
+            System.out.println(event.getName());
         }
     }
     
@@ -118,8 +148,28 @@ public class EventSystem extends GameManager {
     }
     
     // Event Functions
-    public void respawnPlayer(Vector3f bathroomPosition) {
-        this.player.setPosition(bathroomPosition);
-        System.out.println("Respawned player in bathroom.");
+    public void respawnPlayer() {
+        if (this.bathroomBounds != null) {
+            // Get the center of the bathroom bounding box
+            Vector3f bathroomCenter = this.bathroomBounds.getCenter();
+            
+            // Offset slightly to ensure the player is above the ground
+            float offsetHeight = this.bathroomBounds.getYExtent() / 2 + player.getPlayerHeight() / 2;
+            
+            // Create a position vector inside the bathroom bounds
+            Vector3f spawnPosition = new Vector3f(
+                    bathroomCenter.x,
+                    bathroomCenter.y + offsetHeight,
+                    bathroomCenter.z
+            );
+            
+            // Set the player's position to the spawn location
+            player.setPosition(spawnPosition);
+            
+            System.out.println("Respawned player in bathroom.");
+        } else {
+            System.out.println("Error: Bathroom bounds not found. Unable to teleport player.");
+        }
+        
     }
 }

@@ -9,20 +9,39 @@ public class Player {
     private Node playerNode;
     public float playerBoxHalfExtent = 1f;
     public BoundingBox playerBounds;
+    private float playerHeight;
+    private float eyeOffset = 0.01f;
 
     public Player(Spatial playerSpatial) {
         this.playerNode = new Node("PlayerNode");
 
         // Attach the player's spatial model to the player node
         this.playerNode.attachChild(playerSpatial);
-        
-        // Set initial position and bounding box
-        playerSpatial.setLocalTranslation(0, playerBoxHalfExtent, 0);
-        this.playerBounds = new BoundingBox(playerSpatial.getLocalTranslation(), playerBoxHalfExtent, playerBoxHalfExtent, playerBoxHalfExtent);
+
+        // Calculate player height and bounds
+        playerSpatial.updateModelBound();
+        BoundingBox playerBox = (BoundingBox) playerSpatial.getWorldBound();
+            this.playerHeight = playerBox.getYExtent() * 2;
+            this.playerBounds = new BoundingBox(
+                    playerBox.getCenter(),
+                    playerBox.getXExtent(),
+                    playerBox.getYExtent(),
+                    playerBox.getZExtent()
+            );
     }
 
+
     public Node getPlayerNode() {
-        return playerNode;
+        return this.playerNode;
+    }
+    
+    public float getPlayerHeight() {
+        System.out.println("Player height is " + this.playerHeight);
+        return this.playerHeight;
+    }
+    
+    public float getPlayerEyeOffset() {
+        return this.eyeOffset;
     }
 
     public void setPosition(Vector3f newPosition) {

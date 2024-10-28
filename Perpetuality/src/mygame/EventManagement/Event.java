@@ -33,23 +33,6 @@ public class Event {
         return this.isTriggered;
     }
     
-    public void triggerEvent() {
-        try {
-            if (!isTriggered) {
-                System.out.println("Event Triggered: " + this.name);
-                this.isTriggered = true;
-                if (this.consequence != null) {
-                    consequence.run();
-                }
-            } else {
-                System.out.println("Event has already been triggered.");
-            }
-            
-        } catch (Exception e) {
-            System.out.println("Could not trigger event");
-        }
-    }
-    
     public void resetEvent() {
         this.isTriggered = false;
     }
