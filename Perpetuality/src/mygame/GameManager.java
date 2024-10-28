@@ -454,7 +454,6 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
             switch (name) {
                 case GameInputManager.MAPPING_FORWARD:
                     playerNode.move(dir.mult(value * moveSpeed));
-                    System.out.println("Player is moving forward.");
                     break;
                 case GameInputManager.MAPPING_BACKWARD:
                     playerNode.move(dir.mult(-value * moveSpeed));
