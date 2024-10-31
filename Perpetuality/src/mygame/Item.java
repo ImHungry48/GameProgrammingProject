@@ -14,10 +14,11 @@ package mygame;
 public class Item {
     private String name;
     private String description;
+    private String type;
     private int score;
 
     // Constructor
-    public Item(String name, String description, int score) {
+    public Item(String name, String description, int score, String type) {
         this.name = name;
         this.description = description;
     }
@@ -35,6 +36,10 @@ public class Item {
     // Get the item's score
     public int getScore() {
         return score;
+    }
+    
+    public String getType() {
+        return type;
     }
 
 }

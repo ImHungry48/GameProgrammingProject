@@ -5,6 +5,7 @@
  */
 package mygame;
 
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,9 +48,38 @@ public class InventorySystem {
         return true;
     }
     
-    // Return the item's score
+    public Item getItem(int slot) {
+        return items[slot - 1];
+    }
+    
     public int useItem(int slot) {
+       Item item = getItem(slot);
+       if (item == null) {
+           // Trigger event that item cannot be used
+           // TODO: Trigger Dialog saying you have no item
+           return 0;
+       }
+       int score = 0;
+       if ("Consumable".equals(item.getType())) {
+           score = useConsumable(slot);
+       }
+       else if ("Key Item".equals(item.getType())){
+           score = useKeyItem(slot);
+       }
+       // Remove item from inventory system
+       items[slot - 1] = null;
+       
+       return score;
+    }
+    
+    // Return the item's score
+    public int useConsumable(int slot) {
         System.out.println("item consumed");
         return items[slot - 1].getScore();
+    }
+    
+    public int useKeyItem(int slot) {
+        // Trigger event
+        return 0;
     }
 }

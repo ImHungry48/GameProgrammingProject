@@ -82,6 +82,7 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         
         // Initialize player spatial
         Spatial playerSpatial = assetManager.loadModel("/Models/male_base_mesh/male_base_mesh.j3o");
+        
 
         // Initialize the player with its model and attach to root node
         player = new Player(playerSpatial);
@@ -359,7 +360,7 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
             // Good Box and Bad Box are collectable objects that will be gone once clicked
             if (target.getName().equals("Good Box")) {
                 gameState.increaseHealth(20);
-                inventory.addItem(new Item("Apple", "A delicious apple",10));
+                inventory.addItem(new Item("Apple", "A delicious apple",10, "Consumable"));
                 rootNode.detachChild(target); // you have collected the apple, so it's gone
             } else if (target.getName().equals("Bad Box")) {
                 gameState.decreaseHealth(10);
