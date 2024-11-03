@@ -15,15 +15,19 @@ import com.jme3.ui.Picture;
 
 import com.jme3.collision.*;
 import com.jme3.input.controls.*;
+import com.jme3.light.*;
+import com.jme3.math.FastMath;
 
 import com.jme3.math.Ray;
+import com.jme3.scene.Spatial;
+import com.jme3.shadow.SpotLightShadowRenderer;
 
 /**
  * This is the Main Class of your Game. You should only do initialization here.
  * Move your Logic into AppStates or Controls
  * @author normenhansen
  */
-public class DialogBox extends SimpleApplication {
+public class FlashLight extends SimpleApplication {
 
     // Class Fields
     private BitmapText dialogText;
@@ -35,9 +39,18 @@ public class DialogBox extends SimpleApplication {
     
     private static Box mesh1 = new Box(Vector3f.ZERO, 1, 1, 1); // for cursor
     
+    // fields for flahslight
+    private SpotLight flash_light;
+    private float flash_radius;
+    // Sunlight
+    DirectionalLight sun = new DirectionalLight();
+    final int SHADOWMAP_SIZE=1024;
+    
+    // Character
+    Spatial monsterGeom;
     
     public static void main(String[] args) {
-        DialogBox app = new DialogBox();
+        FlashLight app = new FlashLight();
         app.start();
     }
 
@@ -53,10 +66,15 @@ public class DialogBox extends SimpleApplication {
         inputManager.addMapping(MAPPING_DIALOG, TRIGGER_DIALOG);
         inputManager.addListener(actionListener, new String[] {MAPPING_DIALOG});
         
-        
-        // Place Holder for Dialog Box triggering
-        rootNode.attachChild(myBox("Blue Box", 
-                new Vector3f(0, -1.5f, 0), ColorRGBA.Blue));
+        // NPC Character Place Holder, PROBLEM: material not applying
+        monsterGeom = assetManager.loadModel("Models/male_base_mesh/male_base_mesh.j3o");
+        monsterGeom.setName("Monster");
+        Material mat = new Material(assetManager, 
+            "Common/MatDefs/Light/Lighting.j3md");
+        mat.setColor("Ambient", ColorRGBA.Blue);
+        mat.setColor("Diffuse", ColorRGBA.Blue);
+        monsterGeom.setMaterial(mat);
+        rootNode.attachChild(monsterGeom);
         
         
         // Load a font, initialize BimapText object and attach it to guiNode
@@ -74,6 +92,29 @@ public class DialogBox extends SimpleApplication {
         
         // the cursor
         attachCenterMark();
+        
+        // Sunlight
+        sun.setColor(ColorRGBA.White);
+        sun.setDirection(new Vector3f(-.5f,-.5f,-.5f).normalizeLocal());
+        rootNode.addLight(sun);
+        
+        flash_radius = 70f;
+        // FLASH Light implementation
+        flash_light = new SpotLight();
+        // Spot Range, light cone
+        flash_light.setSpotRange(flash_radius);
+        flash_light.setSpotInnerAngle(15f * FastMath.DEG_TO_RAD);
+        flash_light.setSpotOuterAngle(35f * FastMath.DEG_TO_RAD);
+        // Color, location, direction
+        flash_light.setColor(ColorRGBA.Yellow.mult(ColorRGBA.White));
+        flash_light.setPosition(cam.getLocation());
+        flash_light.setDirection(cam.getDirection());
+        rootNode.addLight(flash_light);
+        // Shadow
+        SpotLightShadowRenderer slsr = new SpotLightShadowRenderer(assetManager, SHADOWMAP_SIZE);
+        slsr.setLight(flash_light);
+        viewPort.addProcessor(slsr);
+        
     }
     
     private void attachCenterMark() {
@@ -108,7 +149,7 @@ public class DialogBox extends SimpleApplication {
                 if (results.size() > 0) {
                     Geometry target = results.getClosestCollision().getGeometry();
                     // implement action here
-                    if (target.getName().equals("Blue Box") && !dialogOpen) {
+                    if (target.equals(monsterGeom) && !dialogOpen) {
                         // Set the dialogtext as needed
                         dialogText.setText("  It's very dark. \n"
                                 + "   I need this battery to \n"
@@ -175,6 +216,10 @@ public class DialogBox extends SimpleApplication {
             logo.setImage(assetManager,
          "Interface/chimpanzee-sad.gif", true);
         } */
+        
+        // Flashlight Mechanism Update
+        flash_light.setPosition(cam.getLocation());
+        flash_light.setDirection(cam.getDirection());
     }
 
     @Override
