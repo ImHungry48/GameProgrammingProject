@@ -84,4 +84,34 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
         - 1st iteration: interacting with bad boxes
     - Standing in darkness
         - 1st iteration: user will lose sanity by default for now
+
+## Development (Submission 3 Progress)
+ ### Dialog Box
+    - Informs the user of what event has occur
+        - Triggered by consuming an item in the inventory system (working in progress)
+        - Triggered by an event system
+        ![Alt text for image](./Images/DialogExample)
+ ### Safe Areas
+    - Player can now increase their sanity by going into certain safe areas like the Bathroom
+    - Bathroom and other safe areas have triggerbox that cause sanity to increase
+ ### Event System
+    - An observer class that handles event that occurs in game
+    - For now informs the player of their respawn status
+    - If an event triggers, a functionality will fire off
+        - If the event respawn occurs, the player will respawn in the bathroom
+    - This event system will make it easier to add more functionality to our game
+        - Easily adding new custom events by adding more functionailty in the function triggerEvents
+        - Can easily be used with the Inventory System (working in progress)
+ ### Puzzles
+    - We are not sure about what type of puzzles we want to implement, so we are deciding to make mechanics that will help us make these puzzles
+    - The next few items in the deliverable will mention some details about these game mechanics
+ ### Inventory System
+    - Now has two types of items
+        - Key items
+            - An item that can possibly be used for puzzles later in our development
+            - If a player consume this item, an event will trigger
+        - Consumables 
+            - Mostly used to increase or decrease sanity
+ ### Flashlight
+    - User has a spotlight attached to the camera
     
