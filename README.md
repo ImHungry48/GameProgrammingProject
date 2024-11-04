@@ -90,7 +90,7 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
     - Informs the user of what event has occur
         - Triggered by consuming an item in the inventory system (working in progress)
         - Triggered by an event system
-        ![Alt text for image](./Images/DialogExample.png)
+![Example of our dialog](./Images/DialogExample.png)
  ### Safe Areas
     - Player can now increase their sanity by going into certain safe areas like the Bathroom
     - Bathroom and other safe areas have triggerbox that cause sanity to increase
