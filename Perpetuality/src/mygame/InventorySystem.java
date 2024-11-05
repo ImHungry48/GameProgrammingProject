@@ -54,10 +54,11 @@ public class InventorySystem extends AbstractAppState {
             if (items[i] == null) {
                 items[i] = item;
                 System.out.println("\"" + item.getName() + "\" has been added to the inventory.");
-                updateInventoryUI();
+                updateInventoryUI(); // CHANGE: Comment <Should update this to dialog textbox later>
                 return true;
             }
         }
+        // CHANGE: Comment <Should update this to dialog textbox later>
         System.out.println("Cannot add \"" + item.getName() + "\". Inventory is full.");
         return false;
     }
