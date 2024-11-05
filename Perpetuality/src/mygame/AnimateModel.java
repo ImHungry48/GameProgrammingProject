@@ -67,7 +67,7 @@ public class AnimateModel extends SimpleApplication {
         animComposer.setCurrentAction("stand");
         
         
-        // Add sun to rootnode
+        // Add sun to rootnode (might not be needed)
         DirectionalLight sun = new DirectionalLight();
         sun.setDirection((new Vector3f(-0.5f, -0.5f, -0.5f)));
         sun.setColor(ColorRGBA.White.mult(2));
