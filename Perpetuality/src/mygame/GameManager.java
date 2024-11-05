@@ -43,7 +43,7 @@ import mygame.GameInputManager.AnalogHandler;
  * @author mike0
  * Game Manager that maps the controls, set the scene up, and populate the game with interactable objects
  */
-public class GameManager extends SimpleApplication implements ActionHandler, AnalogHandler, GameInputManager.MovementHandler{    
+public class GameManager extends SimpleApplication implements ActionHandler, AnalogHandler, GameInputManager.MovementHandler {    
     // Maintain the game controls
     private GameInputManager gameInputManager;
     // Maintain the state of the game
@@ -72,6 +72,12 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     private Node pitchNode;
     private Node yawNode;
     private final Vector3f respawnPosition = new Vector3f(0f, 0f, 0f);
+    
+    // Flashlight
+    private FlashLight flashlight;
+    
+    // Dialog box
+    private DialogBox dialogBox;
 
     // Field for Game Logic
     @Override
@@ -126,6 +132,20 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         //cam.setLocation(cameraNode.getWorldTranslation());
         //cam.lookAt(player.getPlayerNode().getWorldTranslation(), Vector3f.UNIT_Y);
 
+        // Create the flash light
+        flashlight = new FlashLight(assetManager, inputManager, viewPort, rootNode);
+        
+        // Initalize dialog box
+        dialogBox = new DialogBox(assetManager, inputManager, guiNode, viewPort, rootNode);
+        
+        Geometry interactableBox = new Geometry("InteractableBox", new Box(1, 1, 1));        
+        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        mat.setColor("Color", ColorRGBA.Blue);
+        interactableBox.setMaterial(mat);
+        interactableBox.setLocalTranslation(0, 1, -5);
+        
+        rootNode.attachChild(interactableBox);
+        
         // Potential Cache Issue
         good_interact_geoms = new ArrayList<>();
         bad_interact_geoms = new ArrayList<>();
@@ -133,8 +153,8 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         // Just as an idea, maybe grades should be the threshold for which we have different status
         
         // Fill the scene with some randomly positioned interactable but all on the y = 0 plane
-        makeGoodCubes(15);
-        makeBadCubes(15);
+        //makeGoodCubes(15);
+        //makeBadCubes(15);
         
         Vector3f loc1 = new Vector3f(
                 FastMath.nextRandomInt(-50, 50),
@@ -334,6 +354,8 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
                 gameState.increaseHealth(1);
             }
         }
+        
+        flashlight.update(cam.getLocation(), cam.getDirection());
     }
 
     @Override
@@ -469,6 +491,13 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
                     break;
             }
         }
+    }
+    
+    @Override
+    public void destroy() {
+        flashlight.cleanup();
+        dialogBox.cleanup();
+        super.destroy();
     }
     
 }

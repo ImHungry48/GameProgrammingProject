@@ -30,7 +30,6 @@ public class Player {
             );
     }
 
-
     public Node getPlayerNode() {
         return this.playerNode;
     }
