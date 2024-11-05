@@ -163,6 +163,8 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
       
         inventory = new InventorySystem();
         
+        stateManager.attach(inventory);
+        
         // To make camera (the character) runs faster 
         // TODO: Disabled for first-person testing since it's redundant
         // flyCam.setMoveSpeed(50f);
