@@ -110,14 +110,20 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
         - Easily adding new custom events by adding more functionality in the function trigger events
         - Can easily be used with the Inventory System (working in progress)
  ### Puzzles
-    - Not yet certain about what type of puzzles to implement, so currently focused on mechanics that will help us make these puzzles (moving, dialog box, flashlight, sanity...)
-    - The core mechanic is to find batteries in the scene and recharge the flashlight + collect certain "key" items to push the plot forward
+    - Not yet certain about what type of puzzles to implement.
+        - Currently focused on mechanics that help to make more puzzles (moving, dialog box, flashlight, sanity...)
+    - The current core mechanics:
+        - Find batteries in the scene & recharge the flashlight
+        - Collect certain "key" items to push the plot forward using DialogBox
+        - Sanity Management
     
  ### Flashlight
-    - The user has a spotlight attached to the camera as the primary light source (Limit the visible range to control difficulty of finding items, the scene should be dark most of the time with the flashlight as the only light source).
-    - Later, we will update more mechanics so that the flashlight distance (view range) fluctuates depending on the number of batteries the user collects (the main collectible). 
+    - The user has a spotlight attached to the camera as the primary light source 
+        - Limit the visible range to control the difficulty of finding items
+        - The scene should be dark most of the time, flashlight should be the only light source.
+    - We will update more mechanics so that the flashlight distance (view range) fluctuates depending on the number of batteries collected (the main collectible). 
         - One of the player's main goals is to continue searching for batteries to maintain flashlight status.
-    - Plan: Lower battery status will lead to a quicker decrease in health (sanity) + trigger monster chasing once belong a certain threshold.
+    - Plan: Lower battery status will lead to a quicker decrease in health (sanity) + trigger monster chasing once belows a certain threshold.
  <img width="626" alt="Screenshot 2024-11-06 at 8 25 32 AM" src="https://github.com/user-attachments/assets/b87519fc-0343-4c10-acf3-79a129796d79">
 
  ### Animation
