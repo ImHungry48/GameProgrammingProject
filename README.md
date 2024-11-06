@@ -87,31 +87,42 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
 
 ## Development (Submission 3 Progress)
  ### Dialog Box
-    - Informs the user of what event has occur
-        - Triggered by consuming an item in the inventory system (working in progress)
+    - Informs the user of what event has occurred and guides the user forward in the plot.
         - Triggered by an event system
+        - Triggered by consuming an item in the inventory system (working in progress)
 ![Example of our dialog](./Images/DialogExample.png)
  ### Safe Areas
     - Player can now increase their sanity by going into certain safe areas like the Bathroom
-    - Bathroom and other safe areas have triggerbox that cause sanity to increase
+    - Bathroom and other safe areas have trigger box that cause sanity to increase
  ### Event System
-    - An observer class that handles event that occurs in game
-    - For now informs the player of their respawn status
+    - An observer class that handles event that occurs in-game
+    - For now, informs the player of their respawn status
     - If an event triggers, a functionality will fire off
         - If the event respawn occurs, the player will respawn in the bathroom
     - This event system will make it easier to add more functionality to our game
-        - Easily adding new custom events by adding more functionailty in the function triggerEvents
+        - Easily adding new custom events by adding more functionality in the function trigger events
         - Can easily be used with the Inventory System (working in progress)
  ### Puzzles
-    - We are not sure about what type of puzzles we want to implement, so we are deciding to make mechanics that will help us make these puzzles
-    - The next few items in the deliverable will mention some details about these game mechanics
+    - Not yer certain about what type of puzzles to implement, so currently focused on mechanics that will help us make these puzzles (moving, dialog box, flashlight, sanity...)
+    - The next few items in the deliverable will mention more details about these game mechanics
+    
+ ### Flashlight
+    - The user has a spotlight attached to the camera as the primary light source (the scene should be dark most of the time and the flashlight should be the only light source)
+    - Later, we will update more mechanics so that the light intensity will fluctuate depending on the number of batteries the user collects (the main collectible). 
+        - One of the player's main goals is to continue searching for batteries to maintain flashlight status.
+    - Plan: Lower battery status will trigger a quicker decrease in health (sanity).
+
+ ### Animation
+    - There is one animated "monster" in our game, it will chase the user once the battery status is low. 
+    - The animated monster is currently using the Oto model, which might change for later submission.
+    
+ ### More Scene Models Created
+    
  ### Inventory System
     - Now has two types of items
         - Key items
             - An item that can possibly be used for puzzles later in our development
-            - If a player consume this item, an event will trigger
+            - If a player consumes this item, an event will trigger
         - Consumables 
             - Mostly used to increase or decrease sanity
- ### Flashlight
-    - User has a spotlight attached to the camera
     
