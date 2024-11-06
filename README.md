@@ -101,6 +101,9 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
  ### Safe Areas
     - Player can now increase their sanity by going into certain safe areas like the Bathroom
     - Bathroom and other safe areas have trigger box that cause sanity to increase
+![Bathroom_1](https://github.com/user-attachments/assets/154d27c3-2320-488b-b8a4-38af5f23e8fe)
+![Bathroom_2](https://github.com/user-attachments/assets/d4b94bd3-08b3-47d0-acff-abcf8692a70c)
+![Bathroom_Flashlight](https://github.com/user-attachments/assets/25bec851-0c5a-4eec-b431-b754c41e67e8)
  ### Event System
     - An observer class that handles event that occurs in-game
     - For now, informs the player of their respawn status
@@ -134,9 +137,6 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
     - Created two new classroom scenes through Blender.
     - Connected the bathroom scene to the two classroom scenes. 
     - !!IMPORTANT!! Our models are created in Blender with textures already attached, so no need to explicitly use loadTexture method.
-![Bathroom_1](https://github.com/user-attachments/assets/154d27c3-2320-488b-b8a4-38af5f23e8fe)
-![Bathroom_2](https://github.com/user-attachments/assets/d4b94bd3-08b3-47d0-acff-abcf8692a70c)
-![Bathroom_Flashlight](https://github.com/user-attachments/assets/25bec851-0c5a-4eec-b431-b754c41e67e8)
 ![Classroom_1_Flashlight](https://github.com/user-attachments/assets/7f8b353b-aa99-420c-8a5b-17c982157c35)
 ![Classroom_2_Flashlight](https://github.com/user-attachments/assets/d32bc0d4-2a60-4020-a5e7-35fd2564bd48)
 
