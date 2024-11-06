@@ -118,7 +118,7 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
     - Later, we will update more mechanics so that the flashlight distance (view range) fluctuates depending on the number of batteries the user collects (the main collectible). 
         - One of the player's main goals is to continue searching for batteries to maintain flashlight status.
     - Plan: Lower battery status will lead to a quicker decrease in health (sanity) + trigger monster chasing once belong a certain threshold.
-    <img width="626" alt="Screenshot 2024-11-06 at 8 25 32 AM" src="https://github.com/user-attachments/assets/b87519fc-0343-4c10-acf3-79a129796d79">
+ <img width="626" alt="Screenshot 2024-11-06 at 8 25 32 AM" src="https://github.com/user-attachments/assets/b87519fc-0343-4c10-acf3-79a129796d79">
 
  ### Animation
     - There is one animated "monster" in our game, it will chase the user once the battery status is low. 
