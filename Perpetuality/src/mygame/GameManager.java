@@ -72,17 +72,23 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     private ArrayList<Geometry> bad_interact_geoms;
     private Node pitchNode;
     private Node yawNode;
-    private final Vector3f respawnPosition = new Vector3f(0f, 0f, 0f);
+    private final Vector3f respawnPosition = new Vector3f(3.9238453f, 0f, 0f);
     
     // Flashlight
     private FlashLight flashlight;
     
     // Dialog box
     private DialogBox dialogBox;
+    
+    private AnimateModel animateModel;
 
     // Field for Game Logic
     @Override
     public void simpleInitApp() {
+        
+        setDisplayFps(false);
+
+        setDisplayStatView(false);
         
         // Detach FlyCamAppState to prevent it from interfering with cursor visibility
         stateManager.detach(stateManager.getState(FlyCamAppState.class));
@@ -93,7 +99,7 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
 
         // Initialize the player with its model and attach to root node
         player = new Player(playerSpatial);
-        player.getPlayerNode().setLocalTranslation(0,1,0);
+        player.getPlayerNode().setLocalTranslation(0,0.5f,0);
         rootNode.attachChild(player.getPlayerNode());
 
         // Disable default flyCam behavior and make the camera follow the camera node
@@ -122,12 +128,14 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         // While we can't attach 'cam' directly to the scene graph, we'll store the pitchNode for camera synchronization
         this.pitchNode = pitchNode; // Add 'pitchNode' as a field in GameManager
         
+        animateModel = new AnimateModel(assetManager, rootNode);
+        
         // Set up GameInputManager for camera controls
-        gameInputManager = new GameInputManager(inputManager, yawNode, pitchNode);
+        gameInputManager = new GameInputManager(inputManager, yawNode, pitchNode, animateModel);
         gameInputManager.setActionHandler(this);
         gameInputManager.setAnalogHandler(this);
         gameInputManager.setMovementHandler(this);
-        gameInputManager.initInputMappings();
+        gameInputManager.initInputMappings(); 
 
         // Synchronize the camera with the camera node in simpleUpdate
         //cam.setLocation(cameraNode.getWorldTranslation());
@@ -139,11 +147,11 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         // Initalize dialog box
         dialogBox = new DialogBox(assetManager, inputManager, guiNode, viewPort, rootNode);
         
-        Geometry interactableBox = new Geometry("InteractableBox", new Box(1, 1, 1));        
+        Geometry interactableBox = new Geometry("InteractableBox", new Box(0.1f, 0.1f, 0.1f));        
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", ColorRGBA.Blue);
         interactableBox.setMaterial(mat);
-        interactableBox.setLocalTranslation(0, 1, -5);
+        interactableBox.setLocalTranslation(0, 1, -10);
         
         rootNode.attachChild(interactableBox);
         
@@ -196,12 +204,12 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
   
         
         // Submision3: Set Background
-        viewPort.setBackgroundColor(ColorRGBA.fromRGBA255(26, 20, 107,1));
+        viewPort.setBackgroundColor(ColorRGBA.fromRGBA255(21,34,56,1));
         // Submission3: Dark Light for our game
         setUpLight();
 
         // Load the bathroom model from the scene
-        bathroomModel = rootNode.getChild("Bathroom"); // Replace with the name of your bathroom node
+        bathroomModel = rootNode.getChild("Bathroom"); 
         if (bathroomModel != null && bathroomModel.getWorldBound() instanceof BoundingBox) {
             this.bathroomBounds = (BoundingBox) bathroomModel.getWorldBound();
             // Log bounding box details for debugging
@@ -228,9 +236,19 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     // Submission 3: NEW
     private void setUpLight() {
         // We add light so we see the scene
-        AmbientLight al = new AmbientLight();
-        al.setColor(ColorRGBA.DarkGray.mult(ColorRGBA.fromRGBA255(29, 51, 17,1)));
-        rootNode.addLight(al);
+        //AmbientLight al = new AmbientLight();
+        //al.setColor(ColorRGBA.White.mult(ColorRGBA.LightGray));
+        // Increase intensity by multiplying
+        //rootNode.addLight(al);
+        
+        //DirectionalLight dl = new DirectionalLight();
+        //rootNode.addLight(dl);
+        
+        PointLight pl = new PointLight(new Vector3f(1.5510116f, 2.1516128f, -8.777508f));
+        pl.setColor(ColorRGBA.White.mult(0.3f));
+        pl.setRadius(3.0f);
+        rootNode.addLight(pl);
+        
     }
     
     // Crosshair for our game :)
@@ -334,20 +352,6 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         
         if (gameState.getHealth() <= 0) {
             // System.out.println("It is easier to die than live, huh?");
-            
-            try {
-                // Trigger respawn event based on current state (altered or normal)
-                Event respawnEvent = eventSystem.getEventByName("RespawnNormal");
-                if (respawnEvent != null) {
-                    eventSystem.triggerEvent("RespawnNormal");
-                } else {
-                    throw new NullPointerException();
-                }
-            } catch (NullPointerException a) {
-                //System.out.println("The bathroom is null.");
-            } catch (Exception e) {
-                System.out.println("Failed to respawn.");
-            }
         }
         
         this.player.playerBounds.setCenter(cam.getLocation());
@@ -420,14 +424,6 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         CollisionResults results = new CollisionResults();
         Ray ray = new Ray(cam.getLocation(), cam.getDirection());
         rootNode.collideWith(ray, results);
-        /* For printing out result, but don't need this
-        for (int i = 0; i < results.size(); i++){
-            float dist = results.getCollision(i).getDistance();
-            Vector3f pt = results.getCollision(i).getContactPoint();
-            String target = results.getCollision(i).getGeometry().getName();
-            System.out.println("Selection: #" + i + ": " + target +
-            " at " + pt + ", " + dist + " WU away.");
-        } */ 
         if (results.size() > 0) {
             Geometry target = results.getClosestCollision().getGeometry();
             // implement action here

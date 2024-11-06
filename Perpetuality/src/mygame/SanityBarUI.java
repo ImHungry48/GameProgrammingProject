@@ -63,8 +63,13 @@ public class SanityBarUI extends AbstractAppState {
         mat.setColor("Color", ColorRGBA.Green);
         sanityBar.setMaterial(mat);
 
-        // Position the bar in the bottom left of the screen
-        sanityBar.setLocalTranslation(20, 20, 0);
+        // Get the screen width and height
+        int screenWidth = app.getContext().getSettings().getWidth();
+        int screenHeight = app.getContext().getSettings().getHeight();
+
+        // Position the bar in the bottom-right corner with a margin
+        float margin = 20f; // Margin from the edges of the screen
+        sanityBar.setLocalTranslation(screenWidth - barWidth - margin, margin, 0);
         sanityBar.setQueueBucket(RenderQueue.Bucket.Gui);
         
         // Attach the bar to the GUI node
@@ -73,13 +78,17 @@ public class SanityBarUI extends AbstractAppState {
     
     private void initTextDisplay() {
         BitmapFont font = app.getAssetManager().loadFont("Interface/Fonts/Default.fnt");
-        
+    
         // Sanity Text Display
-        sanityText = new BitmapText(font, false);
         sanityText = new BitmapText(font, false);
         sanityText.setSize(font.getCharSet().getRenderedSize());
         sanityText.setColor(ColorRGBA.White);
-        sanityText.setLocalTranslation(20, 45, 0);
+
+        // Position the text above the sanity bar
+        int screenWidth = app.getContext().getSettings().getWidth();
+        float margin = 20f;
+        sanityText.setLocalTranslation(screenWidth - barWidth - margin, barHeight + margin + 25, 0);
+
         guiNode.attachChild(sanityText);
     }
 
@@ -87,7 +96,7 @@ public class SanityBarUI extends AbstractAppState {
     public void update(float tpf) {
         // Update the width of the bar based on current sanity
         updateSanityBar();
-        updateTextDisplay();
+        // updateTextDisplay();
     }
 
     public void setSanity(float sanity) {

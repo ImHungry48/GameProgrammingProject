@@ -105,7 +105,7 @@ public class DialogBox {
         System.out.println("handle interaction called");
         if (results.size() > 0) {
             Geometry target = results.getClosestCollision().getGeometry();
-            System.out.println("Collided with: " + target.getName());  // Debugging print
+            // System.out.println("Collided with: " + target.getName());  // Debugging print
 
             if ("InteractableBox".equals(target.getName()) && !dialogOpen) {
                 // Show dialog with specified message

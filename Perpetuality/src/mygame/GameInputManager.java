@@ -49,10 +49,20 @@ public class GameInputManager {
     protected final static String MAPPING_BACKWARD = "Move Backward";
     protected final static String MAPPING_LEFT = "Move Left";
     protected final static String MAPPING_RIGHT = "Move Right";
+    
+    // Definition of animation mapping names
+    private static final String ANI_IDLE = "stand";
+    private static final String ANI_WALK = "Walk";
+    
+    // Definition of trigger mapping names
+    private final static Trigger TRIGGER_WALK = new KeyTrigger(KeyInput.KEY_SPACE);
+    private final static String MAPPING_WALK = "Walk";
 
     private final InputManager inputManager;
     private final Node yawNode; // Yaw node (left/right)
     private final Node pitchNode; // Pitch node (up/down)
+    
+    private final AnimateModel animateModel;
     
    // Callback interfaces
     public interface ActionHandler {
@@ -69,10 +79,11 @@ public class GameInputManager {
     private AnalogHandler analogHandler;
 
     // Constructor
-    public GameInputManager(InputManager inputManager, Node yawNode, Node pitchNode) {
+    public GameInputManager(InputManager inputManager, Node yawNode, Node pitchNode, AnimateModel animateModel) {
         this.inputManager = inputManager;
         this.yawNode = yawNode;
         this.pitchNode = pitchNode;
+        this.animateModel = animateModel;
     }
 
     // Methods to set the handlers
@@ -109,6 +120,9 @@ public class GameInputManager {
         inputManager.addListener(analogListener, MAPPING_ROTATE);
         inputManager.addListener(cameraControlListener, MAPPING_LOOK_LEFT, MAPPING_LOOK_RIGHT, MAPPING_LOOK_UP, MAPPING_LOOK_DOWN);
         inputManager.addListener(movementListener, MAPPING_FORWARD, MAPPING_BACKWARD, MAPPING_LEFT, MAPPING_RIGHT);
+    
+        inputManager.addMapping(MAPPING_WALK, TRIGGER_WALK);
+        inputManager.addListener(actionListener, MAPPING_WALK);
     }
 
     // Action listener to handle actions
@@ -131,6 +145,13 @@ public class GameInputManager {
                         break;
                     default:
                         break;
+                }
+            }
+            if (MAPPING_WALK.equals(name)) {
+                if (isPressed) {
+                    animateModel.startWalking();
+                } else {
+                    animateModel.stopWalking();
                 }
             }
         }

@@ -89,8 +89,9 @@ public class EventSystem {
                 // Add the event to the list
                 events.add(event);
                 
-                System.out.println("Successfully added an event.");
             }
+            
+            System.out.println("[EventSystem.java] Event loading completed");
         } catch (ParserConfigurationException | SAXException | IOException e) {
             System.out.println("Error loading events: " + e.getMessage());
             e.printStackTrace();
