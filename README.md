@@ -145,4 +145,6 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
             - If a player consumes this item, an event will trigger
         - Consumables 
             - Mostly used to increase or decrease sanity
-    
+    - Displays what type of items you have now
+        - Updates InventoryUI when an item is gain or used.
+![InventoryUI](./Images/InventoryUI.png)  
