@@ -91,9 +91,9 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
         - 1st iteration: user will lose sanity by default for now
 
 ## Development (Submission 3 Progress)
- ### Sanity UI Updated 
+ ### Sanity UI Updated (guidNode)
     - Player can now visualize the live changes in the health bar status
- ### Dialog Box UI
+ ### Dialog Box UI (guiNode)
     - Informs the user of what event has occurred and provides guidance on navigation (general instructions + hints on finding items)
         - Triggered by an event system
         - Triggered by consuming an item in the inventory system (working in progress)
@@ -117,7 +117,7 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
         - Collect certain "key" items to push the plot forward using DialogBox
         - Sanity Management
     
- ### Flashlight
+ ### Flashlight (SpotLight + DirectionalLight)
     - The user has a spotlight attached to the camera as the primary light source 
         - Limit the visible range to control the difficulty of finding items
         - The scene should be dark most of the time, flashlight should be the only light source.
@@ -126,15 +126,19 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
     - Plan: Lower battery status will lead to a quicker decrease in health (sanity) + trigger monster chasing once belows a certain threshold.
  <img width="626" alt="Screenshot 2024-11-06 at 8 25 32 AM" src="https://github.com/user-attachments/assets/b87519fc-0343-4c10-acf3-79a129796d79">
 
- ### Animation
+ ### Animation (Skinning Control + Texture) 
     - There is one animated "monster" in our game, it will chase the user once the battery status is low. 
     - The animated monster is currently using the Oto model, which might change for later submission.
     
- ### More Scene Models Created
-    - Created two new classroom scenes through blender.
+ ### More Scene Models Created (AssetManager + Texture)
+    - Created two new classroom scenes through Blender.
     - Connected the bathroom scene to the two classroom scenes. 
+    - !!IMPORTANT!! Our models are created in Blender with textures already attached, so no need to explicitly use loadTexture method.
+
+ ### Moving Mechanism (Physics)
+    - Limit the player's movement (WASD) to the ground level (simulation of gravity) 
     
- ### Inventory System
+ ### Inventory System (guiNode)
     - Now has two types of items
         - Key items
             - An item that can possibly be used for puzzles later in our development
