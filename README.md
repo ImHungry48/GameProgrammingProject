@@ -18,6 +18,9 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
 - Amnesia: The Dark Descent: Influenced our sanity mechanics and atmospheric tension, focusing on maintaining sanity through environmental interactions and evasion rather than combat.
 - Shinkansen 0, Exit 8, Platform 8: Inspired our sense of disorientation and anomaly detection mechanics, utilizing repetitive and unsettling environments with the concept of resets upon failure.
 - Rusty Lake: Roots: Contributed to our game's eerie atmosphere and dark narrative style, incorporating disturbing imagery and surreal puzzles.
+<img width="622" alt="Screenshot 2024-11-06 at 8 24 52 AM" src="https://github.com/user-attachments/assets/7f9938a8-1917-4754-be3d-0e55741abe4b">
+<img width="622" alt="Screenshot 2024-11-06 at 8 25 08 AM" src="https://github.com/user-attachments/assets/d298b2ce-0cd5-495d-9e8b-2c161ab576c1">
+
 
 ## Gameplay Mechanics
 ### Sanity Management
@@ -57,6 +60,8 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
             - They will disappear once you collect them
         - Yellow and Pink:
             - Change color or shape
+ <img width="620" alt="Screenshot 2024-11-06 at 8 25 22 AM" src="https://github.com/user-attachments/assets/e6c90fcf-01bf-4291-b6d6-57a6a0820b05">
+
  ### Scene Loader
     - Loads a scene in the game
  ### Game State
@@ -111,12 +116,16 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
     - Later, we will update more mechanics so that the light intensity will fluctuate depending on the number of batteries the user collects (the main collectible). 
         - One of the player's main goals is to continue searching for batteries to maintain flashlight status.
     - Plan: Lower battery status will trigger a quicker decrease in health (sanity).
+    <img width="626" alt="Screenshot 2024-11-06 at 8 25 32 AM" src="https://github.com/user-attachments/assets/b87519fc-0343-4c10-acf3-79a129796d79">
+
 
  ### Animation
     - There is one animated "monster" in our game, it will chase the user once the battery status is low. 
     - The animated monster is currently using the Oto model, which might change for later submission.
     
  ### More Scene Models Created
+    - Created two new classroom scenes through blender.
+    - Connected the bathroom scene to the two classroom scenes. 
     
  ### Inventory System
     - Now has two types of items
