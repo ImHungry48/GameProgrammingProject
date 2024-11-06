@@ -114,7 +114,7 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
     - The core mechanic is to find batteries in the scene and recharge the flashlight + collect certain "key" items to push the plot forward
     
  ### Flashlight
-    - The user has a spotlight attached to the camera as the primary light source (Limit the visible range to control difficulty of finding items, the scene should be dark most of the       time with the flashlight as the only light source).
+    - The user has a spotlight attached to the camera as the primary light source (Limit the visible range to control difficulty of finding items, the scene should be dark most of the time with the flashlight as the only light source).
     - Later, we will update more mechanics so that the flashlight distance (view range) fluctuates depending on the number of batteries the user collects (the main collectible). 
         - One of the player's main goals is to continue searching for batteries to maintain flashlight status.
     - Plan: Lower battery status will lead to a quicker decrease in health (sanity) + trigger monster chasing once belong a certain threshold.
