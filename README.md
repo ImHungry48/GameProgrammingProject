@@ -42,7 +42,7 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
 
 **As development progresses, additional mechanics and story elements will be introduced to enhance gameplay depth and narrative cohesion.**
 
-## Development (Submission 2 Progress)
+## Development First Deliverable
  ### User Input
     - Maps out the controls of the game
         - WASD: move
@@ -90,7 +90,7 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
     - Standing in darkness
         - 1st iteration: user will lose sanity by default for now
 
-## Development (Submission 3 Progress)
+## Development Second Deliverable
  ### Sanity UI Updated (guidNode)
     - Player can now visualize the live changes in the health bar status
  ### Dialog Box UI (guiNode)
