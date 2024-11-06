@@ -132,6 +132,10 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
  ### Animation (Skinning Control + Texture) 
     - There is one animated "monster" in our game, it will chase the user once the battery status is low. 
     - The animated monster is currently using the Oto model, which might change for later submission.
+ ![Robot_Idle](https://github.com/user-attachments/assets/f005c22c-3ec2-444f-96ba-8a1c9c49359b)
+ ![Robot_Walking_2](https://github.com/user-attachments/assets/f93ce89b-2a7f-4081-a013-3702d6716de7)
+ ![Robot_Walking_1](https://github.com/user-attachments/assets/df93e564-b1a2-4269-b56e-7b43f6bbf5e5)
+
     
  ### More Scene Models Created (AssetManager + Texture)
     - Created two new classroom scenes through Blender.
