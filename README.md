@@ -91,8 +91,10 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
         - 1st iteration: user will lose sanity by default for now
 
 ## Development (Submission 3 Progress)
- ### Dialog Box
-    - Informs the user of what event has occurred and guides the user forward in the plot.
+ ### Sanity UI Updated 
+    - Player can now visualize the live changes in the health bar status
+ ### Dialog Box UI
+    - Informs the user of what event has occurred and provides guidance on navigation (general instructions + hints on finding items)
         - Triggered by an event system
         - Triggered by consuming an item in the inventory system (working in progress)
 ![Example of our dialog](./Images/DialogExample.png)
@@ -108,16 +110,15 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
         - Easily adding new custom events by adding more functionality in the function trigger events
         - Can easily be used with the Inventory System (working in progress)
  ### Puzzles
-    - Not yer certain about what type of puzzles to implement, so currently focused on mechanics that will help us make these puzzles (moving, dialog box, flashlight, sanity...)
-    - The next few items in the deliverable will mention more details about these game mechanics
+    - Not yet certain about what type of puzzles to implement, so currently focused on mechanics that will help us make these puzzles (moving, dialog box, flashlight, sanity...)
+    - The core mechanic is to find batteries in the scene and recharge the flashlight + collect certain "key" items to push the plot forward
     
  ### Flashlight
-    - The user has a spotlight attached to the camera as the primary light source (the scene should be dark most of the time and the flashlight should be the only light source)
-    - Later, we will update more mechanics so that the light intensity will fluctuate depending on the number of batteries the user collects (the main collectible). 
+    - The user has a spotlight attached to the camera as the primary light source (Limit the visible range to control difficulty of finding items, the scene should be dark most of the       time with the flashlight as the only light source).
+    - Later, we will update more mechanics so that the flashlight distance (view range) fluctuates depending on the number of batteries the user collects (the main collectible). 
         - One of the player's main goals is to continue searching for batteries to maintain flashlight status.
-    - Plan: Lower battery status will trigger a quicker decrease in health (sanity).
+    - Plan: Lower battery status will lead to a quicker decrease in health (sanity) + trigger monster chasing once belong a certain threshold.
     <img width="626" alt="Screenshot 2024-11-06 at 8 25 32 AM" src="https://github.com/user-attachments/assets/b87519fc-0343-4c10-acf3-79a129796d79">
-
 
  ### Animation
     - There is one animated "monster" in our game, it will chase the user once the battery status is low. 
