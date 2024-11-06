@@ -17,6 +17,7 @@ import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.input.controls.Trigger;
+import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.light.PointLight;
 import com.jme3.material.Material;
@@ -192,18 +193,12 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         /* SCENE LOADING */
         SceneLoader sceneLoader = new SceneLoader(assetManager, rootNode);
         sceneLoader.loadScene("Scenes/Bathroom.j3o");
+  
         
-        DirectionalLight sun = new DirectionalLight();
-        sun.setDirection(new Vector3f(-0.5f, -1.0f, -0.5f).normalizeLocal());  // Direction of the light
-        sun.setColor(ColorRGBA.fromRGBA255(255, 255, 255, 5));  // Color of the light
-        rootNode.addLight(sun);  // Attach the light to the rootNode
-        // Yellow light: 245, 205, 86
-        
-        // General Light
-        DirectionalLight lamp = new DirectionalLight();
-        lamp.setDirection(new Vector3f(0, 10f, 0f).normalizeLocal());  // Direction of the light
-        lamp.setColor(ColorRGBA.fromRGBA255(255, 255, 255, 5));  // Color of the light
-        rootNode.addLight(lamp);  // Attach the light to the rootNode
+        // Submision3: Set Background
+        viewPort.setBackgroundColor(ColorRGBA.fromRGBA255(26, 20, 107,1));
+        // Submission3: Dark Light for our game
+        setUpLight();
 
         // Load the bathroom model from the scene
         bathroomModel = rootNode.getChild("Bathroom"); // Replace with the name of your bathroom node
@@ -229,6 +224,14 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         // Attach a cursor to the screen
         attachCenterMark();
     } 
+    
+    // Submission 3: NEW
+    private void setUpLight() {
+        // We add light so we see the scene
+        AmbientLight al = new AmbientLight();
+        al.setColor(ColorRGBA.DarkGray.mult(ColorRGBA.fromRGBA255(29, 51, 17,1)));
+        rootNode.addLight(al);
+    }
     
     // Crosshair for our game :)
     private void attachCenterMark() {
