@@ -74,8 +74,6 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     // Dialog box
     private DialogBox dialogBox;
     
-    private AnimateModel animateModel;
-    
     private SceneLoader sceneLoader;
     private ClassroomScene classroomScene;
     private DialogBoxUI dialogBoxUI;

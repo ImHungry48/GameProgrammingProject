@@ -83,7 +83,6 @@ public class DialogBoxUI extends AbstractAppState {
     }
 
     public void hideDialog() {
-        System.out.println("[DialogBoxUI.java] Hiding dialog.");
         dialogBackground.setCullHint(Geometry.CullHint.Always);
         dialogText.setCullHint(Geometry.CullHint.Always);
         isVisible = false;
@@ -94,7 +93,6 @@ public class DialogBoxUI extends AbstractAppState {
     }
     
     public void clearDialog() {
-        System.out.println("[DialogBoxUI.java] Clearing dialog.");
         dialogText.setText(""); // Clear the text
         dialogBackground.setCullHint(Geometry.CullHint.Always); // Hide background if needed
         dialogText.setCullHint(Geometry.CullHint.Always);       // Hide text if needed

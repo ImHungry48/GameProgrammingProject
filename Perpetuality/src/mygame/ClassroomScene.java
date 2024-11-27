@@ -11,6 +11,7 @@ import com.jme3.light.SpotLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
@@ -28,15 +29,32 @@ public class ClassroomScene extends AbstractAppState {
     private SceneLoader sceneLoader;
     private DialogBoxUI dialogBoxUI;
 
+    // Transition fade
     private Geometry fadeOverlay;
     private Material fadeMaterial;
     private float fadeAlpha = 1.0f; // Start fully opaque
     private boolean fadeInComplete = false;
 
+    // Transition time
     private float elapsedTime = 0;
+    private boolean resetElapsed = false;
     private boolean transitionTriggered = false;
     
+    // Player
     private Player player;
+    
+    // Enemy
+    private AnimateModel animateModel;
+    
+    // Camera handling
+    private boolean dialogShown1 = false;
+    private boolean dialogShown2 = false;
+    private boolean dialogShown3 = false;
+    private boolean dialogShown4 = false;
+    private boolean dialogShown5 = false;
+    private boolean lookingDown = false;
+    private boolean lookingUp = false;
+    private float rotationTimeElapsed = 0;
 
     public ClassroomScene(SceneLoader sceneLoader, DialogBoxUI dialogBoxUI, Player player) {
         this.sceneLoader = sceneLoader;
@@ -113,29 +131,102 @@ public class ClassroomScene extends AbstractAppState {
 
         if (!fadeInComplete) {
             updateFadeIn(tpf);
-        } else {
-            if (elapsedTime > 10 && !transitionTriggered) {
+        } else if (!transitionTriggered) {
+            // Example sequence tracker (optional)
+            if (elapsedTime > 10 && !dialogShown1) {
                 dialogBoxUI.showDialog("Alright students. You have one hour to complete the exam. Keep your eyes on your own paper.");
+                dialogShown1 = true; // Flag to ensure this executes only once
             }
 
-            if (elapsedTime > 15 && !transitionTriggered) {
+            if (elapsedTime > 15 && !dialogShown2) {
+                // Start camera rotation
+                lookingDown = true;
+                rotationTimeElapsed = 0;
+                
                 dialogBoxUI.hideDialog();
                 dialogBoxUI.showDialog("[I can't believe this is happening. I've barely studied for this.]");
+                dialogShown2 = true; // Ensure this executes only once
             }
 
-            if (elapsedTime > 20 && !transitionTriggered) {
+            // Handle camera rotation downward
+            if (lookingDown) {
+                rotationTimeElapsed += tpf;
+                if (rotationTimeElapsed < 5.0f) { // Rotate for 1 second
+                    rotateCameraToLookDown(tpf);
+                } else {
+                    lookingDown = false;
+                    lookingUp = true;
+                    rotationTimeElapsed = 0;
+                }
+            }
+
+            // Handle camera rotation upward
+            if (lookingUp) {
+                rotationTimeElapsed += tpf;
+                if (rotationTimeElapsed < 3.0f) { // Rotate back up for 1 second
+                    rotateCameraToLookUp(tpf);
+                } else {
+                    lookingUp = false;
+                }
+            }
+
+            if (elapsedTime > 30 && !dialogShown3) {
                 dialogBoxUI.hideDialog();
                 dialogBoxUI.showDialog("Your exam will begin soon. Remember, no talking. If you are caught cheating, you will be disqualified.");
+                dialogShown3 = true;
             }
-            
-            if (elapsedTime > 25 && !transitionTriggered) {
+
+            if (elapsedTime > 35 && !dialogShown4) {
+                // Start camera rotation
+                lookingDown = true;
+                rotationTimeElapsed = 0;
+                
                 dialogBoxUI.hideDialog();
                 dialogBoxUI.showDialog("[I can't even read this.]");
+                dialogShown4 = true;
             }
             
-            if (elapsedTime > 35 && !transitionTriggered) {
+            // Handle camera rotation downward
+            if (lookingDown) {
+                rotationTimeElapsed += tpf;
+                if (rotationTimeElapsed < 5.0f) { // Rotate for 1 second
+                    rotateCameraToLookDown(tpf);
+                } else {
+                    lookingDown = false;
+                    lookingUp = true;
+                    rotationTimeElapsed = 0;
+                }
+            }
+
+            // Handle camera rotation upward
+            if (lookingUp) {
+                rotationTimeElapsed += tpf;
+                if (rotationTimeElapsed < 3.0f) { // Rotate back up for 1 second
+                    rotateCameraToLookUp(tpf);
+                } else {
+                    lookingUp = false;
+                }
+            }
+
+            if (elapsedTime > 50 && !dialogShown5) {
                 dialogBoxUI.hideDialog();
-                dialogBoxUI.showDialog("[I'm gonna be sick.]");
+                dialogBoxUI.showDialog("I'm gonna be sick.");
+                dialogShown5 = true;
+            }
+
+            if (elapsedTime > 55 && !transitionTriggered) {
+                transitionTriggered = true;
+            }
+        }
+
+        if (transitionTriggered) {
+            if (!resetElapsed) {
+                elapsedTime = 0;
+                resetElapsed = true; // Ensure reset happens only once
+            }
+
+            if (elapsedTime > 5) {
+                // Add transition logic here
             }
         }
     }
@@ -198,6 +289,32 @@ public class ClassroomScene extends AbstractAppState {
             rootNode.addLight(spotLight);
         }
     }
+    
+    private void rotateCameraToLookDown(float tpf) {
+        float currentPitch = player.getPitchNode().getLocalRotation().toAngles(null)[0];
+        float targetPitch = FastMath.DEG_TO_RAD * 30; // Look down by 30 degrees
+        float rotationSpeed = FastMath.DEG_TO_RAD * 60; // Degrees per second
+
+        // Interpolate towards the target pitch
+        float newPitch = FastMath.interpolateLinear(tpf * rotationSpeed, currentPitch, targetPitch);
+
+        // Update pitch rotation
+        player.getPitchNode().setLocalRotation(new Quaternion().fromAngles(newPitch, 0, 0));
+    }
+    
+    private void rotateCameraToLookUp(float tpf) {
+        float currentPitch = player.getPitchNode().getLocalRotation().toAngles(null)[0];
+        float targetPitch = 0; // Default level position
+        float rotationSpeed = FastMath.DEG_TO_RAD * 60; // Degrees per second
+
+        // Interpolate towards the target pitch
+        float newPitch = FastMath.interpolateLinear(tpf * rotationSpeed, currentPitch, targetPitch);
+
+        // Update pitch rotation
+        player.getPitchNode().setLocalRotation(new Quaternion().fromAngles(newPitch, 0, 0));
+    }
+
+
 
     @Override
     public void cleanup() {
@@ -208,4 +325,5 @@ public class ClassroomScene extends AbstractAppState {
         app.getFlyByCamera().setEnabled(true);
         // Re-enable any inputs or settings you changed
     }
+   
 }
