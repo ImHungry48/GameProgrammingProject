@@ -64,12 +64,6 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     private Spatial bathroomModel; 
     protected BoundingBox bathroomBounds;
     
-    // Mesh potentially
-    private static Box mesh = new Box(Vector3f.ZERO, 1, 1, 1);
-    
-    // Objects that are populated in our game
-    private ArrayList<Geometry> good_interact_geoms;
-    private ArrayList<Geometry> bad_interact_geoms;
     private Node pitchNode;
     private Node yawNode;
     private final Vector3f respawnPosition = new Vector3f(3.9238453f, 0f, 0f);
@@ -81,13 +75,16 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     private DialogBox dialogBox;
     
     private AnimateModel animateModel;
+    
+    private SceneLoader sceneLoader;
+    private ClassroomScene classroomScene;
+    private DialogBoxUI dialogBoxUI;
 
     // Field for Game Logic
     @Override
     public void simpleInitApp() {
         
         setDisplayFps(false);
-
         setDisplayStatView(false);
         
         // Detach FlyCamAppState to prevent it from interfering with cursor visibility
@@ -95,10 +92,9 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         
         // Initialize player spatial
         Spatial playerSpatial = assetManager.loadModel("/Models/male_base_mesh/male_base_mesh.j3o");
-        
 
         // Initialize the player with its model and attach to root node
-        player = new Player(playerSpatial);
+        player = new Player(playerSpatial, cam);
         player.getPlayerNode().setLocalTranslation(0,0.5f,0);
         rootNode.attachChild(player.getPlayerNode());
 
@@ -108,83 +104,14 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         // Hide the cursor to capture mouse movement
         inputManager.setCursorVisible(false);
         inputManager.setMouseCursor(null); // Hides system cursor
-
-        // Create a yaw node and attach it to the player's node
-        yawNode = new Node("YawNode");
-        player.getPlayerNode().attachChild(yawNode);
-        yawNode.setLocalTranslation(0, this.player.getPlayerHeight() / 2, 0); // Adjust to the height of the player's "eyes"
-
-        // Create a pitch node and attach it to the yaw node
-        pitchNode = new Node("PitchNode");
-        yawNode.attachChild(pitchNode);
         
-        // Create a CameraNode and attach it to the pitchNode
-        CameraNode camNode = new CameraNode("CameraNode", cam);
-        camNode.setControlDir(ControlDirection.SpatialToCamera); // Control the camera based on the spatial's transforms
-        pitchNode.attachChild(camNode);
-        camNode.setLocalTranslation(0, 0, 0.1f); // TODO: Adjust as needed to align with the eyes
-
-        // Since we don't have a camNode, we need to simulate attaching the camera to the pitchNode
-        // While we can't attach 'cam' directly to the scene graph, we'll store the pitchNode for camera synchronization
-        this.pitchNode = pitchNode; // Add 'pitchNode' as a field in GameManager
-        
-        animateModel = new AnimateModel(assetManager, rootNode);
-        
-        // Set up GameInputManager for camera controls
-        gameInputManager = new GameInputManager(inputManager, yawNode, pitchNode, animateModel);
-        gameInputManager.setActionHandler(this);
-        gameInputManager.setAnalogHandler(this);
-        gameInputManager.setMovementHandler(this);
-        gameInputManager.initInputMappings(); 
-
-        // Synchronize the camera with the camera node in simpleUpdate
-        //cam.setLocation(cameraNode.getWorldTranslation());
-        //cam.lookAt(player.getPlayerNode().getWorldTranslation(), Vector3f.UNIT_Y);
+        // animateModel = new AnimateModel(assetManager, rootNode);
 
         // Create the flash light
         flashlight = new FlashLight(assetManager, inputManager, viewPort, rootNode);
         
         // Initalize dialog box
         dialogBox = new DialogBox(assetManager, inputManager, guiNode, viewPort, rootNode);
-        
-        Geometry interactableBox = new Geometry("InteractableBox", new Box(0.1f, 0.1f, 0.1f));        
-        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.setColor("Color", ColorRGBA.Blue);
-        interactableBox.setMaterial(mat);
-        interactableBox.setLocalTranslation(0, 1, -10);
-        
-        rootNode.attachChild(interactableBox);
-        
-        // Potential Cache Issue
-        good_interact_geoms = new ArrayList<>();
-        bad_interact_geoms = new ArrayList<>();
-        
-        // Just as an idea, maybe grades should be the threshold for which we have different status
-        
-        // Fill the scene with some randomly positioned interactable but all on the y = 0 plane
-        //makeGoodCubes(15);
-        //makeBadCubes(15);
-        
-        Vector3f loc1 = new Vector3f(
-                FastMath.nextRandomInt(-50, 50),
-                0f,
-                FastMath.nextRandomInt(-50,50) 
-        );
-        
-        Vector3f loc2 = new Vector3f(
-                FastMath.nextRandomInt(-50, 50),
-                0f,
-                FastMath.nextRandomInt(-50,50) 
-        );
-        
-        
-        // Collectable objects for now
-        rootNode.attachChild(myBox("Good Box",
-                loc1, ColorRGBA.Green));
-        
-        
-        rootNode.attachChild(myBox("Bad Box", 
-                loc2, ColorRGBA.Red));
 
         // Initialize the game state
         gameState = new GameState();
@@ -194,124 +121,40 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         
         stateManager.attach(inventory);
         
-        // To make camera (the character) runs faster 
-        // TODO: Disabled for first-person testing since it's redundant
-        // flyCam.setMoveSpeed(50f);
-        
-        /* SCENE LOADING */
-        SceneLoader sceneLoader = new SceneLoader(assetManager, rootNode);
-        sceneLoader.loadScene("Scenes/Bathroom.j3o");
-  
-        
-        // Submision3: Set Background
-        viewPort.setBackgroundColor(ColorRGBA.fromRGBA255(21,34,56,1));
-        // Submission3: Dark Light for our game
-        setUpLight();
-
-        // Load the bathroom model from the scene
-        bathroomModel = rootNode.getChild("Bathroom"); 
-        if (bathroomModel != null && bathroomModel.getWorldBound() instanceof BoundingBox) {
-            this.bathroomBounds = (BoundingBox) bathroomModel.getWorldBound();
-            // Log bounding box details for debugging
-            System.out.println("Bathroom Center: " + bathroomBounds.getCenter());
-            System.out.println("Bathroom Extents: " + bathroomBounds.getXExtent() + ", " +
-                    bathroomBounds.getYExtent() + ", " + bathroomBounds.getZExtent());
-        }
-
         // Initialize the player bounds as a bounding box centered on the camera location
         float playerBoxHalfExtent = 1f; // Adjust the size as needed
         this.player.playerBounds = new BoundingBox(cam.getLocation(), playerBoxHalfExtent, playerBoxHalfExtent, playerBoxHalfExtent);
+        
+        /* SCENE LOADING */
 
-        sanityBarUI = new SanityBarUI(this);
-        stateManager.attach(sanityBarUI);
+        // Initialize SceneLoader
+        this.sceneLoader = new SceneLoader(assetManager, rootNode);
+
+        // Initialize DialogBox
+        dialogBoxUI = new DialogBoxUI(this);
+        dialogBoxUI.initialize(stateManager, this);
+        // stateManager.attach(dialogBoxUI);
         
-        /* EVENT SYSTEM */
-        this.eventSystem = new EventSystem(this.player, this.bathroomBounds, this.respawnPosition);
-        this.eventSystem.loadEvents();
-        
+        // Load the first scene (Classroom)
+        stateManager.attach(new ClassroomScene(sceneLoader, dialogBoxUI, player));
+
+        // Set up GameInputManager for camera controls
+//        gameInputManager = new GameInputManager(inputManager, yawNode, pitchNode, animateModel);
+//        gameInputManager.setActionHandler(this);
+//        gameInputManager.setAnalogHandler(this);
+//        gameInputManager.setMovementHandler(this);
+//        gameInputManager.initInputMappings(); 
+
+//        sanityBarUI = new SanityBarUI(this);
+//        stateManager.attach(sanityBarUI);
+//        
+//        /* EVENT SYSTEM */
+//        this.eventSystem = new EventSystem(this.player, this.bathroomBounds, this.respawnPosition);
+//        this.eventSystem.loadEvents();
+//        
         // Attach a cursor to the screen
-        attachCenterMark();
-    } 
-    
-    // Submission 3: NEW
-    private void setUpLight() {
-        // We add light so we see the scene
-        //AmbientLight al = new AmbientLight();
-        //al.setColor(ColorRGBA.White.mult(ColorRGBA.LightGray));
-        // Increase intensity by multiplying
-        //rootNode.addLight(al);
-        
-        //DirectionalLight dl = new DirectionalLight();
-        //rootNode.addLight(dl);
-        
-        PointLight pl = new PointLight(new Vector3f(1.5510116f, 2.1516128f, -8.777508f));
-        pl.setColor(ColorRGBA.White.mult(0.3f));
-        pl.setRadius(3.0f);
-        rootNode.addLight(pl);
-        
-    }
-    
-    // Crosshair for our game :)
-    private void attachCenterMark() {
-        Geometry c = myBox("center mark", 
-            Vector3f.ZERO, ColorRGBA.White);
-        c.scale(4); 
-        c.setLocalTranslation( settings.getWidth()/2,
-        settings.getHeight()/2, 0 ); 
-        guiNode.attachChild(c); // attach to 2D user interface
-    }
-    
-    // Interactable cubes that can increase sanity
-    private void makeGoodCubes(int number) {
-        for (int i = 0; i < number; i++) {
-            Vector3f loc = new Vector3f(
-                FastMath.nextRandomInt(-50, 50),
-                0f,
-                FastMath.nextRandomInt(-50,50)
-            );
-            
-            // Add the good geom
-            Geometry goodgeom = myBox("GBox" + i, loc, ColorRGBA.Yellow);
-            goodgeom.addControl(new ChangeHealthBarControl(cam, rootNode));
-            rootNode.attachChild(goodgeom);
-            
-            // Add the goodgeom to good_geoms
-            // Potential Cache ISSUE
-            good_interact_geoms.add(goodgeom);
-            
-        }
-    }
-    
-    // Interactable cubes that can increase sanity
-    private void makeBadCubes(int number) {
-        for (int i = 0; i < number; i++) {
-            Vector3f loc = new Vector3f(
-                FastMath.nextRandomInt(-50, 50),
-                0f,
-                FastMath.nextRandomInt(-50,50) 
-            );
-            
-            // Add the bad geom
-            Geometry badgeom = myBox("BBox" + i, loc, ColorRGBA.Pink);
-            badgeom.addControl(new ChangeHealthBarControl(cam, rootNode));
-            rootNode.attachChild(badgeom);
-            
-            // Add the badgeom to bad_geoms
-            // Potential Cache ISSUE
-            bad_interact_geoms.add(badgeom);
-        }
-    }
-        
-    // Box constructor
-    public Geometry myBox(String name, Vector3f loc, ColorRGBA color) {
-        Geometry local_geom = new Geometry(name, mesh);
-        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.setColor("Color", color);
-        local_geom.setMaterial(mat);
-        local_geom.setLocalTranslation(loc);
-        return local_geom;
-    }
-    
+        // attachCenterMark();
+    }    
     
     // ActionListener to handle actions
     private ActionListener actionListener = new ActionListener() {
@@ -334,7 +177,7 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
                         break;
                     case "Use Item 3":
                         if (inventory.checkItemExists(3)) {
-                            gameState.applyHealth(inventory.useItem(3));
+                            // gameState.applyHealth(inventory.useItem(3));
                         }
                         break;
                     default:
@@ -347,8 +190,13 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     @Override
     public void simpleUpdate(float tpf) {
         
+        // Update the classroom scene if it's active
+        if (classroomScene != null) {
+            this.classroomScene.update(tpf);
+        }
+        
         // Update the sanity bar based on the GameState’s health value
-        sanityBarUI.setSanity(gameState.getHealth());
+        //sanityBarUI.setSanity(gameState.getHealth());
         
         if (gameState.getHealth() <= 0) {
             // System.out.println("It is easier to die than live, huh?");
@@ -362,7 +210,7 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
             }
         }
         
-        flashlight.update(cam.getLocation(), cam.getDirection());
+        //flashlight.update(cam.getLocation(), cam.getDirection());
     }
 
     @Override
@@ -378,38 +226,6 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
 
     // Manage health when an object is interacted
     private void handleChangeHealth() {
-        // implement action here
-        CollisionResults results = new CollisionResults();
-        Ray ray = new Ray(cam.getLocation(), cam.getDirection());
-        rootNode.collideWith(ray, results);
-
-
-        if (results.size() > 0) {
-            Geometry target = results.getClosestCollision().getGeometry();
-            // implement action here
-            
-            // Good Box and Bad Box are collectable objects that will be gone once clicked
-            if (target.getName().equals("Good Box")) {
-                gameState.increaseHealth(20);
-                inventory.addItem(new Item("Apple", "A delicious apple",10, "Consumable"));
-                rootNode.detachChild(target); // you have collected the apple, so it's gone
-            } else if (target.getName().equals("Bad Box")) {
-                gameState.decreaseHealth(10);
-                rootNode.detachChild(target);
-            }
-            
-            // Good_geoms and Bad_geoms are currently more like neutral objects that are not collectable but interactable
-            if (good_interact_geoms.contains(target)) {
-                gameState.increaseHealth(3);
-                target.getMaterial().setColor("Color", ColorRGBA.LightGray);
-                good_interact_geoms.remove(target); // delete the obj instance as a good geom
-                // 
-            } else if(bad_interact_geoms.contains(target)) {
-                gameState.decreaseHealth(1);
-                target.getMaterial().setColor("Color", ColorRGBA.LightGray);
-                bad_interact_geoms.remove(target); // delete the obj instance as a bad geom
-            }
-        }
     }
 
     @Override
@@ -420,40 +236,7 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     }
     
     public void handleRotate(float intensity, float tpf) {
-        // implement action here
-        CollisionResults results = new CollisionResults();
-        Ray ray = new Ray(cam.getLocation(), cam.getDirection());
-        rootNode.collideWith(ray, results);
-        if (results.size() > 0) {
-            Geometry target = results.getClosestCollision().getGeometry();
-            // implement action here
-            if (target.getName().equals("Good Box")) {
-                target.rotate(tpf,tpf,tpf);
-                System.out.println("You are selecting the good box");
-                // for future work, should showcase description of the target to user
-            } else if (target.getName().equals("Bad Box")) {
-                target.rotate(tpf,tpf,tpf);
-                System.out.println("Hmm, you are selecting the bad box");
-                // for future work, should showcase description of the target to user
-            }
-
-            //----------------------------------
-
-            //Potential Cache issue
-            // Some other potentially neutral objects
-            if (good_interact_geoms.contains(target)) {
-                // the good geom rotates as if being selected, but no effects on health yet (just like an inspection)
-                // future Implementation: might have a text box pop out with instructions about the interaction with the object
-                target.rotate(tpf,tpf,tpf);
-                System.out.println("This could be helpful?");
-            } else if(bad_interact_geoms.contains(target)) {
-                target.rotate(tpf,tpf,tpf);
-                System.out.println("This could be harmful?");
-            }
-        } else {
-            System.out.println("Selection: Nothing");
-        }
-        // System.out.println("You triggered: "+name);
+        
     }
 
     @Override

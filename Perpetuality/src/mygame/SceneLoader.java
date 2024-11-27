@@ -26,17 +26,22 @@ public class SceneLoader {
     }
 
     // Method to load a scene by path
-    public void loadScene(String scenePath) {
+    public void loadScene(String scenePath, Runnable postLoadAction) {
         // Detach current scene if there's one already loaded
         if (currentScene != null) {
             rootNode.detachChild(currentScene);
         }
 
-        // Load the new scened
+        // Load the new scene
         currentScene = assetManager.loadModel(scenePath);
 
         // Attach it to the root node
         rootNode.attachChild(currentScene);
+
+        // Run post-load action
+        if (postLoadAction != null) {
+            postLoadAction.run();
+        }
     }
 
     // Method to unload the current scene
@@ -47,10 +52,12 @@ public class SceneLoader {
         }
     }
 
-    // Optional: Method to transition between scenes smoothly
-    public void transitionToScene(String newScenePath) {
-        // Fade-outs, loading screens, or background loading here
-        unloadScene();
-        loadScene(newScenePath);
+    // Add this method to expose the rootNode
+    public Node getRootNode() {
+        return rootNode;
+    }
+    
+    public Spatial getCurrentScene() {
+        return this.currentScene;
     }
 }
