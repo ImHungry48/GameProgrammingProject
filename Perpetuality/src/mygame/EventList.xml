@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/XML/XMLDocument.xml to edit this template
+-->
+
+
+
+<root>
+    <events>
+        <event>
+            <name>BathroomLightFlicker</name>
+            <description>The bathroom lights flicker.</description>
+            <consequence>
+                <action>lightFlickering</action>
+            </consequence>
+        </event>
+        <event>
+            <name>RespawnNormal</name>
+            <description>The player respawns in a normal bathroom.</description>
+            <consequence>
+                <action>respawnPlayerNormal</action>
+            </consequence>
+        </event>
+        <event>
+            <name>RespawnAltered</name>
+            <description>The player respawns in an altered bathroom.</description>
+            <consequence>
+                <action>respawnPlayerAltered</action>
+            </consequence>
+        </event>
+    </events>
+</root>
+

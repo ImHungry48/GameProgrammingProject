@@ -1,79 +1,189 @@
-// Michael Kim, Alaisha Barber, Chenjia Zhang
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package mygame;
 
 import com.jme3.app.Application;
+import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.font.BitmapFont;
+import com.jme3.font.BitmapText;
+import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
-import java.util.ArrayList;
+import com.jme3.scene.shape.Quad;
 
-/**
- *
- * @author mike0
- */
 public class GameState extends AbstractAppState {
-    private float health = 100;
-    private Node rootNode;
+    private SimpleApplication app;
+    private GameManager gameManager;
+    private SimplifiedInventorySystem inventory;
 
-    
-    public GameState() {
-        
+    private float health = 100;
+    private boolean gameOver = false;
+    private int requiredNumPages = 0;
+
+    // Health Bar Components
+    private Geometry healthBarBackground;
+    private Geometry healthBarForeground;
+    private float maxHealthBarWidth = 200; // Maximum width in pixels
+    private float healthBarHeight = 20;    // Height in pixels
+    private BitmapText healthText;
+
+    public GameState(GameManager gameManager) {
+        this.gameManager = gameManager;
     }
 
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
-        
-        
+        super.initialize(stateManager, app);
+        this.app = (SimpleApplication) app;
+
+        this.inventory = new SimplifiedInventorySystem(this);
+        inventory.initialize(stateManager, app);
+
+        // Initialize Health Bar
+        initHealthBar();
     }
-
     
-
     @Override
     public void update(float tpf) {
-        //TODO: add update code
-        
-        // Constantly decrease health 
-        if (this.health > 0) {
-            this.health -= .1;
+        if (!gameOver) {
+            if (this.health > 0 && !inventory.checkFlashLight()) {
+                this.health -= 0.001f;
+                updateHealthBar();
+            }
+
+            if (this.health <= 0) {
+                this.health = 0;
+                gameOver = true;
+                displayGameOverScreen(false); // Player lost
+            }
         }
-        
     }
     
-    // Increase health
     public void increaseHealth(int value) {
         if (this.health < 100) {
             this.health += value;
+            if (this.health > 100) this.health = 100;
+            updateHealthBar();
         }
     }
-    
-    // Decrease health
+
     public void decreaseHealth(int value) {
         if (this.health > 0) {
             this.health -= value;
+            if (this.health < 0) this.health = 0;
+            updateHealthBar();
+            if (this.health == 0) {
+                gameOver = true;
+                // Handle game over logic here
+            }
         }
     }
     
-    // Increase or decrease health
-    public void applyHealth(int value) {
-        if (this.health + value <= 100) {
-            this.health += value;
+    public boolean checkWin() {
+        int pages = getInventory().getPagesCount();
+        if (pages == requiredNumPages) {
+            gameOver = true;
+            return true;
         }
+        return false;
     }
     
-    // Current Health Getter
-    public float getHealth() {
-        return this.health;
+    public void displayGameOverScreen(boolean isWin) {
+        // Create a transparent background
+        Quad backgroundQuad = new Quad(app.getCamera().getWidth(), app.getCamera().getHeight());
+        Geometry background = new Geometry("GameOverBackground", backgroundQuad);
+        Material bgMat = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+        bgMat.setColor("Color", new ColorRGBA(0, 0, 0, 0.5f)); // Semi-transparent black
+        background.setMaterial(bgMat);
+        background.setLocalTranslation(0, 0, 0);
+        app.getGuiNode().attachChild(background);
+
+        // Display the Win/Lose Message
+        BitmapFont guiFont = app.getAssetManager().loadFont("Interface/Fonts/Default.fnt");
+        BitmapText gameOverText = new BitmapText(guiFont, false);
+        gameOverText.setSize(guiFont.getCharSet().getRenderedSize() * 2);
+        gameOverText.setColor(ColorRGBA.White);
+
+        if (isWin) {
+            gameOverText.setText("You Win!");
+        } else {
+            gameOverText.setText("Game Over! You Lose!");
+        }
+
+        // Center the text
+        gameOverText.setLocalTranslation(
+            (app.getCamera().getWidth() - gameOverText.getLineWidth()) / 2,
+            app.getCamera().getHeight() / 2,
+            1
+        );
+        app.getGuiNode().attachChild(gameOverText);
     }
-    
-    
+
+
     @Override
     public void cleanup() {
         // Optional cleanup logic
+        app.getGuiNode().detachChild(healthBarBackground);
+        app.getGuiNode().detachChild(healthBarForeground);
+        app.getGuiNode().detachChild(healthText);
+    }
+
+    public SimplifiedInventorySystem getInventory() {
+        return inventory;
+    }
+    
+    public void addHealth() {
+        health += 10;
+    }
+
+    private void initHealthBar() {
+        // Create Background Bar
+        Quad backgroundQuad = new Quad(maxHealthBarWidth, healthBarHeight);
+        healthBarBackground = new Geometry("HealthBarBackground", backgroundQuad);
+        Material bgMat = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+        bgMat.setColor("Color", ColorRGBA.DarkGray);
+        healthBarBackground.setMaterial(bgMat);
+        healthBarBackground.setLocalTranslation(app.getCamera().getWidth() - maxHealthBarWidth - 10, 30, 0);  // Bottom-right position with padding
+        app.getGuiNode().attachChild(healthBarBackground);
+
+        // Create Foreground Bar
+        Quad foregroundQuad = new Quad(maxHealthBarWidth, healthBarHeight);
+        healthBarForeground = new Geometry("HealthBarForeground", foregroundQuad);
+        Material fgMat = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+        fgMat.setColor("Color", ColorRGBA.Green);
+        healthBarForeground.setMaterial(fgMat);
+        healthBarForeground.setLocalTranslation(app.getCamera().getWidth() - maxHealthBarWidth - 10, 30, 1);  // Bottom-right position
+        app.getGuiNode().attachChild(healthBarForeground);
+
+        // Initialize Health Text
+        BitmapFont guiFont = app.getAssetManager().loadFont("Interface/Fonts/Default.fnt");
+        healthText = new BitmapText(guiFont, false);
+        healthText.setSize(guiFont.getCharSet().getRenderedSize());
+        healthText.setColor(ColorRGBA.White);
+        healthText.setText("Health: " + (int) health);
+        healthText.setLocalTranslation(app.getCamera().getWidth() - 150, 30, 2);  // Adjust text position near the health bar
+        app.getGuiNode().attachChild(healthText);
+    }
+
+    private void updateHealthBar() {
+        float healthRatio = this.health / 100f; // Assuming max health is 100
+        float newWidth = maxHealthBarWidth * healthRatio;
+
+        // Update Foreground Geometry
+        Quad newForegroundQuad = new Quad(newWidth, healthBarHeight);
+        healthBarForeground.setMesh(newForegroundQuad);
+
+        // Update Foreground Color Based on Health
+        Material fgMat = healthBarForeground.getMaterial();
+        if (healthRatio > 0.6f) {
+            fgMat.setColor("Color", ColorRGBA.Green);
+        } else if (healthRatio > 0.3f) {
+            fgMat.setColor("Color", ColorRGBA.Yellow);
+        } else {
+            fgMat.setColor("Color", ColorRGBA.Red);
+        }
+
+        // Update Health Text
+        healthText.setText("Health: " + (int) this.health);
     }
 }
-
