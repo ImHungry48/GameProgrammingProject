@@ -4,6 +4,7 @@ import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.audio.AudioNode;
 import com.jme3.input.InputManager;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.PointLight;
@@ -55,6 +56,17 @@ public class ClassroomScene extends AbstractAppState {
     private boolean lookingDown = false;
     private boolean lookingUp = false;
     private float rotationTimeElapsed = 0;
+    
+    // Jumpscare
+    private boolean jumpscareTriggered = false;
+    private float jumpscareElapsed = 0;
+    private float jumpscareDuration = 2.0f; // Total duration of the jumpscare
+    private Spatial targetModel; // The model we are zooming in on
+    private Vector3f originalModelPosition; // To reset the model
+    private Vector3f originalCameraPosition; // To reset the camera after the zoom
+    private float originalFOV = 45f; // Original field of view
+    private float targetFOV = 20f; // Zoomed-in field of view
+    private AudioNode jumpscareSound; // Jumpscare audio
 
     public ClassroomScene(SceneLoader sceneLoader, DialogBoxUI dialogBoxUI, Player player) {
         this.sceneLoader = sceneLoader;
@@ -118,83 +130,100 @@ public class ClassroomScene extends AbstractAppState {
 
         // Set up lights and other scene elements
         setupLighting();
+        setupJumpscareScene();
+        setupAudio();
     }
     
     private void setupLighting() {
         PointLight pl = new PointLight();
         rootNode.addLight(pl);
     }
+    
+    private void setupJumpscareScene() {
+        this.targetModel = sceneLoader.getRootNode().getChild("ScaryModel");
+        
+        if (targetModel != null) {
+            this.originalModelPosition = targetModel.getWorldTranslation().clone();
+        } else {
+            System.err.println("Target model for jumpscare not found! :(");
+        }
+        
+        this.originalFOV = 45f; // Default perspective FOV
+        app.getCamera().setFrustumPerspective(originalFOV,
+                (float) app.getContext().getSettings().getWidth() /
+                (float) app.getContext().getSettings().getHeight(),
+                1f, 1000f);
+    }
 
     @Override
     public void update(float tpf) {
-        elapsedTime += tpf;
+        this.elapsedTime += tpf;
 
         if (!fadeInComplete) {
             updateFadeIn(tpf);
         } else if (!transitionTriggered) {
-            // Example sequence tracker (optional)
             if (elapsedTime > 10 && !dialogShown1) {
-                dialogBoxUI.showDialog("Alright students. You have one hour to complete the exam. Keep your eyes on your own paper.", 1.0f, false);
+                dialogBoxUI.showDialog("Alright students. You have one hour to complete the exam. Keep your eyes on your own paper.", 1.5f, false);
                 dialogShown1 = true; // Flag to ensure this executes only once
             }
 
             if (elapsedTime > 15 && !dialogShown2) {
                 // Start camera rotation
-                lookingDown = true;
-                rotationTimeElapsed = 0;
+                this.lookingDown = true;
+                this.rotationTimeElapsed = 0;
                 
                 dialogBoxUI.hideDialog();
-                dialogBoxUI.showDialog("[I can't believe this is happening. I've barely studied for this.]", 1.0f, false);
+                dialogBoxUI.showDialog("[I can't believe this is happening. I've barely studied for this.]", 1.5f, false);
                 dialogShown2 = true; // Ensure this executes only once
             }
 
             // Handle camera rotation downward
-            if (lookingDown) {
-                rotationTimeElapsed += tpf;
-                if (rotationTimeElapsed < 5.0f) { // Rotate for 1 second
+            if (this.lookingDown) {
+                this.rotationTimeElapsed += tpf;
+                if (this.rotationTimeElapsed < 5.0f) { // Rotate for 1 second
                     rotateCameraToLookDown(tpf);
                 } else {
-                    lookingDown = false;
-                    lookingUp = true;
-                    rotationTimeElapsed = 0;
+                    this.lookingDown = false;
+                    this.lookingUp = true;
+                    this.rotationTimeElapsed = 0;
                 }
             }
 
             // Handle camera rotation upward
-            if (lookingUp) {
-                rotationTimeElapsed += tpf;
+            if (this.lookingUp) {
+                this.rotationTimeElapsed += tpf;
                 if (rotationTimeElapsed < 3.0f) { // Rotate back up for 1 second
-                    rotateCameraToLookUp(tpf);
+                    this.rotateCameraToLookUp(tpf);
                 } else {
-                    lookingUp = false;
+                    this.lookingUp = false;
                 }
             }
 
-            if (elapsedTime > 20 && !dialogShown3) {
-                dialogBoxUI.hideDialog();
-                dialogBoxUI.showDialog("Your exam will begin soon. Remember, no talking. If you are caught cheating, you will be disqualified.", 1.0f, false);
-                dialogShown3 = true;
+            if (this.elapsedTime > 20 && !dialogShown3) {
+                this.dialogBoxUI.hideDialog();
+                this.dialogBoxUI.showDialog("Your exam will begin soon. Remember, no talking. If you are caught cheating, you will be disqualified.", 1.5f, false);
+                this.dialogShown3 = true;
             }
 
             if (elapsedTime > 25 && !dialogShown4) {
                 // Start camera rotation
-                lookingDown = true;
-                rotationTimeElapsed = 0;
+                this.lookingDown = true;
+                this.rotationTimeElapsed = 0;
                 
-                dialogBoxUI.hideDialog();
-                dialogBoxUI.showDialog("[I can't even read this.]", 1.0f, false);
-                dialogShown4 = true;
+                this.dialogBoxUI.hideDialog();
+                this.dialogBoxUI.showDialog("[I can't even read this.]", 1.5f, false);
+                this.dialogShown4 = true;
             }
             
             // Handle camera rotation downward
-            if (lookingDown) {
-                rotationTimeElapsed += tpf;
-                if (rotationTimeElapsed < 5.0f) { // Rotate for 1 second
-                    rotateCameraToLookDown(tpf);
+            if (this.lookingDown) {
+                this.rotationTimeElapsed += tpf;
+                if (this.rotationTimeElapsed < 5.0f) { // Rotate for 1 second
+                    this.rotateCameraToLookDown(tpf);
                 } else {
-                    lookingDown = false;
-                    lookingUp = true;
-                    rotationTimeElapsed = 0;
+                    this.lookingDown = false;
+                    this.lookingUp = true;
+                    this.rotationTimeElapsed = 0;
                 }
             }
 
@@ -210,7 +239,7 @@ public class ClassroomScene extends AbstractAppState {
 
             if (elapsedTime > 40 && !dialogShown5) {
                 dialogBoxUI.hideDialog();
-                dialogBoxUI.showDialog("I'm gonna be sick.", 1.0f, false);
+                dialogBoxUI.showDialog("I'm gonna be sick.", 1.5f, false);
                 dialogShown5 = true;
             }
 
@@ -218,9 +247,46 @@ public class ClassroomScene extends AbstractAppState {
                 dialogBoxUI.hideDialog();
                 dialogBoxUI.showDialog("HEY!", 3.0f, true);
                 dialogBoxUI.startShake(2.0f, 10.0f);
-                transitionTriggered = true;
+                
+                jumpscareTriggered = true;
+                jumpscareElapsed = 0;
             }
+        }
+        
+        if (jumpscareTriggered) {
+            jumpscareElapsed += tpf;
             
+            if (jumpscareElapsed <= jumpscareDuration) {
+                // Interpolate the FOV for zoom
+                float zoomProgress = jumpscareElapsed / jumpscareDuration;
+                float currentFOV = FastMath.interpolateLinear(zoomProgress, originalFOV, targetFOV);
+                
+                app.getCamera().setFrustumPerspective(currentFOV,
+                        (float) app.getContext().getSettings().getWidth() / 
+                        (float) app.getContext().getSettings().getHeight(),
+                        1f, 1000f);
+                
+                // Shake the target model
+                if (targetModel != null) {
+                    float offsetX = (float) (Math.random() * 2 - 1) * 0.1f;
+                    float offsetY = (float) (Math.random() * 2 - 1) * 0.1f;
+                    float offsetZ = (float) (Math.random() * 2 - 1) * 0.1f;
+                    
+                    targetModel.setLocalTranslation(originalModelPosition.add(offsetX, offsetY, offsetZ));
+                } else {
+                    // Reset after the jumpscare
+                    app.getCamera().setFrustumPerspective(originalFOV,
+                            (float) app.getContext().getSettings().getWidth() /
+                            (float) app.getContext().getSettings().getHeight(),
+                            1f, 1000f);
+                    
+                    if (targetModel != null) {
+                        targetModel.setLocalTranslation(originalModelPosition);
+                    }
+                    
+                    jumpscareTriggered = false;
+                }
+            }
         }
 
         if (transitionTriggered) {
@@ -316,6 +382,14 @@ public class ClassroomScene extends AbstractAppState {
 
         // Update pitch rotation
         player.getPitchNode().setLocalRotation(new Quaternion().fromAngles(newPitch, 0, 0));
+    }
+    
+    private void setupAudio() {
+        jumpscareSound = new AudioNode(app.getAssetManager(), "Sounds/jumpscare.ogg", false);
+        jumpscareSound.setPositional(false);
+        jumpscareSound.setLooping(false);
+        jumpscareSound.setVolume(3);
+        app.getRootNode().attachChild(jumpscareSound);
     }
 
     @Override
