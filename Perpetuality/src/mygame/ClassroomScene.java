@@ -65,8 +65,13 @@ public class ClassroomScene extends AbstractAppState {
     private Vector3f originalModelPosition; // To reset the model
     private Vector3f originalCameraPosition; // To reset the camera after the zoom
     private float originalFOV = 45f; // Original field of view
-    private float targetFOV = 20f; // Zoomed-in field of view
+    private float targetFOV = 5f; // Zoomed-in field of view
     private AudioNode jumpscareSound; // Jumpscare audio
+    private boolean jumpscareStarted = false;
+    
+    private Quaternion originalYawRotation;
+    private Quaternion originalPitchRotation;
+
 
     public ClassroomScene(SceneLoader sceneLoader, DialogBoxUI dialogBoxUI, Player player) {
         this.sceneLoader = sceneLoader;
@@ -140,7 +145,7 @@ public class ClassroomScene extends AbstractAppState {
     }
     
     private void setupJumpscareScene() {
-        this.targetModel = sceneLoader.getRootNode().getChild("ScaryModel");
+        this.targetModel = sceneLoader.getRootNode().getChild("Model_Point");
         
         if (targetModel != null) {
             this.originalModelPosition = targetModel.getWorldTranslation().clone();
@@ -153,6 +158,10 @@ public class ClassroomScene extends AbstractAppState {
                 (float) app.getContext().getSettings().getWidth() /
                 (float) app.getContext().getSettings().getHeight(),
                 1f, 1000f);
+        
+        // Store the original camera rotations
+        this.originalYawRotation = player.getYawNode().getLocalRotation().clone();
+        this.originalPitchRotation = player.getPitchNode().getLocalRotation().clone();
     }
 
     @Override
@@ -205,7 +214,7 @@ public class ClassroomScene extends AbstractAppState {
                 this.dialogShown3 = true;
             }
 
-            if (elapsedTime > 25 && !dialogShown4) {
+            if (elapsedTime > 23 && !dialogShown4) {
                 // Start camera rotation
                 this.lookingDown = true;
                 this.rotationTimeElapsed = 0;
@@ -237,58 +246,69 @@ public class ClassroomScene extends AbstractAppState {
                 }
             }
 
-            if (elapsedTime > 40 && !dialogShown5) {
+            if (elapsedTime > 30 && !dialogShown5) {
                 dialogBoxUI.hideDialog();
                 dialogBoxUI.showDialog("I'm gonna be sick.", 1.5f, false);
                 dialogShown5 = true;
             }
 
-            if (elapsedTime > 45) {
+            if (elapsedTime > 32 && !jumpscareStarted) {
+                jumpscareStarted = true; // Set the flag to prevent re-triggering
                 dialogBoxUI.hideDialog();
                 dialogBoxUI.showDialog("HEY!", 3.0f, true);
                 dialogBoxUI.startShake(2.0f, 10.0f);
-                
+
                 jumpscareTriggered = true;
                 jumpscareElapsed = 0;
             }
         }
         
         if (jumpscareTriggered) {
-            jumpscareElapsed += tpf;
-            
-            if (jumpscareElapsed <= jumpscareDuration) {
-                // Interpolate the FOV for zoom
-                float zoomProgress = jumpscareElapsed / jumpscareDuration;
-                float currentFOV = FastMath.interpolateLinear(zoomProgress, originalFOV, targetFOV);
-                
-                app.getCamera().setFrustumPerspective(currentFOV,
-                        (float) app.getContext().getSettings().getWidth() / 
-                        (float) app.getContext().getSettings().getHeight(),
-                        1f, 1000f);
-                
-                // Shake the target model
-                if (targetModel != null) {
-                    float offsetX = (float) (Math.random() * 2 - 1) * 0.1f;
-                    float offsetY = (float) (Math.random() * 2 - 1) * 0.1f;
-                    float offsetZ = (float) (Math.random() * 2 - 1) * 0.1f;
-                    
-                    targetModel.setLocalTranslation(originalModelPosition.add(offsetX, offsetY, offsetZ));
-                } else {
-                    // Reset after the jumpscare
-                    app.getCamera().setFrustumPerspective(originalFOV,
-                            (float) app.getContext().getSettings().getWidth() /
-                            (float) app.getContext().getSettings().getHeight(),
-                            1f, 1000f);
-                    
-                    if (targetModel != null) {
-                        targetModel.setLocalTranslation(originalModelPosition);
-                    }
-                    
-                    jumpscareTriggered = false;
-                }
-            }
-        }
+        jumpscareElapsed += tpf;
 
+        if (jumpscareElapsed <= jumpscareDuration) {
+            // Interpolate the FOV for zoom
+            float zoomProgress = jumpscareElapsed / jumpscareDuration;
+            float currentFOV = FastMath.interpolateLinear(zoomProgress, originalFOV, targetFOV);
+
+            System.out.println("Setting FOV: " + currentFOV); // Debug log
+            app.getCamera().setFrustumPerspective(currentFOV,
+                (float) app.getContext().getSettings().getWidth() /
+                (float) app.getContext().getSettings().getHeight(),
+                1f, 1000f);
+            
+            // Adjust camera to look at the target model
+            adjustCameraToLookAtModel();
+
+            // Shake the target model
+            if (targetModel != null) {
+                float offsetX = (float) (Math.random() * 2 - 1) * 0.1f;
+                float offsetY = (float) (Math.random() * 2 - 1) * 0.1f;
+                float offsetZ = (float) (Math.random() * 2 - 1) * 0.1f;
+
+                targetModel.setLocalTranslation(originalModelPosition.add(offsetX, offsetY, offsetZ));
+            }
+        } else {
+            // Reset after the jumpscare
+            jumpscareTriggered = false;
+            jumpscareElapsed = 0;
+
+            app.getCamera().setFrustumPerspective(originalFOV,
+                (float) app.getContext().getSettings().getWidth() /
+                (float) app.getContext().getSettings().getHeight(),
+                1f, 1000f);
+            
+            // Reset camera orientation
+            player.getYawNode().setLocalRotation(originalYawRotation);
+            player.getPitchNode().setLocalRotation(originalPitchRotation);
+
+            if (targetModel != null) {
+                targetModel.setLocalTranslation(originalModelPosition);
+            }
+            System.out.println("Jumpscare reset to original settings.");
+        }
+    }
+        
         if (transitionTriggered) {
             if (!resetElapsed) {
                 elapsedTime = 0;
@@ -300,6 +320,30 @@ public class ClassroomScene extends AbstractAppState {
             }
         }
     }
+    
+    private void adjustCameraToLookAtModel() {
+        // Get the camera's current position
+        Vector3f cameraPosition = app.getCamera().getLocation();
+
+        // Get the target model's position
+        Vector3f targetPosition = targetModel.getWorldTranslation();
+
+        // Calculate the direction vector from the camera to the target
+        Vector3f directionToTarget = targetPosition.subtract(cameraPosition).normalizeLocal();
+
+        // Calculate the yaw and pitch angles
+        float yaw = FastMath.atan2(directionToTarget.x, directionToTarget.z);
+        float pitch = FastMath.asin(directionToTarget.y);
+
+        // Create quaternions from yaw and pitch
+        Quaternion yawRotation = new Quaternion().fromAngles(0, yaw, 0);
+        Quaternion pitchRotation = new Quaternion().fromAngles(-pitch, 0, 0);
+
+        // Set the yaw and pitch rotations
+        player.getYawNode().setLocalRotation(yawRotation);
+        player.getPitchNode().setLocalRotation(pitchRotation);
+    }
+
 
     private void updateFadeIn(float tpf) {
         fadeAlpha -= tpf / 9.0f; // Adjust fade duration as needed
@@ -385,7 +429,7 @@ public class ClassroomScene extends AbstractAppState {
     }
     
     private void setupAudio() {
-        jumpscareSound = new AudioNode(app.getAssetManager(), "Sounds/jumpscare.ogg", false);
+        jumpscareSound = new AudioNode(app.getAssetManager(), "Sound/mascot-jumpscare.wav", false);
         jumpscareSound.setPositional(false);
         jumpscareSound.setLooping(false);
         jumpscareSound.setVolume(3);
