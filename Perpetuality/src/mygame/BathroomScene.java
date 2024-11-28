@@ -23,7 +23,7 @@ public class BathroomScene {
 
     private void setupScene() {
         // Display initial dialogue
-        dialogBoxUI.showDialog("Did I get sick again?");
+        dialogBoxUI.showDialog("Did I get sick again?", 1.0f, false);
     }
 
     public void update(float tpf) {
@@ -40,7 +40,7 @@ public class BathroomScene {
         if (results.size() > 0) {
             Geometry target = results.getClosestCollision().getGeometry();
             if ("Flashlight".equals(target.getName())) {
-                dialogBoxUI.showDialog("You picked up the flashlight.");
+                dialogBoxUI.showDialog("You picked up the flashlight.", 1.0f, false);
                 flashlightPickedUp = true;
                 sceneLoader.getRootNode().detachChild(target);
             }

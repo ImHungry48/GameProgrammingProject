@@ -24,6 +24,13 @@ public class DialogBoxUI extends AbstractAppState {
     private final float boxWidth = 800; // Width of the dialog box
     private final float boxHeight = 150; // Height of the dialog box
     private boolean isVisible = false;
+    
+    // Shaking animation
+    private boolean isShaking = false;
+    private float shakeTimeElapsed = 0;
+    private float shakeDuration = 1.0f;
+    private float shakeIntensity = 5.0f;
+    private float originalX, originalY;
 
     public DialogBoxUI(Application app) {
         this.app = (SimpleApplication) app;
@@ -72,11 +79,19 @@ public class DialogBoxUI extends AbstractAppState {
         dialogText.setVerticalAlignment(BitmapFont.VAlign.Center);
         dialogText.setLocalTranslation((screenWidth - boxWidth) / 2 + 10, 20 + boxHeight - 10, 1);
 
+        originalX = dialogText.getLocalTranslation().x;
+        originalY = dialogText.getLocalTranslation().y;
+        
         guiNode.attachChild(dialogText);
     }
 
-    public void showDialog(String text) {
+    public void showDialog(String text, float sizeMultiplier, boolean shake) {
         dialogText.setText(text);
+        
+        BitmapFont font = app.getAssetManager().loadFont("Interface/Fonts/Default.fnt");
+        dialogText.setSize(font.getCharSet().getRenderedSize() * sizeMultiplier);
+        
+  
         dialogBackground.setCullHint(Geometry.CullHint.Never);
         dialogText.setCullHint(Geometry.CullHint.Never);
         isVisible = true;
@@ -85,7 +100,29 @@ public class DialogBoxUI extends AbstractAppState {
     public void hideDialog() {
         dialogBackground.setCullHint(Geometry.CullHint.Always);
         dialogText.setCullHint(Geometry.CullHint.Always);
+        
+        dialogText.setSize(app.getAssetManager().loadFont("Interface/Fonts/Default.fnt").getCharSet().getRenderedSize());
+        
+        isShaking = false;
         isVisible = false;
+    }
+    
+    @Override
+    public void update(float tpf) {
+        if (isShaking) {
+            shakeTimeElapsed += tpf;
+            
+            if (shakeTimeElapsed > shakeDuration) {
+                isShaking = false; // Stop shaking after the duration
+                dialogText.setLocalTranslation(originalX, originalY, 1); // Reset position
+            } else {
+                // Randomized shake effect
+                float offsetX = (float)(Math.random() * shakeIntensity * 2 - shakeIntensity);
+                float offsetY = (float)(Math.random() * shakeIntensity * 2 - shakeIntensity);
+                
+                dialogText.setLocalTranslation(originalX + offsetX, originalY + offsetY, 1);
+            }
+        }
     }
 
     public boolean isDialogVisible() {
@@ -97,6 +134,18 @@ public class DialogBoxUI extends AbstractAppState {
         dialogBackground.setCullHint(Geometry.CullHint.Always); // Hide background if needed
         dialogText.setCullHint(Geometry.CullHint.Always);       // Hide text if needed
         isVisible = false;
+    }
+    
+    public void startShake(float duration, float intensity) {
+        this.isShaking = true;
+        this.shakeTimeElapsed = 0;
+        this.shakeDuration = duration;
+        this.shakeIntensity = intensity;
+    }
+    
+    public void showDialogWithShake(String text, float sizeMultiplier, float shakeDuration, float shakeIntensity) {
+        showDialog(text, sizeMultiplier, true);
+        startShake(shakeDuration, shakeIntensity);
     }
 
 }

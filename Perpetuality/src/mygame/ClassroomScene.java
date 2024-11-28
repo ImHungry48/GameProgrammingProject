@@ -134,7 +134,7 @@ public class ClassroomScene extends AbstractAppState {
         } else if (!transitionTriggered) {
             // Example sequence tracker (optional)
             if (elapsedTime > 10 && !dialogShown1) {
-                dialogBoxUI.showDialog("Alright students. You have one hour to complete the exam. Keep your eyes on your own paper.");
+                dialogBoxUI.showDialog("Alright students. You have one hour to complete the exam. Keep your eyes on your own paper.", 1.0f, false);
                 dialogShown1 = true; // Flag to ensure this executes only once
             }
 
@@ -144,7 +144,7 @@ public class ClassroomScene extends AbstractAppState {
                 rotationTimeElapsed = 0;
                 
                 dialogBoxUI.hideDialog();
-                dialogBoxUI.showDialog("[I can't believe this is happening. I've barely studied for this.]");
+                dialogBoxUI.showDialog("[I can't believe this is happening. I've barely studied for this.]", 1.0f, false);
                 dialogShown2 = true; // Ensure this executes only once
             }
 
@@ -170,19 +170,19 @@ public class ClassroomScene extends AbstractAppState {
                 }
             }
 
-            if (elapsedTime > 30 && !dialogShown3) {
+            if (elapsedTime > 20 && !dialogShown3) {
                 dialogBoxUI.hideDialog();
-                dialogBoxUI.showDialog("Your exam will begin soon. Remember, no talking. If you are caught cheating, you will be disqualified.");
+                dialogBoxUI.showDialog("Your exam will begin soon. Remember, no talking. If you are caught cheating, you will be disqualified.", 1.0f, false);
                 dialogShown3 = true;
             }
 
-            if (elapsedTime > 35 && !dialogShown4) {
+            if (elapsedTime > 25 && !dialogShown4) {
                 // Start camera rotation
                 lookingDown = true;
                 rotationTimeElapsed = 0;
                 
                 dialogBoxUI.hideDialog();
-                dialogBoxUI.showDialog("[I can't even read this.]");
+                dialogBoxUI.showDialog("[I can't even read this.]", 1.0f, false);
                 dialogShown4 = true;
             }
             
@@ -208,15 +208,19 @@ public class ClassroomScene extends AbstractAppState {
                 }
             }
 
-            if (elapsedTime > 50 && !dialogShown5) {
+            if (elapsedTime > 40 && !dialogShown5) {
                 dialogBoxUI.hideDialog();
-                dialogBoxUI.showDialog("I'm gonna be sick.");
+                dialogBoxUI.showDialog("I'm gonna be sick.", 1.0f, false);
                 dialogShown5 = true;
             }
 
-            if (elapsedTime > 55 && !transitionTriggered) {
+            if (elapsedTime > 45) {
+                dialogBoxUI.hideDialog();
+                dialogBoxUI.showDialog("HEY!", 3.0f, true);
+                dialogBoxUI.startShake(2.0f, 10.0f);
                 transitionTriggered = true;
             }
+            
         }
 
         if (transitionTriggered) {
@@ -313,8 +317,6 @@ public class ClassroomScene extends AbstractAppState {
         // Update pitch rotation
         player.getPitchNode().setLocalRotation(new Quaternion().fromAngles(newPitch, 0, 0));
     }
-
-
 
     @Override
     public void cleanup() {

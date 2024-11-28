@@ -131,7 +131,7 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         // Initialize DialogBox
         dialogBoxUI = new DialogBoxUI(this);
         dialogBoxUI.initialize(stateManager, this);
-        // stateManager.attach(dialogBoxUI);
+        stateManager.attach(dialogBoxUI);
         
         // Load the first scene (Classroom)
         stateManager.attach(new ClassroomScene(sceneLoader, dialogBoxUI, player));
