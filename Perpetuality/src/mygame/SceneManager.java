@@ -8,6 +8,6 @@ package mygame;
  *
  * @author alais
  */
-public class SceneHandler {
+public class SceneManager {
     
 }

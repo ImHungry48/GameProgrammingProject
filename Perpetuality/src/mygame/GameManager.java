@@ -114,10 +114,6 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         // Initialize the game state
         gameState = new GameState();
         stateManager.attach(gameState);
-      
-        inventory = new InventorySystem();
-        
-        stateManager.attach(inventory);
         
         // Initialize the player bounds as a bounding box centered on the camera location
         float playerBoxHalfExtent = 1f; // Adjust the size as needed
@@ -134,8 +130,11 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         stateManager.attach(dialogBoxUI);
         
         // Load the first scene (Classroom)
-        stateManager.attach(new ClassroomScene(sceneLoader, dialogBoxUI, player));
+        stateManager.attach(new ClassroomScene(sceneLoader, dialogBoxUI, player, stateManager));
 
+        //inventory = new InventorySystem();
+        
+        //stateManager.attach(inventory);
         // Set up GameInputManager for camera controls
 //        gameInputManager = new GameInputManager(inputManager, yawNode, pitchNode, animateModel);
 //        gameInputManager.setActionHandler(this);

@@ -21,6 +21,10 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Quad;
 import com.jme3.ui.Picture;
 
+/**
+ *
+ * @author abarbe23
+ */
 public class ClassroomScene extends AbstractAppState {
     private SimpleApplication app;
     private InputManager inputManager;
@@ -78,7 +82,7 @@ public class ClassroomScene extends AbstractAppState {
     private float staticDuration = 2.0f; // Duration for the static effect
 
 
-    public ClassroomScene(SceneLoader sceneLoader, DialogBoxUI dialogBoxUI, Player player) {
+    public ClassroomScene(SceneLoader sceneLoader, DialogBoxUI dialogBoxUI, Player player, AppStateManager stateManager) {
         this.sceneLoader = sceneLoader;
         this.dialogBoxUI = dialogBoxUI;
         this.player = player;
@@ -352,8 +356,7 @@ public class ClassroomScene extends AbstractAppState {
             if (staticTimeElapsed > staticDuration) {
                 // End the static effect
                 hideStaticOverlay();
-                System.out.println("Transitioning to the next scene.");
-                //transitionToNextScene(); // Transition after static effect
+                transitionToBathroom(); // Transition after static effect
             }
         }
 
@@ -435,9 +438,9 @@ public class ClassroomScene extends AbstractAppState {
     }
 
     private void transitionToBathroom() {
-        //stateManager.detach(this);
-        //BathroomScene bathroomScene = new BathroomScene(sceneLoader, dialogBoxUI);
-        //stateManager.attach(bathroomScene);
+        stateManager.detach(this);
+        BathroomScene bathroomScene = new BathroomScene(sceneLoader, dialogBoxUI);
+        stateManager.attach(bathroomScene);
     }
     
     private void disablePlayerMovement() {

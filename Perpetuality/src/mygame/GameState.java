@@ -8,9 +8,15 @@ package mygame;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Map;
 
 /**
  *
@@ -19,6 +25,11 @@ import java.util.ArrayList;
 public class GameState extends AbstractAppState {
     private float health = 100;
     private Node rootNode;
+    
+    private Vector3f playerPosition;
+    private Quaternion playerOrientation;
+    private Set<String> collectedPages = new HashSet<>();
+    private Map<String, Object> sceneData = new HashMap<>();
 
     
     public GameState() {
@@ -27,11 +38,7 @@ public class GameState extends AbstractAppState {
 
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
-        
-        
     }
-
-    
 
     @Override
     public void update(float tpf) {
@@ -74,6 +81,38 @@ public class GameState extends AbstractAppState {
     @Override
     public void cleanup() {
         // Optional cleanup logic
+    }
+    
+    public Vector3f getPlayerPosition() {
+        return playerPosition;
+    }
+    
+    public void setPlayerPosition(Vector3f position) {
+        this.playerPosition = position.clone();
+    }
+    
+    public Quaternion getPlayerOrientation() {
+        return playerOrientation;
+    }
+    
+    public void setPlayerOrientation(Quaternion orientation) {
+        this.playerOrientation = orientation.clone();
+    }
+    
+    public void addCollectedPage(String page) {
+        collectedPages.add(page);
+    }
+    
+    public boolean isPageCollected(String page) {
+        return collectedPages.contains(page);
+    }
+    
+    public void saveSceneData(String key, Object value) {
+        sceneData.put(key, value);
+    }
+    
+    public Object getSceneData(String key) {
+        return sceneData.get(key);
     }
 }
 

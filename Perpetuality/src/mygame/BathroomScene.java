@@ -1,5 +1,6 @@
 package mygame;
 
+import com.jme3.app.state.AbstractAppState;
 import com.jme3.collision.CollisionResults;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
@@ -7,7 +8,11 @@ import com.jme3.scene.Geometry;
 import mygame.DialogBox;
 import mygame.SceneLoader;
 
-public class BathroomScene {
+/**
+ *
+ * @author abarbe23
+ */
+public class BathroomScene extends AbstractAppState {
     private SceneLoader sceneLoader;
     private DialogBoxUI dialogBoxUI;
     private boolean flashlightPickedUp = false;
