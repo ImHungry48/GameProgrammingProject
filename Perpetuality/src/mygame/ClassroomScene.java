@@ -71,6 +71,11 @@ public class ClassroomScene extends AbstractAppState {
     
     private Quaternion originalYawRotation;
     private Quaternion originalPitchRotation;
+    
+    private Geometry staticOverlay; // Geometry for static overlay
+    private boolean staticTriggered = false; // Trigger for static effect
+    private float staticTimeElapsed = 0; // Timer for static effect
+    private float staticDuration = 2.0f; // Duration for the static effect
 
 
     public ClassroomScene(SceneLoader sceneLoader, DialogBoxUI dialogBoxUI, Player player) {
@@ -88,6 +93,7 @@ public class ClassroomScene extends AbstractAppState {
         this.stateManager = stateManager;
 
         initializeFadeOverlay();
+        initializeStaticOverlay();
         loadScene();
         setupCam();
         disablePlayerMovement();
@@ -113,6 +119,28 @@ public class ClassroomScene extends AbstractAppState {
 
         app.getGuiNode().attachChild(fadeOverlay);
     }
+    
+    private void initializeStaticOverlay() {
+        int screenWidth = app.getContext().getSettings().getWidth();
+        int screenHeight = app.getContext().getSettings().getHeight();
+
+        Quad quad = new Quad(screenWidth, screenHeight);
+        staticOverlay = new Geometry("StaticOverlay", quad);
+
+        Material mat = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+        mat.setTexture("ColorMap", app.getAssetManager().loadTexture("Textures/StaticOverlay/Static-1.png"));
+        mat.getAdditionalRenderState().setBlendMode(com.jme3.material.RenderState.BlendMode.Alpha); // Optional blending
+        staticOverlay.setMaterial(mat);
+
+        staticOverlay.setQueueBucket(RenderQueue.Bucket.Gui);
+        staticOverlay.setLocalTranslation(0, 0, 1); // Overlay on top of the GUI
+
+        app.getGuiNode().attachChild(staticOverlay);
+
+        // Start with static hidden
+        staticOverlay.setCullHint(Spatial.CullHint.Always);
+    }
+
 
     public void loadScene() {
         sceneLoader.loadScene("Scenes/Classroom_A1.j3o", this::setupScene);
@@ -260,54 +288,75 @@ public class ClassroomScene extends AbstractAppState {
 
                 jumpscareTriggered = true;
                 jumpscareElapsed = 0;
+                
+                // Play jumpscare sound
+                if (jumpscareSound != null) {
+                    jumpscareSound.play();
+                }
             }
         }
         
         if (jumpscareTriggered) {
-        jumpscareElapsed += tpf;
+            jumpscareElapsed += tpf;
 
-        if (jumpscareElapsed <= jumpscareDuration) {
-            // Interpolate the FOV for zoom
-            float zoomProgress = jumpscareElapsed / jumpscareDuration;
-            float currentFOV = FastMath.interpolateLinear(zoomProgress, originalFOV, targetFOV);
+            if (jumpscareElapsed <= jumpscareDuration) {
+                // Interpolate the FOV for zoom
+                float zoomProgress = jumpscareElapsed / jumpscareDuration;
+                float currentFOV = FastMath.interpolateLinear(zoomProgress, originalFOV, targetFOV);
 
-            System.out.println("Setting FOV: " + currentFOV); // Debug log
-            app.getCamera().setFrustumPerspective(currentFOV,
-                (float) app.getContext().getSettings().getWidth() /
-                (float) app.getContext().getSettings().getHeight(),
-                1f, 1000f);
-            
-            // Adjust camera to look at the target model
-            adjustCameraToLookAtModel();
+                app.getCamera().setFrustumPerspective(currentFOV,
+                    (float) app.getContext().getSettings().getWidth() /
+                    (float) app.getContext().getSettings().getHeight(),
+                    1f, 1000f);
 
-            // Shake the target model
-            if (targetModel != null) {
-                float offsetX = (float) (Math.random() * 2 - 1) * 0.1f;
-                float offsetY = (float) (Math.random() * 2 - 1) * 0.1f;
-                float offsetZ = (float) (Math.random() * 2 - 1) * 0.1f;
+                // Adjust camera to look at the target model
+                adjustCameraToLookAtModel();
 
-                targetModel.setLocalTranslation(originalModelPosition.add(offsetX, offsetY, offsetZ));
+                // Shake the target model
+                if (targetModel != null) {
+                    float offsetX = (float) (Math.random() * 2 - 1) * 0.1f;
+                    float offsetY = (float) (Math.random() * 2 - 1) * 0.1f;
+                    float offsetZ = (float) (Math.random() * 2 - 1) * 0.1f;
+
+                    targetModel.setLocalTranslation(originalModelPosition.add(offsetX, offsetY, offsetZ));
+                }
+            } else {
+                // Reset after the jumpscare
+                jumpscareTriggered = false;
+                jumpscareElapsed = 0;
+                showStaticOverlay();
+
+                app.getCamera().setFrustumPerspective(originalFOV,
+                    (float) app.getContext().getSettings().getWidth() /
+                    (float) app.getContext().getSettings().getHeight(),
+                    1f, 1000f);
+
+                // Reset camera orientation
+                player.getYawNode().setLocalRotation(originalYawRotation);
+                player.getPitchNode().setLocalRotation(originalPitchRotation);
+
+                if (targetModel != null) {
+                    targetModel.setLocalTranslation(originalModelPosition);
+                }
+                System.out.println("Jumpscare reset to original settings.");
             }
-        } else {
-            // Reset after the jumpscare
-            jumpscareTriggered = false;
-            jumpscareElapsed = 0;
-
-            app.getCamera().setFrustumPerspective(originalFOV,
-                (float) app.getContext().getSettings().getWidth() /
-                (float) app.getContext().getSettings().getHeight(),
-                1f, 1000f);
-            
-            // Reset camera orientation
-            player.getYawNode().setLocalRotation(originalYawRotation);
-            player.getPitchNode().setLocalRotation(originalPitchRotation);
-
-            if (targetModel != null) {
-                targetModel.setLocalTranslation(originalModelPosition);
-            }
-            System.out.println("Jumpscare reset to original settings.");
         }
-    }
+        
+        if (staticTriggered) {
+            staticTimeElapsed += tpf;
+
+            if (staticOverlay != null) {
+                animateStatic(tpf);  
+            }
+
+            if (staticTimeElapsed > staticDuration) {
+                // End the static effect
+                hideStaticOverlay();
+                System.out.println("Transitioning to the next scene.");
+                //transitionToNextScene(); // Transition after static effect
+            }
+        }
+
         
         if (transitionTriggered) {
             if (!resetElapsed) {
@@ -319,6 +368,30 @@ public class ClassroomScene extends AbstractAppState {
                 // Add transition logic here
             }
         }
+    }
+    
+    private void showStaticOverlay() {
+        if (staticOverlay != null) {
+            staticOverlay.setCullHint(Spatial.CullHint.Never); // Make it visible
+            staticTriggered = true; // Start the static effect
+            staticTimeElapsed = 0; // Reset the timer
+        }
+    }
+    
+    private void hideStaticOverlay() {
+        if (staticOverlay != null) {
+            staticOverlay.setCullHint(Spatial.CullHint.Always); // Hide the overlay
+        }
+        staticTriggered = false; // Reset the trigger
+    }
+    
+    private void animateStatic(float tpf) {
+        int speed = 10;
+        int numberofframes = 10;
+        int frame = (int) (staticTimeElapsed * speed) % numberofframes; // TODO: Adjust speed and frame count
+        String textureName = "Textures/StaticOverlay/Static-" + (frame + 1) + ".png";
+        Material mat = staticOverlay.getMaterial();
+        mat.setTexture("ColorMap", app.getAssetManager().loadTexture(textureName));
     }
     
     private void adjustCameraToLookAtModel() {
