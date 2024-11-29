@@ -29,10 +29,8 @@ public class GameState extends AbstractAppState {
     private Set<String> collectedPages = new HashSet<>();
     private Map<String, Object> sceneData = new HashMap<>();
     private SimpleApplication app;
-    private GameManager gameManager;
     private SimplifiedInventorySystem inventory;
 
-    private float health = 100;
     private boolean gameOver = false;
     private int requiredNumPages = 0;
 
@@ -43,14 +41,11 @@ public class GameState extends AbstractAppState {
     private float healthBarHeight = 20;    // Height in pixels
     private BitmapText healthText;
 
-    public GameState(GameManager gameManager) {
-        this.gameManager = gameManager;
+    public GameState() {
     }
 
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
-    }
-
         super.initialize(stateManager, app);
         this.app = (SimpleApplication) app;
 
@@ -150,6 +145,9 @@ public class GameState extends AbstractAppState {
         return inventory;
     }
     
+    public float getHealth() {
+        return this.health;
+    }
     public void addHealth() {
         health += 10;
     }

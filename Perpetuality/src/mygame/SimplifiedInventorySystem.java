@@ -106,10 +106,6 @@ public class SimplifiedInventorySystem extends AbstractAppState {
         System.out.println("UI Initialized.");
     }
 
-
-    
-    
-
     private BitmapText createText(String text, float x, float y) {
         BitmapText bitmapText = new BitmapText(guiFont, false);
         bitmapText.setSize(guiFont.getCharSet().getRenderedSize());

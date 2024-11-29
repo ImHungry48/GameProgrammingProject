@@ -11,6 +11,7 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.collision.CollisionResults;
+import com.jme3.input.controls.ActionListener;
 import com.jme3.light.PointLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -25,6 +26,7 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.control.CameraControl.ControlDirection;
 import com.jme3.scene.shape.Box;
 import java.util.ArrayList;
+import mygame.EventManagement.EventSystem;
 import mygame.GameInputManager.ActionHandler;
 import mygame.GameInputManager.AnalogHandler;
 
@@ -62,6 +64,8 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     private ClassroomScene classroomScene;
     private DialogBoxUI dialogBoxUI;
     private SceneManager sceneManager;
+    
+    private InventorySystem inventory;
 
     // Field for Game Logic
     @Override
@@ -201,12 +205,12 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
                         break;
                     case "Use Item 1":
                         if (inventory.checkItemExists(1)) {
-                            gameState.applyHealth(inventory.useItem(1));
+                            //gameState.applyHealth(inventory.useItem(1));
                         }
                         break;
                     case "Use Item 2":
                         if (inventory.checkItemExists(2)) {
-                            gameState.applyHealth(inventory.useItem(2));
+                            //gameState.applyHealth(inventory.useItem(2));
                         }
                         break;
                     case "Use Item 3":
@@ -252,22 +256,22 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         //TODO: add render code
     }
 
-    /* ActionHandler Methods */
-    @Override
-    public void onChangeHealth() {
-        handleChangeHealth();
-    }
+//    /* ActionHandler Methods */
+//    @Override
+//    public void onChangeHealth() {
+//        handleChangeHealth();
+//    }
 
     // Manage health when an object is interacted
     private void handleChangeHealth() {
     }
 
-    @Override
-    public void onUseItem(int itemNumber) {
-        if (inventory.checkItemExists(itemNumber)) {
-            gameState.applyHealth(inventory.useItem(itemNumber));
-        }
-    }
+//    @Override
+//    public void onUseItem(int itemNumber) {
+//        if (inventory.checkItemExists(itemNumber)) {
+//            gameState.applyHealth(inventory.useItem(itemNumber));
+//        }
+//    }
     
     public void handleRotate(float intensity, float tpf) {
         
@@ -307,10 +311,6 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
                     break;
             }
         }
-    }
-    
-    public GameState getGameState() {
-        return gameState;
     }
     
     @Override

@@ -24,6 +24,7 @@ public class BathroomScene extends AbstractAppState {
     private InventorySystem inventory;
     private GameInputManager gameInputManager;
     private EventSystem eventSystem;
+    private GameManager gameManager;
     
     private SceneLoader sceneLoader;
     private DialogBoxUI dialogBoxUI;
@@ -31,7 +32,7 @@ public class BathroomScene extends AbstractAppState {
 
     public BathroomScene(SceneLoader sceneLoader, SceneManager sceneManager, DialogBoxUI dialogBoxUI,
             Player player, GameState gameState, InventorySystem inventory,
-            GameInputManager gameInputManager, EventSystem eventSystem) {
+            GameInputManager gameInputManager, EventSystem eventSystem, GameManager gameManager) {
         this.sceneLoader = sceneLoader;
         this.dialogBoxUI = dialogBoxUI;
         this.player = player;
@@ -39,6 +40,7 @@ public class BathroomScene extends AbstractAppState {
         this.inventory = inventory;
         this.gameInputManager = gameInputManager;
         this.eventSystem = eventSystem;
+        this.gameManager = gameManager;
     }
     
     @Override

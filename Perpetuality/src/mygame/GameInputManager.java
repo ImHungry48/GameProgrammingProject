@@ -167,22 +167,22 @@ public class GameInputManager {
             if (!enabled) return;
             
             if (isPressed && actionHandler != null) {
-                switch (name) {
-                    case MAPPING_CHANGEHEALTH:
-                        actionHandler.onChangeHealth();
-                        break;
-                    case MAPPING_ITEM1:
-                        actionHandler.onUseItem(1);
-                        break;
-                    case MAPPING_ITEM2:
-                        actionHandler.onUseItem(2);
-                        break;
-                    case MAPPING_ITEM3:
-                        actionHandler.onUseItem(3);
-                        break;
-                    default:
-                        break;
-                }
+//                switch (name) {
+//                    case MAPPING_CHANGEHEALTH:
+//                        actionHandler.onChangeHealth();
+//                        break;
+//                    case MAPPING_ITEM1:
+//                        actionHandler.onUseItem(1);
+//                        break;
+//                    case MAPPING_ITEM2:
+//                        actionHandler.onUseItem(2);
+//                        break;
+//                    case MAPPING_ITEM3:
+//                        actionHandler.onUseItem(3);
+//                        break;
+//                    default:
+//                        break;
+//                }
             }
             if (MAPPING_WALK.equals(name)) {
                 if (isPressed) {

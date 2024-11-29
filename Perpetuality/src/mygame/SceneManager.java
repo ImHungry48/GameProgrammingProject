@@ -52,7 +52,8 @@ public class SceneManager {
         this.gameState,
         this.gameManager.getInventory(),
         this.gameManager.getGameInputManager(),
-        this.gameManager.getEventSystem());
+        this.gameManager.getEventSystem(),
+        this.gameManager);
         
         app.getStateManager().detach(currentScene);
         app.getStateManager().attach(bathroomScene);
