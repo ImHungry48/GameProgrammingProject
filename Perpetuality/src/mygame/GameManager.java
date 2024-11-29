@@ -59,7 +59,7 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     
     // Dialog box
     private DialogBox dialogBox;
-    
+ 
     private SceneLoader sceneLoader;
     private ClassroomScene classroomScene;
     private DialogBoxUI dialogBoxUI;
@@ -80,8 +80,6 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         // Initialize player spatial
         Spatial playerSpatial = assetManager.loadModel("/Models/male_base_mesh/male_base_mesh.j3o");
         
-        
-
         // Initialize the player with its model and attach to root node
         player = new Player(playerSpatial, cam);
         player.getPlayerNode().setLocalTranslation(0,0.5f,0);

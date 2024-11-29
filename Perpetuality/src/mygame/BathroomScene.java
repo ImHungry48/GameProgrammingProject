@@ -122,7 +122,7 @@ public class BathroomScene extends AbstractAppState {
         public void onAction(String name, boolean isPressed, float tpf) {
             if (name.equals("ExitRoom") && isPressed) {
                 if (isNearExitPoint(player.getPlayerNode().getWorldTranslation())) {
-                    //sceneManager.switchScene(currentScene, new Hallway());
+                    sceneManager.switchScene(new HallwayScene(GameManager gameManager));
                 }
             }
         }
@@ -130,8 +130,7 @@ public class BathroomScene extends AbstractAppState {
     
     private boolean isNearExitPoint(Vector3f playerPosition) {
         // Check if the player is close to an exit point
-        //BoundingBox exitBox = new BoundingBox(exitPoint.getWorldTranslation(), 1f, 2f, 1f);
-        //return exitBox.contains(playerPosition);
-        return true;
+        BoundingBox exitBox = new BoundingBox(exitPoint.getWorldTranslation(), 1f, 2f, 1f);
+        return exitBox.contains(playerPosition);
     }
 }

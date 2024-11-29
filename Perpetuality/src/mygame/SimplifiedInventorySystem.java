@@ -31,9 +31,13 @@ public class SimplifiedInventorySystem extends AbstractAppState {
     private BitmapText pagesText;
     private BitmapText batteriesText;
     
+    private boolean enabled;
+    
     public SimplifiedInventorySystem(GameState gameState) {
         this.gameState = gameState;
+        this.enabled = false;
     }
+    
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app);
@@ -64,6 +68,17 @@ public class SimplifiedInventorySystem extends AbstractAppState {
 
     }
     
+    private void enable() {
+        if (!enabled) {
+            enabled = true;
+        }
+    }
+    
+    private void disable() {
+        if (enabled) {
+            enabled = false;
+        }
+    }
     private final ActionListener actionListener = (name, isPressed, tpf) -> {
         if (!isPressed) {
             return; // Ignore key release events
