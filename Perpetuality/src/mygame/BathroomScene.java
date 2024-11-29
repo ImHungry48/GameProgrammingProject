@@ -5,7 +5,9 @@ import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.collision.CollisionResults;
+import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
@@ -30,17 +32,16 @@ public class BathroomScene extends AbstractAppState {
     private DialogBoxUI dialogBoxUI;
     private boolean flashlightPickedUp = false;
 
-    public BathroomScene(SceneLoader sceneLoader, SceneManager sceneManager, DialogBoxUI dialogBoxUI,
-            Player player, GameState gameState, InventorySystem inventory,
-            GameInputManager gameInputManager, EventSystem eventSystem, GameManager gameManager) {
-        this.sceneLoader = sceneLoader;
-        this.dialogBoxUI = dialogBoxUI;
-        this.player = player;
-        this.gameState = gameState;
-        this.inventory = inventory;
-        this.gameInputManager = gameInputManager;
-        this.eventSystem = eventSystem;
+    public BathroomScene(GameManager gameManager) {
         this.gameManager = gameManager;
+        this.sceneLoader = gameManager.getSceneLoader();
+        this.dialogBoxUI = gameManager.getDialogBoxUI();
+        this.player = gameManager.getPlayer();
+        this.gameState = gameManager.getGameState();
+        this.inventory = gameManager.getInventory();
+        this.gameInputManager = gameManager.getGameInputManager();
+        this.eventSystem = gameManager.getEventSystem(); 
+        this.sceneManager = gameManager.getSceneManager();
     }
     
     @Override
@@ -53,15 +54,10 @@ public class BathroomScene extends AbstractAppState {
         }
         
         gameInputManager.enable();
-        
         eventSystem.startListening();
         
-        System.out.println("Loading bathroom");
-        
         // Load the scene
-        sceneLoader.loadScene("Scenes/Bathroom.j3o", this::setupScene);
-        
-        System.out.println("Restoring player position");
+        this.loadScene();
         
         if (gameState == null) {
             System.err.println("GameState is null! Using default values.");
@@ -77,10 +73,14 @@ public class BathroomScene extends AbstractAppState {
 
         gameInputManager.initInputMappings();
         gameInputManager.enable();
+        
+        app.getInputManager().addMapping("ExitBathroom", new KeyTrigger(KeyInput.KEY_Q));
+        app.getInputManager().addListener(actionListener, "ExitBathroom");
 
         eventSystem.startListening();
         
-        System.out.println("Loading scene");
+        
+        System.out.println("Setting up scene dialog");
         setupScene();
     }
 
@@ -120,17 +120,24 @@ public class BathroomScene extends AbstractAppState {
     private ActionListener actionListener = new ActionListener() {
         @Override
         public void onAction(String name, boolean isPressed, float tpf) {
-            if (name.equals("ExitRoom") && isPressed) {
+            if (name.equals("ExitBathroom") && isPressed) {
                 if (isNearExitPoint(player.getPlayerNode().getWorldTranslation())) {
-                    sceneManager.switchScene(new HallwayScene(GameManager gameManager));
+                    System.out.println("Exiting room...");
+                    sceneManager.switchScene("Hallway");
+                } else {
+                    System.out.println("Not near an exit point.");
                 }
             }
         }
     };
     
     private boolean isNearExitPoint(Vector3f playerPosition) {
+        
+        // Create the exit point
+        Vector3f exitPoint = new Vector3f(2.3731039f, 0.2084856f, 0.040968657f);
+        
         // Check if the player is close to an exit point
-        BoundingBox exitBox = new BoundingBox(exitPoint.getWorldTranslation(), 1f, 2f, 1f);
+        BoundingBox exitBox = new BoundingBox(exitPoint, 1f, 2f, 1f);
         return exitBox.contains(playerPosition);
     }
 }

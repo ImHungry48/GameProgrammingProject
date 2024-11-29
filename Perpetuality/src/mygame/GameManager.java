@@ -132,22 +132,17 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         this.stateManager.attach(dialogBoxUI);
         
         this.sceneManager = new SceneManager(this);
+        ClassroomScene classroomScene = new ClassroomScene(this);
+        BathroomScene bathroomScene = new BathroomScene(this);
+        HallwayScene hallwayScene = new HallwayScene(this);
+        
+        sceneManager.addScene("Classroom", classroomScene);
+        sceneManager.addScene("Bathroom", bathroomScene);
+        sceneManager.addScene("Hallway", hallwayScene);
         
         // Load the first scene (Classroom)
-        this.stateManager.attach(new ClassroomScene(this));
-
-        //inventory = new InventorySystem();
+        sceneManager.switchScene("Classroom");
         
-        //stateManager.attach(inventory);
-        // Set up GameInputManager for camera controls
-
-//        sanityBarUI = new SanityBarUI(this);
-//        stateManager.attach(sanityBarUI);
-//        
-//        /* EVENT SYSTEM */
-//        this.eventSystem = new EventSystem(this.player, this.bathroomBounds, this.respawnPosition);
-//        this.eventSystem.loadEvents();
-//        
         // Attach a cursor to the screen
         // attachCenterMark();
     }  

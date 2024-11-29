@@ -31,6 +31,7 @@ public class ClassroomScene extends AbstractAppState {
     private Node rootNode;
     private AppStateManager stateManager;
     private GameState gameState;
+    private GameManager gameManager;
 
     private SceneLoader sceneLoader;
     private DialogBoxUI dialogBoxUI;
@@ -89,6 +90,7 @@ public class ClassroomScene extends AbstractAppState {
         this.player = gameManager.getPlayer();
         this.sceneManager = gameManager.getSceneManager();
         this.gameState = gameManager.getGameState();
+        this.gameManager = gameManager;
     }
 
     @Override
@@ -441,7 +443,7 @@ public class ClassroomScene extends AbstractAppState {
     }
     
     private void transitionToBathroom() {
-        sceneManager.switchToBathroomScene();
+        sceneManager.switchScene("Bathroom");
     }
     
     private void disablePlayerMovement() {

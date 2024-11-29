@@ -8,12 +8,16 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.scene.Node;
+import java.util.HashMap;
 
 /**
  *
  * @author alais
  */
 public class SceneManager {
+
+    private final HashMap<String, AbstractAppState> scenes = new HashMap<>();
+    
     private SimpleApplication app;
     private AppStateManager stateManager;
     private Node rootNode;
@@ -33,31 +37,25 @@ public class SceneManager {
         this.sceneLoader = gameManager.getSceneLoader();
         this.gameManager = gameManager;
     }
+    
+    public void addScene(String sceneName, AbstractAppState scene) {
+        scenes.put(sceneName, scene);
+    }
 
-    public void switchScene(AbstractAppState newScene) {
+    public void switchScene(String sceneName) {
         if (currentScene != null) {
             app.getStateManager().detach(currentScene);
         }
         
-        app.getStateManager().attach(newScene);
-        currentScene = newScene;
+        AbstractAppState newScene = scenes.get(sceneName);
+        
+        if (newScene != null) {
+            this.currentScene = newScene;
+            stateManager.attach(newScene);
+        } else {
+            System.err.println("Scene: " + sceneName + " not found!");
+        }
+        
     }
     
-    public void switchToBathroomScene() {
-        BathroomScene bathroomScene = new BathroomScene(
-        this.sceneLoader,
-        this,
-        this.dialogBoxUI,
-        this.player,
-        this.gameState,
-        this.gameManager.getInventory(),
-        this.gameManager.getGameInputManager(),
-        this.gameManager.getEventSystem(),
-        this.gameManager);
-        
-        app.getStateManager().detach(currentScene);
-        app.getStateManager().attach(bathroomScene);
-        currentScene = bathroomScene;
-    }
-
 }

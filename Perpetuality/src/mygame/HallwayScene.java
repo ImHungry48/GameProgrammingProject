@@ -33,11 +33,13 @@ public class HallwayScene extends AbstractAppState {
     
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
-        
+        super.initialize(stateManager, app);
+        this.loadScene();
+        System.out.println("Initializing");
     }
     
     public void loadScene() {
-        
+        sceneLoader.loadScene("Scenes/Hallway.j3o", this::setupScene);
     }
     
     public void setupScene() {
