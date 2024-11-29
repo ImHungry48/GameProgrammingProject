@@ -30,6 +30,7 @@ public class ClassroomScene extends AbstractAppState {
     private InputManager inputManager;
     private Node rootNode;
     private AppStateManager stateManager;
+    private GameState gameState;
 
     private SceneLoader sceneLoader;
     private DialogBoxUI dialogBoxUI;
@@ -80,12 +81,15 @@ public class ClassroomScene extends AbstractAppState {
     private boolean staticTriggered = false; // Trigger for static effect
     private float staticTimeElapsed = 0; // Timer for static effect
     private float staticDuration = 2.0f; // Duration for the static effect
+    private SceneManager sceneManager;
 
 
-    public ClassroomScene(SceneLoader sceneLoader, DialogBoxUI dialogBoxUI, Player player, AppStateManager stateManager) {
+    public ClassroomScene(SceneLoader sceneLoader, DialogBoxUI dialogBoxUI, Player player, AppStateManager stateManager, SceneManager sceneManager, GameState gameState) {
         this.sceneLoader = sceneLoader;
         this.dialogBoxUI = dialogBoxUI;
         this.player = player;
+        this.sceneManager = sceneManager;
+        this.gameState = gameState;
     }
 
     @Override
@@ -326,6 +330,7 @@ public class ClassroomScene extends AbstractAppState {
                 }
             } else {
                 // Reset after the jumpscare
+                dialogBoxUI.hideDialog();
                 jumpscareTriggered = false;
                 jumpscareElapsed = 0;
                 showStaticOverlay();
@@ -434,13 +439,11 @@ public class ClassroomScene extends AbstractAppState {
     private void setupCam() {
         app.getFlyByCamera().setEnabled(false);
         inputManager.setCursorVisible(false);
-  
     }
-
+    
     private void transitionToBathroom() {
-        stateManager.detach(this);
-        BathroomScene bathroomScene = new BathroomScene(sceneLoader, dialogBoxUI);
-        stateManager.attach(bathroomScene);
+        BathroomScene bathroomScene = new BathroomScene(sceneLoader, sceneManager, dialogBoxUI, player, gameState);
+        sceneManager.switchScene(this, bathroomScene);
     }
     
     private void disablePlayerMovement() {

@@ -77,6 +77,7 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     private SceneLoader sceneLoader;
     private ClassroomScene classroomScene;
     private DialogBoxUI dialogBoxUI;
+    private SceneManager sceneManager;
 
     // Field for Game Logic
     @Override
@@ -129,8 +130,10 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         dialogBoxUI.initialize(stateManager, this);
         stateManager.attach(dialogBoxUI);
         
+        this.sceneManager = new SceneManager(this, stateManager, rootNode);
+        
         // Load the first scene (Classroom)
-        stateManager.attach(new ClassroomScene(sceneLoader, dialogBoxUI, player, stateManager));
+        stateManager.attach(new ClassroomScene(sceneLoader, dialogBoxUI, player, stateManager, sceneManager, gameState));
 
         //inventory = new InventorySystem();
         

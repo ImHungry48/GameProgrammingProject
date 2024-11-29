@@ -113,7 +113,6 @@ public class DialogBox {
                 hideDialog();
             }
         } else {
-            System.out.println("Hiding");
             hideDialog();
         }
     }
