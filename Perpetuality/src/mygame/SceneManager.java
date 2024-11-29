@@ -17,21 +17,46 @@ public class SceneManager {
     private SimpleApplication app;
     private AppStateManager stateManager;
     private Node rootNode;
+    private AbstractAppState currentScene;
+    private GameManager gameManager;
+    private Player player;
+    private DialogBoxUI dialogBoxUI;
+    private GameState gameState;
+    private SceneLoader sceneLoader;
 
-    public SceneManager(SimpleApplication app, AppStateManager stateManager, Node rootNode) {
-        this.app = app;
-        this.stateManager = stateManager;
-        this.rootNode = rootNode;
+    public SceneManager(GameManager gameManager) {
+        this.app = gameManager;
+        this.stateManager = gameManager.getStateManager();
+        this.rootNode = gameManager.getRootNode();
+        this.player = gameManager.getPlayer();
+        this.dialogBoxUI = gameManager.getDialogBoxUI();
+        this.sceneLoader = gameManager.getSceneLoader();
+        this.gameManager = gameManager;
     }
 
-    public void switchScene(AbstractAppState currentScene, AbstractAppState nextScene) {
-        // Detach the current scene
-        stateManager.detach(currentScene);
+    public void switchScene(AbstractAppState newScene) {
+        if (currentScene != null) {
+            app.getStateManager().detach(currentScene);
+        }
         
-        // Clean up the rootNode
-        rootNode.detachAllChildren();
-        
-        // Attach the next scene
-        stateManager.attach(nextScene);
+        app.getStateManager().attach(newScene);
+        currentScene = newScene;
     }
+    
+    public void switchToBathroomScene() {
+        BathroomScene bathroomScene = new BathroomScene(
+        this.sceneLoader,
+        this,
+        this.dialogBoxUI,
+        this.player,
+        this.gameState,
+        this.gameManager.getInventory(),
+        this.gameManager.getGameInputManager(),
+        this.gameManager.getEventSystem());
+        
+        app.getStateManager().detach(currentScene);
+        app.getStateManager().attach(bathroomScene);
+        currentScene = bathroomScene;
+    }
+
 }

@@ -87,4 +87,5 @@ public class Player {
         System.out.println("PitchNode translation: " + pitchNode.getLocalTranslation() + "\nPitchNode rotation: " + pitchNode.getLocalRotation());
         
     }
+   
 }

@@ -10,6 +10,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
+import mygame.EventManagement.EventSystem;
 import mygame.SceneLoader;
 
 /**
@@ -20,22 +21,38 @@ public class BathroomScene extends AbstractAppState {
     private SceneManager sceneManager;
     private Player player;
     private GameState gameState;
+    private InventorySystem inventory;
+    private GameInputManager gameInputManager;
+    private EventSystem eventSystem;
     
     private SceneLoader sceneLoader;
     private DialogBoxUI dialogBoxUI;
     private boolean flashlightPickedUp = false;
 
-    public BathroomScene(SceneLoader sceneLoader, SceneManager sceneManager, DialogBoxUI dialogBoxUI, Player player, GameState gameState) {
+    public BathroomScene(SceneLoader sceneLoader, SceneManager sceneManager, DialogBoxUI dialogBoxUI,
+            Player player, GameState gameState, InventorySystem inventory,
+            GameInputManager gameInputManager, EventSystem eventSystem) {
         this.sceneLoader = sceneLoader;
         this.dialogBoxUI = dialogBoxUI;
         this.player = player;
-        this.gameState = new GameState();
+        this.gameState = gameState;
+        this.inventory = inventory;
+        this.gameInputManager = gameInputManager;
+        this.eventSystem = eventSystem;
     }
     
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
         System.out.println("Initializing bathroom");
         super.initialize(stateManager, app);
+        
+        if (!stateManager.hasState(inventory)) {
+            stateManager.attach(inventory);
+        }
+        
+        gameInputManager.enable();
+        
+        eventSystem.startListening();
         
         System.out.println("Loading bathroom");
         
@@ -55,6 +72,11 @@ public class BathroomScene extends AbstractAppState {
         player.getYawNode().setLocalRotation(
             gameState.getPlayerOrientation() != null ? gameState.getPlayerOrientation() : new Quaternion()
         );
+
+        gameInputManager.initInputMappings();
+        gameInputManager.enable();
+
+        eventSystem.startListening();
         
         System.out.println("Loading scene");
         setupScene();

@@ -83,13 +83,12 @@ public class ClassroomScene extends AbstractAppState {
     private float staticDuration = 2.0f; // Duration for the static effect
     private SceneManager sceneManager;
 
-
-    public ClassroomScene(SceneLoader sceneLoader, DialogBoxUI dialogBoxUI, Player player, AppStateManager stateManager, SceneManager sceneManager, GameState gameState) {
-        this.sceneLoader = sceneLoader;
-        this.dialogBoxUI = dialogBoxUI;
-        this.player = player;
-        this.sceneManager = sceneManager;
-        this.gameState = gameState;
+    public ClassroomScene(GameManager gameManager) {
+        this.sceneLoader = gameManager.getSceneLoader();
+        this.dialogBoxUI = gameManager.getDialogBoxUI();
+        this.player = gameManager.getPlayer();
+        this.sceneManager = gameManager.getSceneManager();
+        this.gameState = gameManager.getGameState();
     }
 
     @Override
@@ -442,8 +441,7 @@ public class ClassroomScene extends AbstractAppState {
     }
     
     private void transitionToBathroom() {
-        BathroomScene bathroomScene = new BathroomScene(sceneLoader, sceneManager, dialogBoxUI, player, gameState);
-        sceneManager.switchScene(this, bathroomScene);
+        sceneManager.switchToBathroomScene();
     }
     
     private void disablePlayerMovement() {

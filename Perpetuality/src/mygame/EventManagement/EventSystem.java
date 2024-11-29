@@ -31,6 +31,8 @@ public class EventSystem {
     private Player player;
     private BoundingBox bathroomBounds;
     private Vector3f respawnPosition;
+
+    private boolean active = false;
     
     public EventSystem(Player player, BoundingBox bathroomBounds, Vector3f respawnPosition) {
         events = new ArrayList<>();
@@ -39,6 +41,14 @@ public class EventSystem {
         this.player = player;
         this.bathroomBounds = bathroomBounds;
         this.respawnPosition = respawnPosition;
+    }
+
+    public void startListening() {
+        active = true;
+    }
+
+    public void stopListening() {
+        active = false;
     }
     
     public void loadEvents() {

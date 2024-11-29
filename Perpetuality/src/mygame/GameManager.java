@@ -7,6 +7,7 @@ package mygame;
 
 import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
+import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.collision.CollisionResults;
@@ -96,6 +97,9 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         player = new Player(playerSpatial, cam);
         player.getPlayerNode().setLocalTranslation(0,0.5f,0);
         rootNode.attachChild(player.getPlayerNode());
+        
+        yawNode = player.getYawNode();
+        pitchNode = player.getPitchNode();
 
         // Disable default flyCam behavior and make the camera follow the camera node
         flyCam.setEnabled(false);
@@ -120,30 +124,35 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         float playerBoxHalfExtent = 1f; // Adjust the size as needed
         this.player.playerBounds = new BoundingBox(cam.getLocation(), playerBoxHalfExtent, playerBoxHalfExtent, playerBoxHalfExtent);
         
+        this.inventory = new InventorySystem();
+        this.stateManager.attach(inventory);
+        
+        gameInputManager = new GameInputManager(inputManager, player.getYawNode(), player.getPitchNode(), null);
+        gameInputManager.setActionHandler(this);
+        gameInputManager.setAnalogHandler(this);
+        gameInputManager.setMovementHandler(this);
+        
+        this.eventSystem = new EventSystem(player, null, respawnPosition);
+        
         /* SCENE LOADING */
 
         // Initialize SceneLoader
         this.sceneLoader = new SceneLoader(assetManager, rootNode);
 
         // Initialize DialogBox
-        dialogBoxUI = new DialogBoxUI(this);
-        dialogBoxUI.initialize(stateManager, this);
-        stateManager.attach(dialogBoxUI);
+        this.dialogBoxUI = new DialogBoxUI(this);
+        this.dialogBoxUI.initialize(stateManager, this);
+        this.stateManager.attach(dialogBoxUI);
         
-        this.sceneManager = new SceneManager(this, stateManager, rootNode);
+        this.sceneManager = new SceneManager(this);
         
         // Load the first scene (Classroom)
-        stateManager.attach(new ClassroomScene(sceneLoader, dialogBoxUI, player, stateManager, sceneManager, gameState));
+        this.stateManager.attach(new ClassroomScene(this));
 
         //inventory = new InventorySystem();
         
         //stateManager.attach(inventory);
         // Set up GameInputManager for camera controls
-//        gameInputManager = new GameInputManager(inputManager, yawNode, pitchNode, animateModel);
-//        gameInputManager.setActionHandler(this);
-//        gameInputManager.setAnalogHandler(this);
-//        gameInputManager.setMovementHandler(this);
-//        gameInputManager.initInputMappings(); 
 
 //        sanityBarUI = new SanityBarUI(this);
 //        stateManager.attach(sanityBarUI);
@@ -154,7 +163,47 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
 //        
         // Attach a cursor to the screen
         // attachCenterMark();
-    }    
+    }  
+    
+    public AppStateManager getStateManager() {
+        return this.stateManager;
+    }
+    
+    public Node getRootNode() {
+        return this.rootNode;
+    }
+    
+    public DialogBoxUI getDialogBoxUI() {
+        return this.dialogBoxUI;
+    }
+    
+    public InventorySystem getInventory() {
+        return this.inventory;
+    }
+    
+    public GameInputManager getGameInputManager() {
+        return this.gameInputManager;
+    }
+    
+    public EventSystem getEventSystem() {
+        return this.eventSystem;
+    }
+    
+    public GameState getGameState() {
+        return this.gameState;
+    }
+    
+    public SceneLoader getSceneLoader() {
+        return this.sceneLoader;
+    }
+    
+    public Player getPlayer() {
+        return this.player;
+    }
+    
+    public SceneManager getSceneManager() {
+        return this.sceneManager;
+    }
     
     // ActionListener to handle actions
     private ActionListener actionListener = new ActionListener() {

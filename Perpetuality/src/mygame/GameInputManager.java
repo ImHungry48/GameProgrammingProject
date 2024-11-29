@@ -63,6 +63,8 @@ public class GameInputManager {
     private final Node pitchNode; // Pitch node (up/down)
     
     private final AnimateModel animateModel;
+
+    private boolean enabled = false;
     
    // Callback interfaces
     public interface ActionHandler {
@@ -125,10 +127,47 @@ public class GameInputManager {
         inputManager.addListener(actionListener, MAPPING_WALK);
     }
 
+    public void enable() {
+        if (!enabled) {
+            enabled = true;
+
+            initInputMappings();
+        }
+    }
+
+    public void disable() {
+        if (enabled) {
+            enabled = false;
+
+            // Remove mappings and listeners
+            inputManager.deleteMapping(MAPPING_CHANGEHEALTH);
+            inputManager.deleteMapping(MAPPING_ROTATE);
+            inputManager.deleteMapping(MAPPING_ITEM1);
+            inputManager.deleteMapping(MAPPING_ITEM2);
+            inputManager.deleteMapping(MAPPING_ITEM3);
+            inputManager.deleteMapping(MAPPING_LOOK_LEFT);
+            inputManager.deleteMapping(MAPPING_LOOK_RIGHT);
+            inputManager.deleteMapping(MAPPING_LOOK_UP);
+            inputManager.deleteMapping(MAPPING_LOOK_DOWN);
+            inputManager.deleteMapping(MAPPING_FORWARD);
+            inputManager.deleteMapping(MAPPING_BACKWARD);
+            inputManager.deleteMapping(MAPPING_LEFT);
+            inputManager.deleteMapping(MAPPING_RIGHT);
+            inputManager.deleteMapping(MAPPING_WALK);
+
+            inputManager.removeListener(actionListener);
+            inputManager.removeListener(analogListener);
+            inputManager.removeListener(cameraControlListener);
+            inputManager.removeListener(movementListener);
+        }
+    }
+
     // Action listener to handle actions
     private final ActionListener actionListener = new ActionListener() {
         @Override
         public void onAction(String name, boolean isPressed, float tpf) {
+            if (!enabled) return;
+            
             if (isPressed && actionHandler != null) {
                 switch (name) {
                     case MAPPING_CHANGEHEALTH:
@@ -161,6 +200,8 @@ public class GameInputManager {
     private final AnalogListener analogListener = new AnalogListener() {
         @Override
         public void onAnalog(String name, float intensity, float tpf) {
+            if (!enabled) return;
+
             if (analogHandler != null) {
                 if (name.equals(MAPPING_ROTATE)) {
                     analogHandler.onRotate(intensity, tpf);
@@ -173,6 +214,8 @@ public class GameInputManager {
     private final AnalogListener cameraControlListener = new AnalogListener() {
         @Override
         public void onAnalog(String name, float value, float tpf) {
+            if (!enabled) return;
+
             if (yawNode != null && pitchNode != null) {
                 final float ROTATION_SPEED = 1.0f; // Adjust for desired sensitivity
                 switch (name) {
@@ -214,6 +257,8 @@ public class GameInputManager {
     private final AnalogListener movementListener = new AnalogListener() {
         @Override
         public void onAnalog(String name, float value, float tpf) {
+            if (!enabled) return;
+
             if (movementHandler != null) {
                 movementHandler.onMove(name, value, tpf);
             }
@@ -231,4 +276,5 @@ public class GameInputManager {
     public void setMovementHandler(MovementHandler handler) {
         this.movementHandler = handler;
     }
+    
 }
