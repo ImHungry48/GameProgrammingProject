@@ -15,7 +15,7 @@ import com.jme3.scene.Node;
 
 public class GameInputManager {
 
-    private final static Trigger TRIGGER_CHANGEHEALTH = new MouseButtonTrigger(MouseInput.BUTTON_LEFT);
+
     private final static Trigger TRIGGER_ROTATE = new MouseButtonTrigger(MouseInput.BUTTON_RIGHT);
     private final static Trigger TRIGGER_ITEM1 = new KeyTrigger(KeyInput.KEY_1);
     private final static Trigger TRIGGER_ITEM2 = new KeyTrigger(KeyInput.KEY_2);
@@ -68,8 +68,7 @@ public class GameInputManager {
     
    // Callback interfaces
     public interface ActionHandler {
-        void onChangeHealth();
-        void onUseItem(int itemNumber);
+
     }
 
     public interface AnalogHandler {
@@ -100,7 +99,6 @@ public class GameInputManager {
     // Initialize input mappings
     public void initInputMappings() {
         // Map actions
-        inputManager.addMapping(MAPPING_CHANGEHEALTH, TRIGGER_CHANGEHEALTH);
         inputManager.addMapping(MAPPING_ROTATE, TRIGGER_ROTATE);
         inputManager.addMapping(MAPPING_ITEM1, TRIGGER_ITEM1);
         inputManager.addMapping(MAPPING_ITEM2, TRIGGER_ITEM2);

@@ -11,18 +11,8 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.collision.CollisionResults;
-import com.jme3.input.KeyInput;
-import com.jme3.input.MouseInput;
-import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.AnalogListener;
-import com.jme3.input.controls.KeyTrigger;
-import com.jme3.input.controls.MouseButtonTrigger;
-import com.jme3.input.controls.Trigger;
-import com.jme3.light.AmbientLight;
-import com.jme3.light.DirectionalLight;
 import com.jme3.light.PointLight;
 import com.jme3.material.Material;
-import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Ray;
@@ -35,8 +25,6 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.control.CameraControl.ControlDirection;
 import com.jme3.scene.shape.Box;
 import java.util.ArrayList;
-import mygame.EventManagement.Event;
-import mygame.EventManagement.EventSystem;
 import mygame.GameInputManager.ActionHandler;
 import mygame.GameInputManager.AnalogHandler;
 
@@ -50,11 +38,6 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     private GameInputManager gameInputManager;
     // Maintain the state of the game
     private GameState gameState;
-    // Inventory system to manage sanity
-    private InventorySystem inventory;
-    
-    // Sanity Bar UI
-    private SanityBarUI sanityBarUI;
     
     // Event System
     private EventSystem eventSystem;
@@ -92,6 +75,8 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         
         // Initialize player spatial
         Spatial playerSpatial = assetManager.loadModel("/Models/male_base_mesh/male_base_mesh.j3o");
+        
+        
 
         // Initialize the player with its model and attach to root node
         player = new Player(playerSpatial, cam);
@@ -322,6 +307,10 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
                     break;
             }
         }
+    }
+    
+    public GameState getGameState() {
+        return gameState;
     }
     
     @Override
