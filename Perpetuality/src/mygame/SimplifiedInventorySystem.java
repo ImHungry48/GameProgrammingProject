@@ -19,11 +19,12 @@ public class SimplifiedInventorySystem extends AbstractAppState {
     private AssetManager assetManager;
     private BitmapFont guiFont;
     private GameState gameState;
+    private FlashlightSystem flashLight;
 
     // Inventory data
     private int consumablesCount = 0;
     private int pagesCount = 0;
-    private int batteriesCount = 0;
+    private int batteriesCount = 2;
 
     // UI elements
     private BitmapText consumablesText;
@@ -37,7 +38,7 @@ public class SimplifiedInventorySystem extends AbstractAppState {
     public void initialize(AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app);
         this.app = (SimpleApplication) app;
-
+        
         guiNode = this.app.getGuiNode();
         assetManager = this.app.getAssetManager();
         guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
@@ -46,6 +47,12 @@ public class SimplifiedInventorySystem extends AbstractAppState {
         
         initUI();
         
+        // Initialize Flashlight
+        flashLight = new FlashlightSystem(gameState);
+        flashLight.initialize(stateManager, app);
+        
+        stateManager.attach(flashLight);
+        
         // Register input mapping for the E key
         app.getInputManager().addMapping("UseConsumable", new KeyTrigger(KeyInput.KEY_E));
         app.getInputManager().addListener(actionListener, "UseConsumable");
@@ -53,6 +60,8 @@ public class SimplifiedInventorySystem extends AbstractAppState {
         // Register input mapping for the R key
         app.getInputManager().addMapping("UseBattery", new KeyTrigger(KeyInput.KEY_R));
         app.getInputManager().addListener(actionListener, "UseBattery");
+        
+
     }
     
     private final ActionListener actionListener = (name, isPressed, tpf) -> {
@@ -132,7 +141,7 @@ public class SimplifiedInventorySystem extends AbstractAppState {
         }
 
         switch (itemType.toLowerCase()) {
-            case "consumable":
+            case "consumable" -> {
                 if (consumablesCount >= amount) {
                     consumablesCount -= amount;
                     // Invoke increasing gamestate sanity
@@ -140,18 +149,17 @@ public class SimplifiedInventorySystem extends AbstractAppState {
                 } else {
                     System.out.println("Not enough consumables to use.");
                 }
-                break;
-            case "battery":
+            }
+            case "battery" -> {
                 if (batteriesCount >= amount) {
                     batteriesCount -= amount;
                     // Invoke increasing battery charge
-                    System.out.println("battery used");
+                    flashLight.addCharge();
                 } else {
                     System.out.println("Not enough batteries to use.");
                 }
-                break;
-            default:
-                System.out.println("Unknown item type: " + itemType);
+            }
+            default -> System.out.println("Unknown item type: " + itemType);
         }
 
         updateUI();
@@ -167,14 +175,14 @@ public class SimplifiedInventorySystem extends AbstractAppState {
     public int getPagesCount() {
         return pagesCount;
     }
+    
+    public FlashlightSystem getFlashLight() {
+        return flashLight;
+    }
 
     @Override
     public void cleanup() {
         super.cleanup();
         guiNode.detachAllChildren();
-    }
-    
-    public boolean checkFlashLight() {
-        return false;
     }
 }

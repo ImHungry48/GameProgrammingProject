@@ -46,7 +46,7 @@ public class GameState extends AbstractAppState {
     @Override
     public void update(float tpf) {
         if (!gameOver) {
-            if (this.health > 0 && !inventory.checkFlashLight()) {
+            if (this.health > 0 && !inventory.getFlashLight().checkIfOn()) {
                 this.health -= 0.001f;
                 updateHealthBar();
             }
