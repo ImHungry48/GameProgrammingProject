@@ -33,6 +33,7 @@ public class GameState extends AbstractAppState {
 
     private boolean gameOver = false;
     private int requiredNumPages = 0;
+    private boolean isSafe = false;
 
     // Health Bar Components
     private Geometry healthBarBackground;
@@ -42,6 +43,7 @@ public class GameState extends AbstractAppState {
     private BitmapText healthText;
 
     public GameState() {
+        this.inventory = new SimplifiedInventorySystem();
     }
 
     @Override
@@ -49,8 +51,8 @@ public class GameState extends AbstractAppState {
         super.initialize(stateManager, app);
         this.app = (SimpleApplication) app;
 
-        this.inventory = new SimplifiedInventorySystem(this);
-        inventory.initialize(stateManager, app);
+        
+        stateManager.attach(this.inventory);
 
         // Initialize Health Bar
         initHealthBar();
@@ -181,7 +183,7 @@ public class GameState extends AbstractAppState {
         app.getGuiNode().attachChild(healthText);
     }
 
-    private void updateHealthBar() {
+    public void updateHealthBar() {
         float healthRatio = this.health / 100f; // Assuming max health is 100
         float newWidth = maxHealthBarWidth * healthRatio;
 

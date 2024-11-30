@@ -68,8 +68,8 @@ public class DialogBox {
             dialogText.setLocalTranslation(viewPort.getCamera().getWidth() / 2 - dialogText.getLineWidth() / 2,
                                            viewPort.getCamera().getHeight() / 2 + dialogText.getLineHeight(), 0);
 
-            dialogFrame.setLocalTranslation(viewPort.getCamera().getWidth() / 2 - dialogFrame.getWidth() / 2,
-                                            viewPort.getCamera().getHeight() / 2 - dialogFrame.getHeight() / 2, -1);
+            dialogFrame.setLocalTranslation(viewPort.getCamera().getWidth() / 2 - 1500 / 2,
+                                            viewPort.getCamera().getHeight() / 2 - 1000 / 2, -1);
 
             guiNode.attachChild(dialogText);
             guiNode.attachChild(dialogFrame);

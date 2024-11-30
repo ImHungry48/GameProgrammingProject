@@ -22,7 +22,7 @@ public class SimplifiedInventorySystem extends AbstractAppState {
     private FlashlightSystem flashLight;
 
     // Inventory data
-    private int consumablesCount = 0;
+    private int consumablesCount = 1;
     private int pagesCount = 0;
     private int batteriesCount = 2;
 
@@ -33,8 +33,8 @@ public class SimplifiedInventorySystem extends AbstractAppState {
     
     private boolean enabled;
     
-    public SimplifiedInventorySystem(GameState gameState) {
-        this.gameState = gameState;
+    public SimplifiedInventorySystem() {
+        flashLight = new FlashlightSystem();
         this.enabled = false;
     }
     
@@ -52,9 +52,8 @@ public class SimplifiedInventorySystem extends AbstractAppState {
         initUI();
         
         // Initialize Flashlight
-        flashLight = new FlashlightSystem(gameState);
-        flashLight.initialize(stateManager, app);
         
+        flashLight.initialize(stateManager, app);
         stateManager.attach(flashLight);
         
         // Register input mapping for the E key
@@ -65,7 +64,7 @@ public class SimplifiedInventorySystem extends AbstractAppState {
         app.getInputManager().addMapping("UseBattery", new KeyTrigger(KeyInput.KEY_R));
         app.getInputManager().addListener(actionListener, "UseBattery");
         
-
+        gameState = stateManager.getState(GameState.class);
     }
     
     private void enable() {
@@ -157,6 +156,7 @@ public class SimplifiedInventorySystem extends AbstractAppState {
                     consumablesCount -= amount;
                     // Invoke increasing gamestate sanity
                     gameState.addHealth();
+                    gameState.updateHealthBar();
                 } else {
                     System.out.println("Not enough consumables to use.");
                 }
@@ -168,6 +168,7 @@ public class SimplifiedInventorySystem extends AbstractAppState {
                     flashLight.addCharge();
                 } else {
                     System.out.println("Not enough batteries to use.");
+                    flashLight.updateHealthBar();
                 }
             }
             default -> System.out.println("Unknown item type: " + itemType);

@@ -36,7 +36,6 @@ public class FlashlightSystem extends AbstractAppState {
     private Node guiNode;
     private AssetManager assetManager;
     private BitmapFont guiFont;
-    private GameState gameState;
     
     private float charge = MAX_HEALTH;  // Current charge level
     private boolean isOn = true;  // Flashlight state
@@ -50,8 +49,8 @@ public class FlashlightSystem extends AbstractAppState {
     private float maxHealthBarWidth = 200; // Maximum width of the health bar
     private float healthBarHeight = 20;    // Height of the health bar
 
-    public FlashlightSystem(GameState gameState) {
-        this.gameState = gameState;
+    public FlashlightSystem() {
+
     }
     
     /**
@@ -230,7 +229,7 @@ public class FlashlightSystem extends AbstractAppState {
     /**
      * Update the health bar based on current charge.
      */
-    private void updateHealthBar() {
+    public void updateHealthBar() {
         float healthRatio = charge / MAX_HEALTH;
         float newWidth = maxHealthBarWidth * healthRatio;
 

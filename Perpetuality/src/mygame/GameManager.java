@@ -8,24 +8,11 @@ package mygame;
 import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AppStateManager;
-import com.jme3.asset.plugins.FileLocator;
 import com.jme3.bounding.BoundingBox;
-import com.jme3.collision.CollisionResults;
-import com.jme3.input.controls.ActionListener;
-import com.jme3.light.PointLight;
-import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
-import com.jme3.math.FastMath;
-import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
-import com.jme3.scene.CameraNode;
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.control.CameraControl.ControlDirection;
-import com.jme3.scene.shape.Box;
-import java.util.ArrayList;
 import mygame.EventManagement.EventSystem;
 import mygame.GameInputManager.ActionHandler;
 import mygame.GameInputManager.AnalogHandler;
@@ -54,9 +41,6 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     private Node yawNode;
     private final Vector3f respawnPosition = new Vector3f(3.9238453f, 0f, 0f);
     
-    // Flashlight
-    private FlashLight flashlight;
-    
     // Dialog box
     private DialogBox dialogBox;
  
@@ -64,8 +48,6 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     private ClassroomScene classroomScene;
     private DialogBoxUI dialogBoxUI;
     private SceneManager sceneManager;
-    
-    private InventorySystem inventory;
 
     // Field for Game Logic
     @Override
@@ -95,24 +77,12 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         inputManager.setCursorVisible(false);
         inputManager.setMouseCursor(null); // Hides system cursor
         
-        // animateModel = new AnimateModel(assetManager, rootNode);
-
-        // Create the flash light
-        flashlight = new FlashLight(assetManager, inputManager, viewPort, rootNode);
-        
         // Initalize dialog box
         dialogBox = new DialogBox(assetManager, inputManager, guiNode, viewPort, rootNode);
-
-        // Initialize the game state
-        gameState = new GameState();
-        stateManager.attach(gameState);
         
         // Initialize the player bounds as a bounding box centered on the camera location
         float playerBoxHalfExtent = 1f; // Adjust the size as needed
         this.player.playerBounds = new BoundingBox(cam.getLocation(), playerBoxHalfExtent, playerBoxHalfExtent, playerBoxHalfExtent);
-        
-        this.inventory = new InventorySystem();
-        this.stateManager.attach(inventory);
         
         gameInputManager = new GameInputManager(inputManager, player.getYawNode(), player.getPitchNode(), null);
         gameInputManager.setActionHandler(this);
@@ -159,10 +129,6 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         return this.dialogBoxUI;
     }
     
-    public InventorySystem getInventory() {
-        return this.inventory;
-    }
-    
     public GameInputManager getGameInputManager() {
         return this.gameInputManager;
     }
@@ -187,36 +153,7 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         return this.sceneManager;
     }
     
-    // ActionListener to handle actions
-    private ActionListener actionListener = new ActionListener() {
-        @Override
-        public void onAction(String name, boolean isPressed, float tpf) {
-            if (isPressed) {
-                switch (name) {
-                    case "Change Health":
-                        handleChangeHealth();
-                        break;
-                    case "Use Item 1":
-                        if (inventory.checkItemExists(1)) {
-                            //gameState.applyHealth(inventory.useItem(1));
-                        }
-                        break;
-                    case "Use Item 2":
-                        if (inventory.checkItemExists(2)) {
-                            //gameState.applyHealth(inventory.useItem(2));
-                        }
-                        break;
-                    case "Use Item 3":
-                        if (inventory.checkItemExists(3)) {
-                            // gameState.applyHealth(inventory.useItem(3));
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-    };    
+    
 
     @Override
     public void simpleUpdate(float tpf) {
@@ -224,13 +161,6 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         // Update the classroom scene if it's active
         if (classroomScene != null) {
             this.classroomScene.update(tpf);
-        }
-        
-        // Update the sanity bar based on the GameState’s health value
-        //sanityBarUI.setSanity(gameState.getHealth());
-        
-        if (gameState.getHealth() <= 0) {
-            // System.out.println("It is easier to die than live, huh?");
         }
         
         this.player.playerBounds.setCenter(cam.getLocation());
@@ -248,23 +178,6 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     public void simpleRender(RenderManager rm) {
         //TODO: add render code
     }
-
-//    /* ActionHandler Methods */
-//    @Override
-//    public void onChangeHealth() {
-//        handleChangeHealth();
-//    }
-
-    // Manage health when an object is interacted
-    private void handleChangeHealth() {
-    }
-
-//    @Override
-//    public void onUseItem(int itemNumber) {
-//        if (inventory.checkItemExists(itemNumber)) {
-//            gameState.applyHealth(inventory.useItem(itemNumber));
-//        }
-//    }
     
     public void handleRotate(float intensity, float tpf) {
         
@@ -308,7 +221,6 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     
     @Override
     public void destroy() {
-        flashlight.cleanup();
         dialogBox.cleanup();
         super.destroy();
     }

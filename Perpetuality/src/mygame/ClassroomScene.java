@@ -362,6 +362,7 @@ public class ClassroomScene extends AbstractAppState {
             if (staticTimeElapsed > staticDuration) {
                 // End the static effect
                 hideStaticOverlay();
+                stateManager.attach(new GameState());
                 transitionToBathroom(); // Transition after static effect
             }
         }

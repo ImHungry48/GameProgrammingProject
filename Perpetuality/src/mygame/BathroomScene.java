@@ -13,7 +13,6 @@ import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import mygame.EventManagement.EventSystem;
-import mygame.SceneLoader;
 
 /**
  *
@@ -23,7 +22,6 @@ public class BathroomScene extends AbstractAppState {
     private SceneManager sceneManager;
     private Player player;
     private GameState gameState;
-    private InventorySystem inventory;
     private GameInputManager gameInputManager;
     private EventSystem eventSystem;
     private GameManager gameManager;
@@ -38,7 +36,6 @@ public class BathroomScene extends AbstractAppState {
         this.dialogBoxUI = gameManager.getDialogBoxUI();
         this.player = gameManager.getPlayer();
         this.gameState = gameManager.getGameState();
-        this.inventory = gameManager.getInventory();
         this.gameInputManager = gameManager.getGameInputManager();
         this.eventSystem = gameManager.getEventSystem(); 
         this.sceneManager = gameManager.getSceneManager();
@@ -48,10 +45,6 @@ public class BathroomScene extends AbstractAppState {
     public void initialize(AppStateManager stateManager, Application app) {
         System.out.println("Initializing bathroom");
         super.initialize(stateManager, app);
-        
-        if (!stateManager.hasState(inventory)) {
-            stateManager.attach(inventory);
-        }
         
         gameInputManager.enable();
         eventSystem.startListening();
@@ -74,7 +67,7 @@ public class BathroomScene extends AbstractAppState {
         gameInputManager.initInputMappings();
         gameInputManager.enable();
         
-        app.getInputManager().addMapping("ExitBathroom", new KeyTrigger(KeyInput.KEY_Q));
+        app.getInputManager().addMapping("ExitBathroom", new KeyTrigger(KeyInput.KEY_F));
         app.getInputManager().addListener(actionListener, "ExitBathroom");
 
         eventSystem.startListening();
