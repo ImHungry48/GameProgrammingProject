@@ -171,6 +171,7 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
    - Health: reflect player’s health status with health bar UI. Health reaches 0 triggers Game Over End State.
    - Required Num Pages: decides how many “pages” (keys) the user needs to collect to win the game.
    - Game over state: indicator for losing or winning.
+
 ![image](https://github.com/user-attachments/assets/d8301b76-1874-480b-8646-b71af9455eea)
 
 
@@ -182,6 +183,7 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
    - Each page should trigger a dialog box telling a short story.
    - If player has the right number of pages, game state announces player has won.
  - Batteries: press the button “R” to charge the flashlight.
+
 ![image](https://github.com/user-attachments/assets/240feaa1-aa5f-4c08-a698-c62798024c74)
 
 
@@ -192,6 +194,7 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
  - When the flashlight is on: health doesn’t decrease; charge status continues to decrease.
  - “Left click” on a battery to charge the flashlight
  - Flashlight turns off when charge is 0.
+
 ![image](https://github.com/user-attachments/assets/994ecf98-9c23-41a1-bd61-d4ecc73d276c)
 
 
@@ -206,6 +209,7 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
 - A second Japanese classroom scene and model are added along with associated textures; also added lights to the classroom.
 - Added fade-in screen before the first scene.
 - Created separate app states for each scene.
+
 ![image](https://github.com/user-attachments/assets/0208f7d7-72bc-4b16-a957-a9e65cb7c180)
 
 
@@ -218,8 +222,10 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
   - Added a list of dialog-box-triggering events to tell the story. The dialog box events are triggered based on elapsed time. 
   - Featured camera rotation abilities to enhance game immersion.
   - Incorporated and set-up various audio effects (ambient, breathing, tension, yelling, pickup sound) for story-telling.
-  - Jumpscare mechanisms were implemented; audio was added to enhance the effect; zoom-in effect also included. 
-<img width="191" alt="image" src="https://github.com/user-attachments/assets/5c5cf859-c7c0-44d7-8393-1367c4b7e497">
+  - Jumpscare mechanisms were implemented; audio was added to enhance the effect; zoom-in effect also included.
+
+![image](https://github.com/user-attachments/assets/40cfc6e0-28e8-462a-9569-e3e4da6bbcd8)
+
 
 
 ### DialogBox and UI Updates:
@@ -230,7 +236,9 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
 ### Robot Interactions
 - Added a beginning cutscene establishing the robot as an antagonist, establishing the story of the game.
 - Plan to add in robot walking in hallway (while being animated).
-<img width="299" alt="image" src="https://github.com/user-attachments/assets/da8ce374-52e4-449e-bc72-e54bdf56c302">
+
+![image](https://github.com/user-attachments/assets/68f126ad-c955-4752-b871-34e431bf0b1a)
+
 
 
 ### Sound: jumpscare audio + other audio effects
