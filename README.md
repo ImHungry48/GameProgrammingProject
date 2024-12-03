@@ -246,9 +246,9 @@ Loads separate scenes to optimize the game
 - Particles: smokes were added to certain parts of the scenes and on certain objects
 - Fog: added to classrooms and hallway to enhance gloominess
 - Juice:
- - Shaking Dialogue
- - Cutting Scenes
- - Jumpscare Zoom In Effect + camera shake
+  - Shaking Dialogue
+  - Cutting Scenes
+  - Jumpscare Zoom In Effect + camera shake
 
 ## Member Contribution
 - Alaisha Barber:
