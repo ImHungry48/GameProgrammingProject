@@ -242,8 +242,8 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
 
 
 ### Sound: jumpscare audio + other audio effects
-Ambient: 
-Positional: jumpscare audio 
+- Ambient
+- Positional: jumpscare audio 
 
 ### SceneManager
 Loads separate scenes to optimize the game
