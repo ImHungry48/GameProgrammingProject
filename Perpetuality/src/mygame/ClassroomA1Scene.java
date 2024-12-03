@@ -10,6 +10,8 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 
 /**
  *
@@ -24,8 +26,11 @@ public class ClassroomA1Scene extends AbstractAppState {
     private GameState gameState;
     private GameManager gameManager;
     private GameInputManager gameInputManager;
+    private Node rootNode;
     
     private final Vector3f EXIT_POINT_HALLWAY = new Vector3f(-3.3919864f, 0.8689593f, -3.9807236f);
+    
+    private Page page;
     
     public ClassroomA1Scene(GameManager gameManager) {
         this.gameManager = gameManager;
@@ -35,6 +40,7 @@ public class ClassroomA1Scene extends AbstractAppState {
         this.gameState = gameManager.getGameState();
         this.gameInputManager = gameManager.getGameInputManager();
         this.sceneManager = gameManager.getSceneManager();
+        this.rootNode = gameManager.getRootNode();
     }
     
     @Override
@@ -49,7 +55,7 @@ public class ClassroomA1Scene extends AbstractAppState {
         gameInputManager.enable();
         
         player.getPlayerNode().setLocalTranslation(
-            gameState.getPlayerPosition() != null ? gameState.getPlayerPosition() : new Vector3f(0, 0, 0)
+            gameState.getPlayerPosition() != null ? gameState.getPlayerPosition() : new Vector3f(0, 1, 0)
         );
         player.getYawNode().setLocalRotation(
             gameState.getPlayerOrientation() != null ? gameState.getPlayerOrientation() : new Quaternion()
@@ -76,6 +82,32 @@ public class ClassroomA1Scene extends AbstractAppState {
     }
     
     private void setupScene() {
+        Node sceneRoot = this.rootNode;
+        Spatial pageSpatial = sceneRoot.getChild("ExamPage");
+        
+        if (pageSpatial != null) {
+            System.out.println("Found page model: " + pageSpatial.getName());
+        
+            // Print the bounds of the page spatial
+            System.out.println("Bounds before update: " + pageSpatial.getWorldBound());
+
+            // Force update the spatial's bounds
+            pageSpatial.updateModelBound();
+            pageSpatial.updateGeometricState();
+
+            // Check the updated bounds
+            System.out.println("Bounds after update: " + pageSpatial.getWorldBound());
+
+            // If bounds are still null, ensure the spatial has a mesh
+            if (pageSpatial.getWorldBound() == null) {
+                System.err.println("World bounds are still null after update. Check if ExamPage has a valid mesh.");
+            }
+
+            page = new Page(pageSpatial, gameState.getInventory());
+
+        } else {
+            System.err.println("Page model 'ExamPage' not found in the scene!");
+        }
     }
     
     @Override

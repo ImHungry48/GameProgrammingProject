@@ -21,29 +21,29 @@ public class Page {
     private Vector3f location;
     private Spatial pageSpatial;
     private SimplifiedInventorySystem inventorySystem;
-    private Node rootNode;
-    private BulletAppState bulletAppState;    
+    private Node rootNode;   
     private SceneManager sceneManager;
     private AudioNode collectSound;
     
     
-    public Page(Vector3f location,
-            AssetManager assetManager,
-            Node rootNode,
-            SimplifiedInventorySystem simplifiedInventorySystem,
-            BulletAppState bulletAppState) {
+    public Page(Spatial pageSpatial,
+            SimplifiedInventorySystem simplifiedInventorySystem) {
         this.hasCollected = false;
-        this.location = location;
-        this.rootNode = rootNode;
-        this.inventorySystem = inventorySystem;
-        this.bulletAppState = bulletAppState;
         
-        initialize(assetManager);
+        PageControl pageControl = new PageControl(this);
+        pageSpatial.addControl(pageControl);
     }
     
     private void initialize(AssetManager assetManager) {
-        //setupAudio();
-        //Spatial page = assetManager.loadModel();
+        // Load the spatial representing the page
+        pageSpatial = assetManager.loadModel("Models/ExamPage/ExamPage.j3o");
+        pageSpatial.setName("Page");
+        pageSpatial.setLocalTranslation(location);
+        rootNode.attachChild(pageSpatial);
+
+        // Set user data to link back to this Page instance
+        PageControl pageControl = new PageControl(this);
+        pageSpatial.addControl(pageControl);
     }
     
     public boolean checkCollected() {
@@ -54,6 +54,15 @@ public class Page {
         if (this.hasCollected) return;
         
         this.hasCollected = true;
+        // Remove the page from the scene
+        pageSpatial.removeFromParent();
+
+        // Update inventory
+        inventorySystem.addItem("page");
+    }
+    
+    public Spatial getPageSpatial() {
+        return pageSpatial;
     }
     
 //    private void setupAudio() {

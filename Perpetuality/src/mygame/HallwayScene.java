@@ -11,6 +11,9 @@ import com.jme3.bounding.BoundingBox;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
+import com.jme3.texture.Texture;
+import com.jme3.util.SkyFactory;
 
 /**
  *
@@ -48,6 +51,7 @@ public class HallwayScene extends AbstractAppState {
     public void initialize(AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app);
         this.loadScene();
+        this.setupScene();
         setupExitTriggers();
         System.out.println("Initializing");
     }
@@ -57,8 +61,30 @@ public class HallwayScene extends AbstractAppState {
     }
     
     private void setupScene() {
+        this.createSkybox();
         
     }
+    
+    private void createSkybox() {
+        // Load the textures for the skybox
+        Texture west = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_west.jpeg");
+        Texture east = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_east.jpeg");
+        Texture north = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_north.jpeg");
+        Texture south = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_south.jpeg");
+        Texture up = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_up.jpeg");
+        Texture down = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_down.jpeg");
+
+        // Use SkyFactory to create a sky
+        Spatial sky = SkyFactory.createSky(
+            app.getAssetManager(),
+            west, east, north, south, up, down
+        );
+
+        // Attach the sky to the root node
+        rootNode.attachChild(sky);
+    }
+    
+    
     
     private void setupExitTriggers() {
         // Exit to Classroom A1

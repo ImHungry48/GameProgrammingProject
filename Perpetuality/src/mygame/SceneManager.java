@@ -58,4 +58,8 @@ public class SceneManager {
         
     }
     
+    public Node getRootNode() {
+        return this.rootNode;
+    }
+    
 }
