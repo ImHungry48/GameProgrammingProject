@@ -175,58 +175,76 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
 
 
 ### Simplified Inventory System
-Consumables: press button “E” to consume and increase health; consumable count decreases.
-Pages: 
-Collect three pages to pass the game.
-Each page should trigger a dialog box telling a short story.
-If player has the right number of pages, game state announces player has won.
-Batteries: press the button “R” to charge the flashlight. 
+ - Consumables: press button “E” to consume and increase health; consumable count decreases.
+ - Pages: 
+   - Collect three pages to pass the game.
+   - Each page should trigger a dialog box telling a short story.
+   - If player has the right number of pages, game state announces player has won.
+ - Batteries: press the button “R” to charge the flashlight.
+<img width="166" alt="image" src="https://github.com/user-attachments/assets/95148797-e93f-4e25-8336-ddf9feb02323">
+
 
 ### FlashLight Mechanism: 
-player needs to collect batteries to charge the flashlight, and the flashlight affects health status.
-Player can toggle the flashlight with “Right Click” only when there is battery
-When the flashlight is on: health doesn’t decrease; charge status continues to decrease.
-“Left click” on a battery to charge the flashlight
-Flashlight turns off when charge is 0.
+ - Player needs to collect batteries to charge the flashlight, and the flashlight affects health status.
+ - Player can toggle the flashlight with “Right Click” only when there is battery
+ - When the flashlight is on: health doesn’t decrease; charge status continues to decrease.
+ - “Left click” on a battery to charge the flashlight
+ - Flashlight turns off when charge is 0.
+<img width="277" alt="image" src="https://github.com/user-attachments/assets/8c083d12-78f1-437b-985c-aba9fd3b21b8">
+
 
 ### Transitions Mechanism
-Allows user to transition between different scenes 
-Added transition mechanism between bathroom, hallway, and classroom scenes: player can press “Q” to exit the bathroom if he/she is close to the exit point.
-Player can only transition if close to an exit point.
-Lots of re-factoring and cleaning were done to manage loading scenes and switching between three different scenes. 
+- Allows user to transition between different scenes 
+- Added transition mechanism between bathroom, hallway, and classroom scenes: player can press “Q” to exit the bathroom if he/she is close to the exit point.
+- Player can only transition if close to an exit point.
+- Lots of re-factoring and cleaning were done to manage loading scenes and switching between three different scenes. 
 
 ### Added/Updated scenes
-Hallway scene and model are added.
-A second Japanese classroom scene and model are added along with associated textures; also added lights to the classroom.
-Added fade-in screen before the first scene.
-Created separate app states for each scene.
+- Hallway scene and model are added.
+- A second Japanese classroom scene and model are added along with associated textures; also added lights to the classroom.
+- Added fade-in screen before the first scene.
+- Created separate app states for each scene.
+<img width="294" alt="image" src="https://github.com/user-attachments/assets/8fb5fe4e-58b1-4aaa-8d52-2492a429918c">
+
 
 ### Added interactive components to different scenes
-Bathroom interactive components
-Initial Dialog
-Pick Up FlashLight action.
-Classroom interactive components
-Added a list of dialog-box-triggering events to tell the story. The dialog box events are triggered based on elapsed time. 
-Featured camera rotation abilities to enhance game immersion.
-Incorporated and set-up various audio effects (ambient, breathing, tension, yelling, pickup sound) for story-telling.
-Jumpscare mechanisms were implemented; audio was added to enhance the effect; zoom-in effect also included. 
+- Bathroom interactive components
+  - Initial Dialog
+  - Pick Up FlashLight action
+- Classroom interactive components
+  - Added a list of dialog-box-triggering events to tell the story. The dialog box events are triggered based on elapsed time. 
+  - Featured camera rotation abilities to enhance game immersion.
+  - Incorporated and set-up various audio effects (ambient, breathing, tension, yelling, pickup sound) for story-telling.
+  - Jumpscare mechanisms were implemented; audio was added to enhance the effect; zoom-in effect also included. 
+<img width="191" alt="image" src="https://github.com/user-attachments/assets/5c5cf859-c7c0-44d7-8393-1367c4b7e497">
+
 
 ### DialogBox and UI Updates:
-Updated DialogBox Background to make it more interesting and “juicy”.
-Functions: show, hide, and clear dialog are updated.
-Shaking Dialogue is added for better visual effects. 
+- Updated DialogBox Background to make it more interesting and “juicy”.
+- Functions: show, hide, and clear dialog are updated.
+- Shaking Dialogue is added for better visual effects. 
 
 ### Robot Interactions
-Added a beginning cutscene establishing the robot as an antagonist, establishing the story of the game.
-Plan to add in robot walking around (while being animated).
+- Added a beginning cutscene establishing the robot as an antagonist, establishing the story of the game.
+- Plan to add in robot walking in hallway (while being animated).
+<img width="299" alt="image" src="https://github.com/user-attachments/assets/da8ce374-52e4-449e-bc72-e54bdf56c302">
 
-#### Sound: jumpscare audio + other audio effects
+
+### Sound: jumpscare audio + other audio effects
 Ambient: 
 Positional: jumpscare audio 
 
 ### SceneManager
 Loads separate scenes to optimize the game
 
+
+## Six Effects
+## Skybox
+- Added the jmonkey provided lagoon skybox
+## Terrain
+- Terrain was added to the hallway scene so user can see the outside terrain
+## Shadow
+- Already implemented last time for flashlight
 
 
 
