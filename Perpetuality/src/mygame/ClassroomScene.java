@@ -152,7 +152,7 @@ public class ClassroomScene extends AbstractAppState {
 
 
     public void loadScene() {
-        sceneLoader.loadScene("Scenes/Classroom_A1.j3o", this::setupScene);
+        sceneLoader.loadScene("Scenes/IntroScene.j3o", this::setupScene);
     }
 
     private void setupScene() {

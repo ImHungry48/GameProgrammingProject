@@ -84,12 +84,14 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         float playerBoxHalfExtent = 1f; // Adjust the size as needed
         this.player.playerBounds = new BoundingBox(cam.getLocation(), playerBoxHalfExtent, playerBoxHalfExtent, playerBoxHalfExtent);
         
-        gameInputManager = new GameInputManager(inputManager, player.getYawNode(), player.getPitchNode(), null);
+        gameInputManager = new GameInputManager(inputManager, player.getYawNode(), player.getPitchNode(), null, this.player);
         gameInputManager.setActionHandler(this);
         gameInputManager.setAnalogHandler(this);
         gameInputManager.setMovementHandler(this);
         
         this.eventSystem = new EventSystem(player, null, respawnPosition);
+        
+        this.gameState = new GameState();
         
         /* SCENE LOADING */
 
@@ -105,10 +107,17 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         ClassroomScene classroomScene = new ClassroomScene(this);
         BathroomScene bathroomScene = new BathroomScene(this);
         HallwayScene hallwayScene = new HallwayScene(this);
+        ClassroomA1Scene classroomA1Scene = new ClassroomA1Scene(this);
+        ClassroomA2Scene classroomA2Scene = new ClassroomA2Scene(this);
+        ClassroomA3Scene classroomA3Scene = new ClassroomA3Scene(this);
+        
         
         sceneManager.addScene("Classroom", classroomScene);
         sceneManager.addScene("Bathroom", bathroomScene);
         sceneManager.addScene("Hallway", hallwayScene);
+        sceneManager.addScene("ClassroomA1", classroomA1Scene);
+        sceneManager.addScene("ClassroomA2", classroomA2Scene);
+        sceneManager.addScene("ClassroomA3", classroomA3Scene);
         
         // Load the first scene (Classroom)
         sceneManager.switchScene("Classroom");
@@ -151,9 +160,7 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     
     public SceneManager getSceneManager() {
         return this.sceneManager;
-    }
-    
-    
+    }   
 
     @Override
     public void simpleUpdate(float tpf) {

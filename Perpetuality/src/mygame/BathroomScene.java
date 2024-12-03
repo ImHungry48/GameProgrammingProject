@@ -29,6 +29,8 @@ public class BathroomScene extends AbstractAppState {
     private SceneLoader sceneLoader;
     private DialogBoxUI dialogBoxUI;
     private boolean flashlightPickedUp = false;
+    
+    private final Vector3f EXIT_POINT_HALLWAY = new Vector3f(2.3731039f, 0.2084856f, 0.040968657f);
 
     public BathroomScene(GameManager gameManager) {
         this.gameManager = gameManager;
@@ -43,8 +45,8 @@ public class BathroomScene extends AbstractAppState {
     
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
-        System.out.println("Initializing bathroom");
         super.initialize(stateManager, app);
+        System.out.println("Initializing bathroom");
         
         gameInputManager.enable();
         eventSystem.startListening();
@@ -54,7 +56,6 @@ public class BathroomScene extends AbstractAppState {
         
         if (gameState == null) {
             System.err.println("GameState is null! Using default values.");
-            gameState = new GameState(); // Fallback to a new game state
         }
 
         player.getPlayerNode().setLocalTranslation(
@@ -63,15 +64,20 @@ public class BathroomScene extends AbstractAppState {
         player.getYawNode().setLocalRotation(
             gameState.getPlayerOrientation() != null ? gameState.getPlayerOrientation() : new Quaternion()
         );
-
-        gameInputManager.initInputMappings();
-        gameInputManager.enable();
         
-        app.getInputManager().addMapping("ExitBathroom", new KeyTrigger(KeyInput.KEY_F));
-        app.getInputManager().addListener(actionListener, "ExitBathroom");
+        // Set up the exit trigger using GameInputManager
+        gameInputManager.setupExitTrigger(new ExitTrigger(
+            EXIT_POINT_HALLWAY,
+            () -> {
+                System.out.println("Entering Hallway...");
+                sceneManager.switchScene("Hallway");
+            },
+            () -> {
+                System.out.println("Not near Hallway exit point.");
+            }
+        ));
 
         eventSystem.startListening();
-        
         
         System.out.println("Setting up scene dialog");
         setupScene();
@@ -110,27 +116,4 @@ public class BathroomScene extends AbstractAppState {
         }
     }
     
-    private ActionListener actionListener = new ActionListener() {
-        @Override
-        public void onAction(String name, boolean isPressed, float tpf) {
-            if (name.equals("ExitBathroom") && isPressed) {
-                if (isNearExitPoint(player.getPlayerNode().getWorldTranslation())) {
-                    System.out.println("Exiting room...");
-                    sceneManager.switchScene("Hallway");
-                } else {
-                    System.out.println("Not near an exit point.");
-                }
-            }
-        }
-    };
-    
-    private boolean isNearExitPoint(Vector3f playerPosition) {
-        
-        // Create the exit point
-        Vector3f exitPoint = new Vector3f(2.3731039f, 0.2084856f, 0.040968657f);
-        
-        // Check if the player is close to an exit point
-        BoundingBox exitBox = new BoundingBox(exitPoint, 1f, 2f, 1f);
-        return exitBox.contains(playerPosition);
-    }
 }

@@ -194,11 +194,7 @@ public class ParticleDustSmoke extends SimpleApplication {
 
     
     @Override
-    public void simpleUpdate(float tpf) {
-        //TODO: add update code
-        
-        // NEW FOR PARTICLE
-        
+    public void simpleUpdate(float tpf) {        
         // make the emitter fly in horizontal circles
         angle += tpf;
         angle %= FastMath.TWO_PI;

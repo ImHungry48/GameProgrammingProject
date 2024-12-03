@@ -1,5 +1,6 @@
 package mygame;
 
+import com.jme3.bounding.BoundingBox;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
@@ -10,8 +11,10 @@ import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.input.controls.Trigger;
 import com.jme3.math.FastMath;
+import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
+import java.util.ArrayList;
 
 public class GameInputManager {
 
@@ -57,6 +60,9 @@ public class GameInputManager {
     // Definition of trigger mapping names
     private final static Trigger TRIGGER_WALK = new KeyTrigger(KeyInput.KEY_SPACE);
     private final static String MAPPING_WALK = "Walk";
+    
+    private final static Trigger TRIGGER_EXIT = new KeyTrigger(KeyInput.KEY_Q);
+    private final static String MAPPING_EXIT = "Teleport";
 
     private final InputManager inputManager;
     private final Node yawNode; // Yaw node (left/right)
@@ -65,6 +71,14 @@ public class GameInputManager {
     private final AnimateModel animateModel;
 
     private boolean enabled = false;
+    
+    private final Player player;
+    
+    private Vector3f exitPoint;
+    private Runnable onExitSuccess;
+    private Runnable onExitFailure;
+    
+    private ArrayList<ExitTrigger> exitTriggers = new ArrayList<>();
     
    // Callback interfaces
     public interface ActionHandler {
@@ -80,11 +94,12 @@ public class GameInputManager {
     private AnalogHandler analogHandler;
 
     // Constructor
-    public GameInputManager(InputManager inputManager, Node yawNode, Node pitchNode, AnimateModel animateModel) {
+    public GameInputManager(InputManager inputManager, Node yawNode, Node pitchNode, AnimateModel animateModel, Player player) {
         this.inputManager = inputManager;
         this.yawNode = yawNode;
         this.pitchNode = pitchNode;
         this.animateModel = animateModel;
+        this.player = player;
     }
 
     // Methods to set the handlers
@@ -123,6 +138,12 @@ public class GameInputManager {
     
         inputManager.addMapping(MAPPING_WALK, TRIGGER_WALK);
         inputManager.addListener(actionListener, MAPPING_WALK);
+        
+        // Add the exit mapping if not already added
+        if (!inputManager.hasMapping(MAPPING_EXIT)) {
+            inputManager.addMapping(MAPPING_EXIT, TRIGGER_EXIT);
+            inputManager.addListener(exitActionListener, MAPPING_EXIT);
+        }
     }
 
     public void enable() {
@@ -157,6 +178,9 @@ public class GameInputManager {
             inputManager.removeListener(analogListener);
             inputManager.removeListener(cameraControlListener);
             inputManager.removeListener(movementListener);
+            
+            inputManager.deleteMapping(MAPPING_EXIT);
+            inputManager.removeListener(exitActionListener);
         }
     }
 
@@ -232,6 +256,14 @@ public class GameInputManager {
                 }
             }
         }
+        
+        private final AnalogListener teleportListener = new AnalogListener() {
+            @Override
+            public void onAnalog(String name, float value, float tpf) {
+                if (!enabled) return;
+                
+            }
+        };
 
         private void rotatePitchNode(float angle) {
             // Limit the pitch rotation to prevent flipping
@@ -275,4 +307,50 @@ public class GameInputManager {
         this.movementHandler = handler;
     }
     
+    public void setupExitTrigger(ExitTrigger exitTrigger) {
+        exitTriggers.add(exitTrigger);
+    }
+    
+    private final ActionListener exitActionListener = new ActionListener() {
+        @Override
+        public void onAction(String name, boolean isPressed, float tpf) {
+            if (!enabled || !isPressed) return;
+
+            if (name.equals(MAPPING_EXIT)) {
+                boolean anyTriggerActivated = false;
+                for (ExitTrigger trigger : exitTriggers) {
+                    if (trigger.isPlayerNear(player)) {
+                        trigger.execute(player);
+                        anyTriggerActivated = true;
+                        break; // Exit after the first successful trigger
+                    }
+                }
+                if (!anyTriggerActivated) {
+                    System.out.println("Not near any exit.");
+                }
+            }
+        }
+    };
+    
+    private boolean isPlayerNearExit() {
+        Vector3f playerPosition = player.getPlayerNode().getWorldTranslation();
+        BoundingBox exitBox = new BoundingBox(exitPoint, 1f, 2f, 1f); // Adjust dimensions as needed
+        
+        // Debug statements
+        System.out.println("Player position: " + playerPosition);
+        System.out.println("Exit bounding box center: " + exitBox.getCenter());
+        System.out.println("Exit bounding box extents: X=" + exitBox.getXExtent() + ", Y=" + exitBox.getYExtent() + ", Z=" + exitBox.getZExtent());
+        System.out.println("Exit bounding box min: " + exitBox.getMin(null));
+        System.out.println("Exit bounding box max: " + exitBox.getMax(null));
+        
+        boolean contains = exitBox.contains(playerPosition);
+        System.out.println("Is player near exit? " + contains);
+
+        return contains;
+    }
+    
+    public void clearExitTriggers() {
+        exitTriggers.clear();
+    }
+
 }
