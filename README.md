@@ -159,13 +159,20 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
         - Updates InventoryUI when an item is gain or used.
 ![InventoryUI](./Images/InventoryUI.png)  
 
+## Updates based on Feedback from Submission 3
+    - Finalize Game Play Mechanics: to pass the game, player should search for “pages” in the scene under the guidance of dialog boxes while managing the health state and the flashlight status. 
+    - Sanity Bar UI now reflects diverse game situations. 
+    - Robot: added into cut scene, plan to add animation for final presentation. 
+
 ## Third Deliverable
 ### GameState
-Contains inventory system
-Contains three important fields
-Health: reflect player’s health status with health bar UI. Health reaches 0 triggers Game Over End State.
-Required Num Pages: decides how many “pages” (keys) the user needs to collect to win the game.
-Game over state: indicator for losing or winning.
+   - Contains inventory system
+   - Contains three important fields
+   - Health: reflect player’s health status with health bar UI. Health reaches 0 triggers Game Over End State.
+   - Required Num Pages: decides how many “pages” (keys) the user needs to collect to win the game.
+   - Game over state: indicator for losing or winning.
+![Game State](./Images/ThirdDeliverable1.png)
+
 ### Simplified Inventory System
 Consumables: press button “E” to consume and increase health; consumable count decreases.
 Pages: 
@@ -173,22 +180,26 @@ Collect three pages to pass the game.
 Each page should trigger a dialog box telling a short story.
 If player has the right number of pages, game state announces player has won.
 Batteries: press the button “R” to charge the flashlight. 
+
 ### FlashLight Mechanism: 
 player needs to collect batteries to charge the flashlight, and the flashlight affects health status.
 Player can toggle the flashlight with “Right Click” only when there is battery
 When the flashlight is on: health doesn’t decrease; charge status continues to decrease.
 “Left click” on a battery to charge the flashlight
 Flashlight turns off when charge is 0.
+
 ### Transitions Mechanism
 Allows user to transition between different scenes 
 Added transition mechanism between bathroom, hallway, and classroom scenes: player can press “Q” to exit the bathroom if he/she is close to the exit point.
 Player can only transition if close to an exit point.
 Lots of re-factoring and cleaning were done to manage loading scenes and switching between three different scenes. 
+
 ### Added/Updated scenes
 Hallway scene and model are added.
 A second Japanese classroom scene and model are added along with associated textures; also added lights to the classroom.
 Added fade-in screen before the first scene.
 Created separate app states for each scene.
+
 ### Added interactive components to different scenes
 Bathroom interactive components
 Initial Dialog
@@ -198,16 +209,20 @@ Added a list of dialog-box-triggering events to tell the story. The dialog box e
 Featured camera rotation abilities to enhance game immersion.
 Incorporated and set-up various audio effects (ambient, breathing, tension, yelling, pickup sound) for story-telling.
 Jumpscare mechanisms were implemented; audio was added to enhance the effect; zoom-in effect also included. 
+
 ### DialogBox and UI Updates:
 Updated DialogBox Background to make it more interesting and “juicy”.
 Functions: show, hide, and clear dialog are updated.
 Shaking Dialogue is added for better visual effects. 
+
 ### Robot Interactions
 Added a beginning cutscene establishing the robot as an antagonist, establishing the story of the game.
 Plan to add in robot walking around (while being animated).
+
 #### Sound: jumpscare audio + other audio effects
 Ambient: 
 Positional: jumpscare audio 
+
 ### SceneManager
 Loads separate scenes to optimize the game
 
