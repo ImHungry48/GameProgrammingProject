@@ -171,7 +171,8 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
    - Health: reflect player’s health status with health bar UI. Health reaches 0 triggers Game Over End State.
    - Required Num Pages: decides how many “pages” (keys) the user needs to collect to win the game.
    - Game over state: indicator for losing or winning.
-<img width="206" alt="image" src="https://github.com/user-attachments/assets/db18022e-e2ea-4352-bf11-55fc0bf38048">
+![image](https://github.com/user-attachments/assets/d8301b76-1874-480b-8646-b71af9455eea)
+
 
 
 ### Simplified Inventory System
@@ -181,7 +182,8 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
    - Each page should trigger a dialog box telling a short story.
    - If player has the right number of pages, game state announces player has won.
  - Batteries: press the button “R” to charge the flashlight.
-<img width="166" alt="image" src="https://github.com/user-attachments/assets/95148797-e93f-4e25-8336-ddf9feb02323">
+![image](https://github.com/user-attachments/assets/240feaa1-aa5f-4c08-a698-c62798024c74)
+
 
 
 ### FlashLight Mechanism: 
@@ -190,7 +192,7 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
  - When the flashlight is on: health doesn’t decrease; charge status continues to decrease.
  - “Left click” on a battery to charge the flashlight
  - Flashlight turns off when charge is 0.
-<img width="277" alt="image" src="https://github.com/user-attachments/assets/8c083d12-78f1-437b-985c-aba9fd3b21b8">
+![image](https://github.com/user-attachments/assets/994ecf98-9c23-41a1-bd61-d4ecc73d276c)
 
 
 ### Transitions Mechanism
@@ -204,7 +206,8 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
 - A second Japanese classroom scene and model are added along with associated textures; also added lights to the classroom.
 - Added fade-in screen before the first scene.
 - Created separate app states for each scene.
-<img width="294" alt="image" src="https://github.com/user-attachments/assets/8fb5fe4e-58b1-4aaa-8d52-2492a429918c">
+![image](https://github.com/user-attachments/assets/0208f7d7-72bc-4b16-a957-a9e65cb7c180)
+
 
 
 ### Added interactive components to different scenes
