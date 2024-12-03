@@ -239,12 +239,35 @@ Loads separate scenes to optimize the game
 
 
 ## Six Effects
-## Skybox
-- Added the jmonkey provided lagoon skybox
-## Terrain
-- Terrain was added to the hallway scene so user can see the outside terrain
-## Shadow
-- Already implemented last time for flashlight
+- Skybox: Added the jmonkey provided lagoon skybox
+- Terrain: Terrain was added to the hallway scene so user can see the outside terrain
+- Shadow: Already implemented last time for flashlight
+- Water: Not necessary for our game, but added a puddle for now
+- Particles: smokes were added to certain parts of the scenes and on certain objects
+- Fog: added to classrooms and hallway to enhance gloominess
+- Juice:
+ - Shaking Dialogue
+ - Cutting Scenes
+ - Jumpscare Zoom In Effect + camera shake
+
+## Member Contribution
+- Alaisha Barber:
+- Chenjia Zhang:
+  - DialogBox Mechanism for events introduction and triggering.
+  - Flashlight Mechanism and interaction with the health bar.
+  - Animation for robot model.
+  - Aspects of special effects: skybox, particles, shadow, and fog. 
+  - Readme writing.
+  - Intermediate rough-sketch functions for demo purposes (cube creation and selection)
+- Michael Kim:
+  - Implemented the GameState, InventorySystem, and Flashlight
+- Collaborative:
+  - Overall brainstorming game logic and mechanics.
+  - Readme
+
+We scheduled regular Zoom meetings to discuss implementation progress and the assignment of different tasks. We mainly worked on our own and then reconvened when we were done with our individual tasks. (Note: Due to some issues with model incompatibility, I (Chenjia) had to implement features and functionalities in separate files first before incorporating them into the actual game. Alaisha and Michael helped significantly with these laborious refactoring processes, and I am very very grateful for their help ).
+
+
 
 
 
