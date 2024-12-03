@@ -171,7 +171,8 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
    - Health: reflect player’s health status with health bar UI. Health reaches 0 triggers Game Over End State.
    - Required Num Pages: decides how many “pages” (keys) the user needs to collect to win the game.
    - Game over state: indicator for losing or winning.
-![ThirdDeliverable1](./Images/ThirdDeliverable1.png)
+<img width="206" alt="image" src="https://github.com/user-attachments/assets/db18022e-e2ea-4352-bf11-55fc0bf38048">
+
 
 ### Simplified Inventory System
 Consumables: press button “E” to consume and increase health; consumable count decreases.
