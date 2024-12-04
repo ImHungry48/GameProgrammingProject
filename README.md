@@ -276,6 +276,7 @@ Loads separate scenes to optimize the game
   -  ClassroomScene.java files and relevant scene transitions (SceneManager.java)
   -  3D Models for each game scene
   -  EventSystem for ending the game and noting whether or not in bathroom (safe spot)
+  -  Audio files
 - Chenjia Zhang:
   - DialogBox Mechanism for events introduction and triggering.
   - Flashlight Mechanism and interaction with the health bar.
