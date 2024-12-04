@@ -194,31 +194,12 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         if (currentSceneRoot != null) {
             currentSceneRoot.collideWith(ray, results);
             if (results.size() > 0) {
-                System.out.println("Collided with " + results.size() + " objects.");
-                for (CollisionResult result : results) {
-                    System.out.println("Hit: " + result.getGeometry().getName());
-                }
-
-                // Handle the closest collision
-                CollisionResult closest = results.getClosestCollision();
-                Geometry geometry = closest.getGeometry();
-                System.out.println("Closest hit: " + geometry.getName());
-
-                // Traverse the scene graph to find PageControl
-                Spatial target = geometry;
-                PageControl pageControl = null;
-                while (target != null) {
-                    pageControl = target.getControl(PageControl.class);
-                    if (pageControl != null) {
-                        break;
+                Spatial clicked = results.getClosestCollision().getGeometry();
+                if (clicked != null) {
+                    CubeControl control = clicked.getControl(CubeControl.class);
+                    if (control != null) {
+                        control.onClick(); // Trigger any custom behavior in cubecontrol
                     }
-                    target = target.getParent();
-                }
-
-                if (pageControl != null) {
-                    pageControl.getPage().collectPage();
-                } else {
-                    System.err.println("No PageControl found in the hierarchy.");
                 }
             } else {
                 System.out.println("No collisions detected.");
@@ -227,8 +208,23 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
             System.err.println("Current scene root node is null.");
         }
     }
-
-
+    
+    private void handleMouseClick() {
+        Ray ray = new Ray(cam.getLocation(), cam.getDirection());
+        
+        CollisionResults results = new CollisionResults();
+        rootNode.collideWith(ray, results);
+        
+        if (results.size() > 0) {
+            Spatial clicked = results.getClosestCollision().getGeometry();
+            if (clicked != null) {
+                CubeControl control = clicked.getControl(CubeControl.class);
+                if (control != null) {
+                    control.onClick(); // Trigger any custom behavior in cubecontrol
+                }
+            }
+        }
+    }
 
     @Override
     public void simpleUpdate(float tpf) {

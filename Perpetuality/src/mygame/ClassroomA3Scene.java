@@ -39,7 +39,7 @@ public class ClassroomA3Scene extends AbstractAppState {
     
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
-        System.out.println("Initializing Classroom A1");
+        System.out.println("Initializing Classroom A3");
         super.initialize(stateManager, app);
         
         if (gameState == null) {

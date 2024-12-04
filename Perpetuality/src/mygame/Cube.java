@@ -45,6 +45,9 @@ public class Cube {
         
         node.attachChild(this.geometry);
         node.setLocalTranslation(position);
+        
+        // TODO: Debug log
+        System.out.println("Cube has been created.");
     }
 
     public String getType() {
