@@ -257,4 +257,9 @@ public class FlashlightSystem extends AbstractAppState {
     public boolean checkIfOn() {
         return isOn;
     }
+    
+    public void cleanUI() {
+        guiNode.detachChild(healthText);
+        guiNode.detachChild(healthBarForeground);
+    }
 }
