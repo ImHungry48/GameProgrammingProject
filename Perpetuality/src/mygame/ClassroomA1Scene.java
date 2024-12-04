@@ -12,6 +12,13 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+/* ---------New For Particle---------- */
+import com.jme3.effect.ParticleEmitter;
+import com.jme3.effect.ParticleMesh.Type;
+import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
+/* ------------------- */
 
 /**
  *
@@ -27,6 +34,10 @@ public class ClassroomA1Scene extends AbstractAppState {
     private GameManager gameManager;
     private GameInputManager gameInputManager;
     private Node rootNode;
+    
+    // NEW FIELD FOR PARTICLE
+    private ParticleEmitter dustEmitter;
+    private float angle = 0;
     
     private final Vector3f EXIT_POINT_HALLWAY = new Vector3f(-3.3919864f, 0.8689593f, -3.9807236f);
     
@@ -108,10 +119,51 @@ public class ClassroomA1Scene extends AbstractAppState {
         } else {
             System.err.println("Page model 'ExamPage' not found in the scene!");
         }
+        
+        // NEW FOR PARTICLE
+        // Descriptive name for emitter, and keep 20 particles of type triangle ready
+        dustEmitter = new ParticleEmitter("dust emitter", Type.Triangle, 20);
+        
+        // Set material
+        Material dustMat = new Material(gameManager.getAssetManager(),"Common/MatDefs/Misc/Particle.j3md");
+        dustEmitter.setMaterial(dustMat);
+        
+        // Load smoke.png into the Texture property of the material
+        dustMat.setTexture("Texture",gameManager.getAssetManager().loadTexture("Effects/smoke.png"));
+        
+        // Help with segmenting the image for smoke.png
+        dustEmitter.setImagesX(2);
+        dustEmitter.setImagesY(2);
+        
+        // Make dust cloud more swirly and random
+        dustEmitter.setSelectRandomImage(true);
+        dustEmitter.setRandomAngle(true);
+        dustEmitter.getParticleInfluencer().setVelocityVariation(1f); // 1f means emits particle in all directions 360 degrees
+        
+        // Attach emitter to a node
+        rootNode.attachChild(dustEmitter);
+        
+        // Can control various features of the dust
+        dustEmitter.setStartSize(1);
+        dustEmitter.setEndSize(3);
+        dustEmitter.setStartColor(ColorRGBA.LightGray);
+        dustEmitter.setEndColor(ColorRGBA.Yellow);
     }
     
     @Override
     public void update(float tpf) {
+        // make the emitter fly in horizontal circles
+//        float player_x = gameState.getPlayerPosition().x;
+//        float player_y = gameState.getPlayerPosition().y;
+//        float player_z = gameState.getPlayerPosition().z;
+        
+        angle += tpf;
+        angle %= FastMath.TWO_PI;
+        // radius is currently 3
+        float x = FastMath.cos(angle) * 3;
+        float y = FastMath.sin(angle) * 3;
+        dustEmitter.setLocalTranslation(0, 1, 0);
+        
     }
     
 }

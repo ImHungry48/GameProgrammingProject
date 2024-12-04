@@ -71,6 +71,7 @@ public class BathroomScene extends AbstractAppState {
             () -> {
                 System.out.println("Entering Hallway...");
                 sceneManager.switchScene("Hallway");
+                dialogBoxUI.hideDialog();
             },
             () -> {
                 System.out.println("Not near Hallway exit point.");

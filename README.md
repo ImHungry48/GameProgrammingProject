@@ -159,57 +159,136 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
         - Updates InventoryUI when an item is gain or used.
 ![InventoryUI](./Images/InventoryUI.png)  
 
+## Updates based on Feedback from Submission 3
+    - Finalize Game Play Mechanics: to pass the game, player should search for “pages” in the scene under the guidance of dialog boxes while managing the health state and the flashlight status. 
+    - Sanity Bar UI now reflects diverse game situations. 
+    - Robot: added into cut scene, plan to add animation for final presentation. 
+
 ## Third Deliverable
 ### GameState
-Contains inventory system
-Contains three important fields
-Health: reflect player’s health status with health bar UI. Health reaches 0 triggers Game Over End State.
-Required Num Pages: decides how many “pages” (keys) the user needs to collect to win the game.
-Game over state: indicator for losing or winning.
+   - Contains inventory system
+   - Contains three important fields
+    - Health: reflect player’s health status with health bar UI. Health reaches 0 triggers Game Over End State.
+    - Required Num Pages: decides how many “pages” (keys) the user needs to collect to win the game. (Currently 3)
+    - Game over state: indicator for losing or winning.
+
+![image](https://github.com/user-attachments/assets/d8301b76-1874-480b-8646-b71af9455eea)
+
+
+
 ### Simplified Inventory System
-Consumables: press button “E” to consume and increase health; consumable count decreases.
-Pages: 
-Collect three pages to pass the game.
-Each page should trigger a dialog box telling a short story.
-If player has the right number of pages, game state announces player has won.
-Batteries: press the button “R” to charge the flashlight. 
+ - Consumables: press button “E” to consume and increase health; consumable count decreases.
+ - Pages: 
+   - Collect three pages to pass the game.
+   - Each page should trigger a dialog box telling a short story (will add the story for the final presentation).
+   - If player has the right number of pages, game state announces player has won.
+ - Batteries: press the button “R” to charge the flashlight.
+
+![image](https://github.com/user-attachments/assets/240feaa1-aa5f-4c08-a698-c62798024c74)
+
+
+
 ### FlashLight Mechanism: 
-player needs to collect batteries to charge the flashlight, and the flashlight affects health status.
-Player can toggle the flashlight with “Right Click” only when there is battery
-When the flashlight is on: health doesn’t decrease; charge status continues to decrease.
-“Left click” on a battery to charge the flashlight
-Flashlight turns off when charge is 0.
+ - Player needs to collect batteries to charge the flashlight, and the flashlight affects health status.
+ - Player can toggle the flashlight with “Right Click” only when there is battery
+ - When the flashlight is on: health doesn’t decrease; charge status continues to decrease.
+ - “Left click” on a battery to charge the flashlight
+ - Flashlight turns off when charge is 0.
+
+![image](https://github.com/user-attachments/assets/994ecf98-9c23-41a1-bd61-d4ecc73d276c)
+
+
 ### Transitions Mechanism
-Allows user to transition between different scenes 
-Added transition mechanism between bathroom, hallway, and classroom scenes: player can press “Q” to exit the bathroom if he/she is close to the exit point.
-Player can only transition if close to an exit point.
-Lots of re-factoring and cleaning were done to manage loading scenes and switching between three different scenes. 
+- Allows user to transition between different scenes 
+- Added transition mechanism between bathroom, hallway, and classroom scenes: player can press “Q” to exit the bathroom if he/she is close to the exit point.
+- Player can only transition if close to an exit point.
+- Lots of re-factoring and cleaning were done to manage loading scenes and switching between three different scenes. 
+
 ### Added/Updated scenes
-Hallway scene and model are added.
-A second Japanese classroom scene and model are added along with associated textures; also added lights to the classroom.
-Added fade-in screen before the first scene.
-Created separate app states for each scene.
+- Hallway scene and model are added.
+- A second Japanese classroom scene and model are added along with associated textures; also added lights to the classroom.
+- Added fade-in screen before the first scene.
+- Created separate app states for each scene.
+
+![image](https://github.com/user-attachments/assets/0208f7d7-72bc-4b16-a957-a9e65cb7c180)
+
+
+
 ### Added interactive components to different scenes
-Bathroom interactive components
-Initial Dialog
-Pick Up FlashLight action.
-Classroom interactive components
-Added a list of dialog-box-triggering events to tell the story. The dialog box events are triggered based on elapsed time. 
-Featured camera rotation abilities to enhance game immersion.
-Incorporated and set-up various audio effects (ambient, breathing, tension, yelling, pickup sound) for story-telling.
-Jumpscare mechanisms were implemented; audio was added to enhance the effect; zoom-in effect also included. 
+- Bathroom interactive components
+  - Initial Dialog
+  - Pick Up FlashLight action
+- Classroom interactive components
+  - Added a list of dialog-box-triggering events to tell the story. The dialog box events are triggered based on elapsed time. 
+  - Featured camera rotation abilities to enhance game immersion.
+  - Incorporated and set-up various audio effects (ambient, breathing, tension, yelling, pickup sound) for story-telling.
+  - Jumpscare mechanisms were implemented; audio was added to enhance the effect; zoom-in effect also included.
+
+![image](https://github.com/user-attachments/assets/40cfc6e0-28e8-462a-9569-e3e4da6bbcd8)
+
+
+
 ### DialogBox and UI Updates:
-Updated DialogBox Background to make it more interesting and “juicy”.
-Functions: show, hide, and clear dialog are updated.
-Shaking Dialogue is added for better visual effects. 
+- Updated DialogBox Background to make it more interesting and “juicy”.
+- Functions: show, hide, and clear dialog are updated.
+- Shaking Dialogue is added for better visual effects. 
+
 ### Robot Interactions
-Added a beginning cutscene establishing the robot as an antagonist, establishing the story of the game.
-Plan to add in robot walking around (while being animated).
-#### Sound: jumpscare audio + other audio effects
-Ambient: 
-Positional: jumpscare audio 
+- Added a beginning cutscene establishing the robot as an antagonist, establishing the story of the game.
+- Plan to add in robot walking in hallway (while being animated).
+
+![image](https://github.com/user-attachments/assets/68f126ad-c955-4752-b871-34e431bf0b1a)
+
+
+
+### Sound: jumpscare audio + other audio effects
+- Ambient
+- Positional: jumpscare audio 
+
 ### SceneManager
 Loads separate scenes to optimize the game
+
+
+## Six Effects
+- Skybox: Added the jmonkey provided lagoon skybox
+- Terrain: Terrain was added to the hallway scene so user can see the outside terrain
+- Shadow: Already implemented last time for flashlight
+- Water: Not necessary for our game, but added a puddle for now
+- Particles: smokes were added to certain parts of the scenes and on certain objects
+- Fog: added to classrooms and hallway to enhance gloominess
+- Juice:
+  - Shaking Dialogue
+  - Cutting Scenes
+  - Jumpscare Zoom In Effect + camera shake
+  ![image](https://github.com/user-attachments/assets/afd89696-4748-4aec-8c5b-055988124c63)
+  ![image](https://github.com/user-attachments/assets/ff529cdf-b7ab-463d-b6b1-f81f1cb094a3)
+  ![image](https://github.com/user-attachments/assets/76be5fcb-c3f3-4613-b17f-9e3ff83f6a70)
+  ![image](https://github.com/user-attachments/assets/02743972-e70c-4b6b-ab37-44fd0ab72376)
+  ![Screenshot 2024-12-03 184017](https://github.com/user-attachments/assets/942d2a44-7772-424a-ab9b-b843001045aa)
+  ![Screenshot 2024-12-03 193359](https://github.com/user-attachments/assets/4665b06c-d954-4260-bc0d-112c973777ef)
+
+
+## Member Contribution
+- Alaisha Barber:
+  -  DialogBoxUI for classroom
+  -  ClassroomScene.java files and relevant scene transitions (SceneManager.java)
+  -  3D Models for each game scene
+  -  EventSystem for ending the game and noting whether or not in bathroom (safe spot)
+- Chenjia Zhang:
+  - DialogBox Mechanism for events introduction and triggering.
+  - Flashlight Mechanism and interaction with the health bar.
+  - Animation for robot model.
+  - Aspects of special effects: skybox, particles, shadow, and fog. 
+  - Readme writing.
+  - Intermediate rough-sketch functions for demo purposes (cube creation and selection)
+- Michael Kim:
+  - Implemented the GameState, InventorySystem, and Flashlight
+- Collaborative:
+  - Overall brainstorming game logic and mechanics.
+  - Readme
+
+We scheduled regular Zoom meetings to discuss implementation progress and the assignment of different tasks. We mainly worked on our own and then reconvened when we were done with our individual tasks. (Note: Due to some issues with model incompatibility, I (Chenjia) had to implement features and functionalities in separate files first before incorporating them into the actual game. Alaisha and Michael helped significantly with these laborious refactoring processes, and I am very very grateful for their help ).
+
 
 
 
