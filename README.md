@@ -264,10 +264,16 @@ Loads separate scenes to optimize the game
   ![image](https://github.com/user-attachments/assets/ff529cdf-b7ab-463d-b6b1-f81f1cb094a3)
   ![image](https://github.com/user-attachments/assets/76be5fcb-c3f3-4613-b17f-9e3ff83f6a70)
   ![image](https://github.com/user-attachments/assets/02743972-e70c-4b6b-ab37-44fd0ab72376)
+  ![Screenshot 2024-12-03 184017](https://github.com/user-attachments/assets/942d2a44-7772-424a-ab9b-b843001045aa)
+  ![Screenshot 2024-12-03 193359](https://github.com/user-attachments/assets/4665b06c-d954-4260-bc0d-112c973777ef)
 
 
 ## Member Contribution
 - Alaisha Barber:
+  -  DialogBoxUI for classroom
+  -  ClassroomScene.java files and relevant scene transitions (SceneManager.java)
+  -  3D Models for each game scene
+  -  EventSystem for ending the game and noting whether or not in bathroom (safe spot)
 - Chenjia Zhang:
   - DialogBox Mechanism for events introduction and triggering.
   - Flashlight Mechanism and interaction with the health bar.
