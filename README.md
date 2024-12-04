@@ -168,9 +168,9 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
 ### GameState
    - Contains inventory system
    - Contains three important fields
-   - Health: reflect player’s health status with health bar UI. Health reaches 0 triggers Game Over End State.
-   - Required Num Pages: decides how many “pages” (keys) the user needs to collect to win the game.
-   - Game over state: indicator for losing or winning.
+    - Health: reflect player’s health status with health bar UI. Health reaches 0 triggers Game Over End State.
+    - Required Num Pages: decides how many “pages” (keys) the user needs to collect to win the game. (Currently 3)
+    - Game over state: indicator for losing or winning.
 
 ![image](https://github.com/user-attachments/assets/d8301b76-1874-480b-8646-b71af9455eea)
 
@@ -180,7 +180,7 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
  - Consumables: press button “E” to consume and increase health; consumable count decreases.
  - Pages: 
    - Collect three pages to pass the game.
-   - Each page should trigger a dialog box telling a short story.
+   - Each page should trigger a dialog box telling a short story (will add the story for the final presentation).
    - If player has the right number of pages, game state announces player has won.
  - Batteries: press the button “R” to charge the flashlight.
 
