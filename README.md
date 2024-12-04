@@ -266,6 +266,8 @@ Loads separate scenes to optimize the game
   ![image](https://github.com/user-attachments/assets/02743972-e70c-4b6b-ab37-44fd0ab72376)
   ![Screenshot 2024-12-03 184017](https://github.com/user-attachments/assets/942d2a44-7772-424a-ab9b-b843001045aa)
   ![Screenshot 2024-12-03 193359](https://github.com/user-attachments/assets/4665b06c-d954-4260-bc0d-112c973777ef)
+  ![Screenshot 2024-12-03 194454](https://github.com/user-attachments/assets/2b0e72be-88d6-4800-a841-218917f1ffbd)
+
 
 
 ## Member Contribution
