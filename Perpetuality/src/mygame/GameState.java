@@ -32,7 +32,7 @@ public class GameState extends AbstractAppState {
     private SimplifiedInventorySystem inventory;
 
     private boolean gameOver = false;
-    private int requiredNumPages = 0;
+    private int requiredNumPages = 3;
     private boolean isSafe = false;
 
     // Health Bar Components
@@ -71,6 +71,8 @@ public class GameState extends AbstractAppState {
                 gameOver = true;
                 displayGameOverScreen(false); // Player lost
             }
+            
+            checkWin();
         }
     }
     
@@ -132,6 +134,11 @@ public class GameState extends AbstractAppState {
             1
         );
         app.getGuiNode().attachChild(gameOverText);
+        inventory.cleanUI();
+        app.getGuiNode().detachChild(healthBarBackground);
+        app.getGuiNode().detachChild(healthBarForeground);
+        app.getGuiNode().detachChild(healthText);
+        inventory.getFlashLight().cleanUI();
     }
 
 

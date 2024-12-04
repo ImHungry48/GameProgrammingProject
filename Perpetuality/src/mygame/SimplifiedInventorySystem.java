@@ -191,6 +191,14 @@ public class SimplifiedInventorySystem extends AbstractAppState {
     public FlashlightSystem getFlashLight() {
         return flashLight;
     }
+    
+    public void cleanUI() {
+ 
+        guiNode.detachChild(consumablesText);
+        guiNode.detachChild(pagesText);
+        guiNode.detachChild(batteriesText);
+
+    }
 
     @Override
     public void cleanup() {
