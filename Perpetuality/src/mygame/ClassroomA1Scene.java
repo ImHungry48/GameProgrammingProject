@@ -122,7 +122,7 @@ public class ClassroomA1Scene extends AbstractAppState {
         
         // NEW FOR PARTICLE
         // Descriptive name for emitter, and keep 20 particles of type triangle ready
-        dustEmitter = new ParticleEmitter("dust emitter", Type.Triangle, 50);
+        dustEmitter = new ParticleEmitter("dust emitter", Type.Triangle, 20);
         
         // Set material
         Material dustMat = new Material(gameManager.getAssetManager(),"Common/MatDefs/Misc/Particle.j3md");
@@ -153,16 +153,16 @@ public class ClassroomA1Scene extends AbstractAppState {
     @Override
     public void update(float tpf) {
         // make the emitter fly in horizontal circles
-        float player_x = gameState.getPlayerPosition().x;
-        float player_y = gameState.getPlayerPosition().y;
-        float player_z = gameState.getPlayerPosition().z;
+//        float player_x = gameState.getPlayerPosition().x;
+//        float player_y = gameState.getPlayerPosition().y;
+//        float player_z = gameState.getPlayerPosition().z;
         
         angle += tpf;
         angle %= FastMath.TWO_PI;
         // radius is currently 3
         float x = FastMath.cos(angle) * 3;
         float y = FastMath.sin(angle) * 3;
-        dustEmitter.setLocalTranslation(x + player_x, player_y, y + player_z);
+        dustEmitter.setLocalTranslation(0, 1, 0);
         
     }
     
