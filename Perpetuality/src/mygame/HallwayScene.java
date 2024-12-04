@@ -9,11 +9,14 @@ import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.input.controls.ActionListener;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
+import com.jme3.post.FilterPostProcessor;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
 import com.jme3.util.SkyFactory;
+import com.jme3.post.filters.FogFilter;
 
 /**
  *
@@ -63,6 +66,17 @@ public class HallwayScene extends AbstractAppState {
     private void setupScene() {
         this.createSkybox();
         
+        // Fog Filter Setup
+        FilterPostProcessor fpp = new FilterPostProcessor(app.getAssetManager());
+        FogFilter fogFilter = new FogFilter();
+
+        // Customize fog settings
+        fogFilter.setFogDistance(50f); // Adjust based on hallway dimensions
+        fogFilter.setFogDensity(0.5f); // Adjust for desired effect
+        fogFilter.setFogColor(ColorRGBA.Gray); // Match fog color to scene ambiance
+
+        fpp.addFilter(fogFilter);
+        app.getViewPort().addProcessor(fpp);
     }
     
     private void createSkybox() {
@@ -83,8 +97,6 @@ public class HallwayScene extends AbstractAppState {
         // Attach the sky to the root node
         rootNode.attachChild(sky);
     }
-    
-    
     
     private void setupExitTriggers() {
         // Exit to Classroom A1
