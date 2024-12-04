@@ -1,4 +1,4 @@
-package com.mygame;
+package mygame;
 
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
