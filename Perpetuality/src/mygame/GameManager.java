@@ -11,6 +11,8 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
+import com.jme3.font.BitmapFont;
+import com.jme3.font.BitmapText;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.MouseButtonTrigger;
@@ -105,7 +107,7 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         /* SCENE LOADING */
 
         // Initialize SceneLoader
-        this.sceneLoader = new SceneLoader(assetManager, rootNode);
+        this.sceneLoader = new SceneLoader(assetManager, rootNode, this);
 
         // Initialize DialogBox
         this.dialogBoxUI = new DialogBoxUI(this);
@@ -120,8 +122,6 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         ClassroomA2Scene classroomA2Scene = new ClassroomA2Scene(this);
         ClassroomA3Scene classroomA3Scene = new ClassroomA3Scene(this);
         
-        inputManager.addMapping("PickObject", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
-        inputManager.addListener(actionListener, "PickObject");
         
         sceneManager.addScene("Classroom", classroomScene);
         sceneManager.addScene("Bathroom", bathroomScene);
@@ -133,8 +133,12 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         // Load the first scene (Classroom)
         sceneManager.switchScene("Classroom");
         
+        inputManager.addMapping("PickObject", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+        inputManager.addListener(actionListener, "PickObject");
+        
         // Attach a cursor to the screen
         // attachCenterMark();
+        attachCrosshair();
     }  
     
     public AppStateManager getStateManager() {
@@ -177,6 +181,7 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         @Override
         public void onAction(String name, boolean isPressed, float tpf) {
             if (name.equals("PickObject") && !isPressed) {
+                System.out.println("clicking");
                 pickObject();
             }
         }
@@ -186,43 +191,39 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         Vector2f click2d = inputManager.getCursorPosition();
         Vector3f click3d = cam.getWorldCoordinates(click2d, 0f).clone();
         Vector3f dir = cam.getWorldCoordinates(click2d, 1f).subtractLocal(click3d).normalizeLocal();
-        Ray ray = new Ray(click3d, dir);
+        Ray ray = new Ray(cam.getLocation(), cam.getDirection());
 
         CollisionResults results = new CollisionResults();
         Node currentSceneRoot = sceneManager.getRootNode();
+        
+        Vector3f vector = getCamera().getLocation();
+        System.out.println(vector);
+        
+        System.out.println("hi");
+        
 
         if (currentSceneRoot != null) {
             currentSceneRoot.collideWith(ray, results);
             if (results.size() > 0) {
                 Spatial clicked = results.getClosestCollision().getGeometry();
+                System.out.println(clicked.getName());
                 if (clicked != null) {
+                    // Check if the clicked object has a PageControl
+                    PageControl pageControl = clicked.getControl(PageControl.class);
+                    if (pageControl != null) {
+                        System.out.println("page found");// Trigger custom behavior for the Page
+                    }
                     CubeControl control = clicked.getControl(CubeControl.class);
                     if (control != null) {
                         control.onClick(); // Trigger any custom behavior in cubecontrol
                     }
+
                 }
             } else {
                 System.out.println("No collisions detected.");
             }
         } else {
             System.err.println("Current scene root node is null.");
-        }
-    }
-    
-    private void handleMouseClick() {
-        Ray ray = new Ray(cam.getLocation(), cam.getDirection());
-        
-        CollisionResults results = new CollisionResults();
-        rootNode.collideWith(ray, results);
-        
-        if (results.size() > 0) {
-            Spatial clicked = results.getClosestCollision().getGeometry();
-            if (clicked != null) {
-                CubeControl control = clicked.getControl(CubeControl.class);
-                if (control != null) {
-                    control.onClick(); // Trigger any custom behavior in cubecontrol
-                }
-            }
         }
     }
 
@@ -262,6 +263,26 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     @Override
     public void onMove(String name, float value, float tpf) {
         handleMovement(name, value, tpf);
+    }
+    
+    private void attachCrosshair() {
+        // Create a new BitmapFont for the crosshair
+        BitmapFont font = assetManager.loadFont("Interface/Fonts/Default.fnt");
+        BitmapText crosshair = new BitmapText(font, false);
+
+        // Set the crosshair text to "+"
+        crosshair.setText("+");
+        crosshair.setSize(font.getCharSet().getRenderedSize() * 2); // Adjust size if needed
+
+        // Position the crosshair in the center of the screen
+        crosshair.setLocalTranslation(
+            (settings.getWidth() / 2f) - (crosshair.getLineWidth() / 2f), 
+            (settings.getHeight() / 2f) + (crosshair.getLineHeight() / 2f), 
+            0
+        );
+
+        // Attach the crosshair to the GUI node
+        guiNode.attachChild(crosshair);
     }
     
     // Implement movement logic

@@ -7,6 +7,7 @@ package mygame;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import java.util.HashMap;
 
@@ -55,6 +56,7 @@ public class SceneManager {
         } else {
             System.err.println("Scene: " + sceneName + " not found!");
         }
+        
         
     }
     

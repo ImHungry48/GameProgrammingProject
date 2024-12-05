@@ -47,6 +47,7 @@ public class CubeControl extends AbstractControl {
                 System.out.println("Clicked door");
                 if (!gameManager.getGameState().checkWin()) {
                     // Game is not finish so just end method early
+                    System.out.println("Not enough pages");
                     return;
                 }
                 gameManager.getGameState().displayGameOverScreen(true);

@@ -16,7 +16,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
 import com.jme3.util.SkyFactory;
-import com.jme3.post.filters.FogFilter;
+//import com.jme3.post.filters.FogFilter;
 
 /**
  *
@@ -68,15 +68,15 @@ public class HallwayScene extends AbstractAppState {
         
         // Fog Filter Setup
         FilterPostProcessor fpp = new FilterPostProcessor(app.getAssetManager());
-        FogFilter fogFilter = new FogFilter();
-
-        // Customize fog settings
-        fogFilter.setFogDistance(50f); // Adjust based on hallway dimensions
-        fogFilter.setFogDensity(0.5f); // Adjust for desired effect
-        fogFilter.setFogColor(ColorRGBA.Gray); // Match fog color to scene ambiance
-
-        fpp.addFilter(fogFilter);
-        app.getViewPort().addProcessor(fpp);
+//        FogFilter fogFilter = new FogFilter();
+//
+//        // Customize fog settings
+//        fogFilter.setFogDistance(50f); // Adjust based on hallway dimensions
+//        fogFilter.setFogDensity(0.5f); // Adjust for desired effect
+//        fogFilter.setFogColor(ColorRGBA.Gray); // Match fog color to scene ambiance
+//
+//        fpp.addFilter(fogFilter);
+//        app.getViewPort().addProcessor(fpp);
     }
     
     private void createSkybox() {

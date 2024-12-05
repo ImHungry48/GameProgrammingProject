@@ -1,14 +1,21 @@
 package mygame;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.bounding.BoundingVolume;
+import com.jme3.collision.Collidable;
+import com.jme3.collision.CollisionResults;
+import com.jme3.collision.UnsupportedCollisionException;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.SceneGraphVisitor;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
+import java.util.Queue;
 
-public class Cube {
+public class Cube{
     private String type;
     private Node node;
     private Geometry geometry;
@@ -25,7 +32,7 @@ public class Cube {
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         switch (type) {
             case "Consumable":
-                mat.setColor("Color", ColorRGBA.Green);
+                mat.setColor("Color", ColorRGBA.Gray);
                 break;
             case "Door":
                 mat.setColor("Color", ColorRGBA.Blue);
@@ -34,7 +41,7 @@ public class Cube {
                 mat.setColor("Color", ColorRGBA.Yellow);
                 break;
             default:
-                mat.setColor("Color", ColorRGBA.White);
+                mat.setColor("Color", ColorRGBA.Green);
                 break;
         }
         this.geometry.setMaterial(mat);

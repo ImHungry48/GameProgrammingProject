@@ -12,7 +12,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
-import com.jme3.post.filters.FogFilter;
+//import com.jme3.post.filters.FogFilter;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Spatial;
 
@@ -25,7 +25,7 @@ public class Fog extends SimpleApplication {
     
     // NEWLY ADDED FIELD FOR FOG
     private FilterPostProcessor fpp;
-    private FogFilter fogFilter;
+//    private FogFilter fogFilter;
     
     
     /**
@@ -65,13 +65,13 @@ public class Fog extends SimpleApplication {
         viewPort.addProcessor(fpp);
         
         //Initialize the FogFilter and add it to the FilterPostProcesor.
-        fogFilter = new FogFilter();
-        fogFilter.setFogDistance(155); // Can change based on when we wantt the fog to appear or disapper, the distance is relative to camera
-        fogFilter.setFogDensity(2.0f); // Can change
-        fpp.addFilter(fogFilter);
-        
-        // Can set different fog color
-        fogFilter.setFogColor(ColorRGBA.DarkGray);
+//        fogFilter = new FogFilter();
+//        fogFilter.setFogDistance(155); // Can change based on when we wantt the fog to appear or disapper, the distance is relative to camera
+//        fogFilter.setFogDensity(2.0f); // Can change
+//        fpp.addFilter(fogFilter);
+//        
+//        // Can set different fog color
+//        fogFilter.setFogColor(ColorRGBA.DarkGray);
         
         
         /* ------------------- ----------------------------------------------------------------------------*/

@@ -92,13 +92,12 @@ public class SimplifiedInventorySystem extends AbstractAppState {
 
 
     private void initUI() {
-        System.out.println("Initializing UI...");
 
         int screenHeight = app.getViewPort().getCamera().getHeight();
 
         // Load the font
         BitmapFont guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
-
+        
         // Check if consumablesText already exists before creating
         if (consumablesText == null) {
             consumablesText = createText("Consumables: " + consumablesCount, 10, screenHeight - 10);

@@ -26,8 +26,7 @@ public class Page {
     private AudioNode collectSound;
     
     
-    public Page(Spatial pageSpatial,
-            SimplifiedInventorySystem simplifiedInventorySystem) {
+    public Page(Spatial pageSpatial) {
         this.hasCollected = false;
         
         PageControl pageControl = new PageControl(this);

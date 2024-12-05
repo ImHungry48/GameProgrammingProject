@@ -32,7 +32,7 @@ public class GameState extends AbstractAppState {
     private SimplifiedInventorySystem inventory;
 
     private boolean gameOver = false;
-    private int requiredNumPages = 3;
+    private int requiredNumPages = 2;
     private boolean isSafe = false;
 
     // Health Bar Components

@@ -7,6 +7,7 @@ package mygame;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.asset.AssetManager;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -18,7 +19,7 @@ import com.jme3.effect.ParticleMesh.Type;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
-import com.jme3.post.filters.FogFilter;
+//import com.jme3.post.filters.FogFilter;
 /* ------------------- */
 
 /**
@@ -35,9 +36,11 @@ public class ClassroomA1Scene extends AbstractAppState {
     private GameManager gameManager;
     private GameInputManager gameInputManager;
     private Node rootNode;
+    private AssetManager assetManager;
+    private Cube cube;
     
     // NEW FIELD FOR PARTICLE
-    private ParticleEmitter dustEmitter;
+//    private ParticleEmitter dustEmitter;
     private float angle = 0;
     
     private final Vector3f EXIT_POINT_HALLWAY = new Vector3f(-3.3919864f, 0.8689593f, -3.9807236f);
@@ -53,6 +56,7 @@ public class ClassroomA1Scene extends AbstractAppState {
         this.gameInputManager = gameManager.getGameInputManager();
         this.sceneManager = gameManager.getSceneManager();
         this.rootNode = gameManager.getRootNode();
+        this.assetManager = gameManager.getAssetManager();
     }
     
     @Override
@@ -84,7 +88,7 @@ public class ClassroomA1Scene extends AbstractAppState {
                 System.out.println("Not near Hallway exit point.");
             }
         ));
-        
+
         this.loadScene();
         
     }
@@ -94,6 +98,7 @@ public class ClassroomA1Scene extends AbstractAppState {
     }
     
     private void setupScene() {
+        
         Node sceneRoot = this.rootNode;
         Spatial pageSpatial = sceneRoot.getChild("ExamPage");
         
@@ -115,7 +120,7 @@ public class ClassroomA1Scene extends AbstractAppState {
                 System.err.println("World bounds are still null after update. Check if ExamPage has a valid mesh.");
             }
 
-            page = new Page(pageSpatial, gameState.getInventory());
+//            page = new Page(pageSpatial);
 
         } else {
             System.err.println("Page model 'ExamPage' not found in the scene!");
@@ -123,32 +128,32 @@ public class ClassroomA1Scene extends AbstractAppState {
         
         // NEW FOR PARTICLE
         // Descriptive name for emitter, and keep 20 particles of type triangle ready
-        dustEmitter = new ParticleEmitter("dust emitter", Type.Triangle, 20);
-        
-        // Set material
-        Material dustMat = new Material(gameManager.getAssetManager(),"Common/MatDefs/Misc/Particle.j3md");
-        dustEmitter.setMaterial(dustMat);
-        
-        // Load smoke.png into the Texture property of the material
-        dustMat.setTexture("Texture",gameManager.getAssetManager().loadTexture("Effects/smoke.png"));
-        
-        // Help with segmenting the image for smoke.png
-        dustEmitter.setImagesX(2);
-        dustEmitter.setImagesY(2);
-        
-        // Make dust cloud more swirly and random
-        dustEmitter.setSelectRandomImage(true);
-        dustEmitter.setRandomAngle(true);
-        dustEmitter.getParticleInfluencer().setVelocityVariation(1f); // 1f means emits particle in all directions 360 degrees
-        
-        // Attach emitter to a node
-        rootNode.attachChild(dustEmitter);
-        
-        // Can control various features of the dust
-        dustEmitter.setStartSize(1);
-        dustEmitter.setEndSize(3);
-        dustEmitter.setStartColor(ColorRGBA.LightGray);
-        dustEmitter.setEndColor(ColorRGBA.Yellow);
+//        dustEmitter = new ParticleEmitter("dust emitter", Type.Triangle, 20);
+//        
+//        // Set material
+//        Material dustMat = new Material(gameManager.getAssetManager(),"Common/MatDefs/Misc/Particle.j3md");
+//        dustEmitter.setMaterial(dustMat);
+//        
+//        // Load smoke.png into the Texture property of the material
+//        dustMat.setTexture("Texture",gameManager.getAssetManager().loadTexture("Effects/smoke.png"));
+//        
+//        // Help with segmenting the image for smoke.png
+//        dustEmitter.setImagesX(2);
+//        dustEmitter.setImagesY(2);
+//        
+//        // Make dust cloud more swirly and random
+//        dustEmitter.setSelectRandomImage(true);
+//        dustEmitter.setRandomAngle(true);
+//        dustEmitter.getParticleInfluencer().setVelocityVariation(1f); // 1f means emits particle in all directions 360 degrees
+//        
+//        // Attach emitter to a node
+//        rootNode.attachChild(dustEmitter);
+//        
+//        // Can control various features of the dust
+//        dustEmitter.setStartSize(1);
+//        dustEmitter.setEndSize(3);
+//        dustEmitter.setStartColor(ColorRGBA.LightGray);
+//        dustEmitter.setEndColor(ColorRGBA.Yellow);
     }
     
     @Override
@@ -163,8 +168,7 @@ public class ClassroomA1Scene extends AbstractAppState {
         // radius is currently 3
         float x = FastMath.cos(angle) * 3;
         float y = FastMath.sin(angle) * 3;
-        dustEmitter.setLocalTranslation(0, 1, 0);
+//        dustEmitter.setLocalTranslation(0, 1, 0);
         
     }
-    
 }
