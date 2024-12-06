@@ -9,6 +9,8 @@ import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.bounding.BoundingBox;
+import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.control.BetterCharacterControl;
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
 import com.jme3.font.BitmapFont;
@@ -33,7 +35,8 @@ import mygame.GameInputManager.AnalogHandler;
  * @author mike0
  * Game Manager that maps the controls, set the scene up, and populate the game with interactable objects
  */
-public class GameManager extends SimpleApplication implements ActionHandler, AnalogHandler, GameInputManager.MovementHandler {    
+public class GameManager extends SimpleApplication implements ActionHandler, AnalogHandler, GameInputManager.MovementHandler {   
+    
     // Maintain the game controls
     private GameInputManager gameInputManager;
     // Maintain the state of the game
@@ -48,6 +51,7 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     private Spatial bathroomModel; 
     protected BoundingBox bathroomBounds;
     
+    // Camera
     private Node pitchNode;
     private Node yawNode;
     private final Vector3f respawnPosition = new Vector3f(3.9238453f, 0f, 0f);
@@ -59,6 +63,13 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     private ClassroomScene classroomScene;
     private DialogBoxUI dialogBoxUI;
     private SceneManager sceneManager;
+    
+    // Collisions and movement
+    private BulletAppState bulletAppState;
+    private boolean movingForward = false;
+    private boolean movingBackward = false;
+    private boolean movingLeft = false;
+    private boolean movingRight = false;
 
     // Field for Game Logic
     @Override
@@ -70,11 +81,14 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         // Detach FlyCamAppState to prevent it from interfering with cursor visibility
         stateManager.detach(stateManager.getState(FlyCamAppState.class));
         
+        bulletAppState = new BulletAppState();
+        stateManager.attach(bulletAppState);
+        
         // Initialize player spatial
         Spatial playerSpatial = assetManager.loadModel("/Models/male_base_mesh/male_base_mesh.j3o");
         
         // Initialize the player with its model and attach to root node
-        player = new Player(playerSpatial, cam);
+        player = new Player(playerSpatial, cam, bulletAppState);
         player.getPlayerNode().setLocalTranslation(0,0.5f,0);
         rootNode.attachChild(player.getPlayerNode());
         
@@ -177,11 +191,14 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         return this.sceneManager;
     }  
     
+    public BulletAppState getBulletAppState() {
+        return this.bulletAppState;
+    }
+    
     private final ActionListener actionListener = new ActionListener() {
         @Override
         public void onAction(String name, boolean isPressed, float tpf) {
             if (name.equals("PickObject") && !isPressed) {
-                System.out.println("clicking");
                 pickObject();
             }
         }
@@ -197,16 +214,11 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         Node currentSceneRoot = sceneManager.getRootNode();
         
         Vector3f vector = getCamera().getLocation();
-        System.out.println(vector);
-        
-        System.out.println("hi");
-        
 
         if (currentSceneRoot != null) {
             currentSceneRoot.collideWith(ray, results);
             if (results.size() > 0) {
                 Spatial clicked = results.getClosestCollision().getGeometry();
-                System.out.println(clicked.getName());
                 if (clicked != null) {
                     // Check if the clicked object has a PageControl
                     PageControl pageControl = clicked.getControl(PageControl.class);
@@ -235,13 +247,10 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
             this.classroomScene.update(tpf);
         }
         
-        this.player.playerBounds.setCenter(cam.getLocation());
+        // Update the physics space
+        bulletAppState.getPhysicsSpace().update(tpf);
         
-        if (bathroomModel != null && this.player.playerBounds != null) {
-            if (this.player.playerBounds.intersects((BoundingBox) bathroomModel.getWorldBound())) {
-                gameState.increaseHealth(1);
-            }
-        }
+        //updateWalkDirection(tpf);
         
         //flashlight.update(cam.getLocation(), cam.getDirection());
     }
@@ -262,7 +271,23 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     
     @Override
     public void onMove(String name, float value, float tpf) {
-        handleMovement(name, value, tpf);
+        boolean isPressed = value > 0;
+        
+        switch (name) {
+            case GameInputManager.MAPPING_FORWARD:
+                movingForward = isPressed;
+                break;
+            case GameInputManager.MAPPING_BACKWARD:
+                movingBackward = isPressed;
+                break;
+            case GameInputManager.MAPPING_LEFT:
+                movingLeft = isPressed;
+                break;
+            case GameInputManager.MAPPING_RIGHT:
+                movingRight = isPressed;
+                break;
+        }
+        updateWalkDirection(tpf);
     }
     
     private void attachCrosshair() {
@@ -284,33 +309,37 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         // Attach the crosshair to the GUI node
         guiNode.attachChild(crosshair);
     }
-    
-    // Implement movement logic
-    private void handleMovement(String name, float value, float tpf) {
-        Node playerNode = player.getPlayerNode();
-        if (playerNode != null) {
-            // Use yawNode's rotation to determine movement direction
+
+    private void updateWalkDirection(float tpf) {
+        BetterCharacterControl characterControl = player.getCharacterControl();
+        if (characterControl != null) {
             Vector3f dir = yawNode.getWorldRotation().mult(Vector3f.UNIT_Z).normalizeLocal();
             Vector3f left = yawNode.getWorldRotation().mult(Vector3f.UNIT_X).normalizeLocal();
-            float moveSpeed = 5f; // Adjust as needed
+            float moveSpeed = 100f; // Adjust speed as needed
 
-            switch (name) {
-                case GameInputManager.MAPPING_FORWARD:
-                    playerNode.move(dir.mult(value * moveSpeed));
-                    break;
-                case GameInputManager.MAPPING_BACKWARD:
-                    playerNode.move(dir.mult(-value * moveSpeed));
-                    break;
-                case GameInputManager.MAPPING_LEFT:
-                    playerNode.move(left.mult(value * moveSpeed));
-                    break;
-                case GameInputManager.MAPPING_RIGHT:
-                    playerNode.move(left.mult(-value * moveSpeed));
-                    break;
+            Vector3f walkDirection = new Vector3f(0, 0, 0);
+            if (movingForward) {
+                walkDirection.addLocal(dir);
             }
+            if (movingBackward) {
+                walkDirection.addLocal(dir.negate());
+            }
+            if (movingLeft) {
+                walkDirection.addLocal(left);
+            }
+            if (movingRight) {
+                walkDirection.addLocal(left.negate());
+            }
+
+            if (walkDirection.lengthSquared() > 0) {
+                walkDirection.normalizeLocal().multLocal(moveSpeed * tpf);
+            } else {
+                walkDirection.set(0, 0, 0); // Stop moving if no keys are pressed
+            }
+            characterControl.setWalkDirection(walkDirection);
         }
     }
-    
+
     @Override
     public void destroy() {
         dialogBox.cleanup();

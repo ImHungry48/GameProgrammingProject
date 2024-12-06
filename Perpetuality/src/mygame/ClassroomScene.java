@@ -203,6 +203,7 @@ public class ClassroomScene extends AbstractAppState {
 
     @Override
     public void update(float tpf) {
+        transitionToBathroom();
         this.elapsedTime += tpf;
 
         if (!fadeInComplete) {

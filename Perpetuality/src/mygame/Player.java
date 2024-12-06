@@ -1,6 +1,7 @@
 package mygame;
 
 import com.jme3.bounding.BoundingBox;
+import com.jme3.bullet.control.CharacterControl;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -9,6 +10,8 @@ import com.jme3.scene.CameraNode;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.CameraControl.ControlDirection;
+import com.jme3.bullet.control.BetterCharacterControl;
+import com.jme3.bullet.BulletAppState;
 
 public class Player {
     private Node playerNode;
@@ -18,8 +21,11 @@ public class Player {
     public BoundingBox playerBounds;
     private float playerHeight;
     private float eyeOffset = 0.01f;
+    private BetterCharacterControl characterControl;
+    private BulletAppState bulletAppState;
 
-    public Player(Spatial playerSpatial, Camera cam) {
+    public Player(Spatial playerSpatial, Camera cam, BulletAppState bulletAppState) {
+        this.bulletAppState = bulletAppState;
         this.playerNode = new Node("PlayerNode");
 
         // Attach the player's spatial model to the player node
@@ -51,6 +57,19 @@ public class Player {
         camNode.setLocalTranslation(0, 0, 0.1f); // Adjust as needed
         
         playerSpatial.setCullHint(Spatial.CullHint.Always);
+        
+        float radius = 0.5f; // Adjust as needed
+        float height = playerHeight; // Use playerHeight from your calculation
+        float mass = 80f; // Average human mass in kg
+
+        characterControl = new BetterCharacterControl(radius, height, mass);
+        characterControl.setGravity(new Vector3f(0, -9.81f, 0)); // Set gravity
+
+        // Add the control to the player node
+        playerNode.addControl(characterControl);
+
+        // Add the player control to the physics space
+        bulletAppState.getPhysicsSpace().add(characterControl);
     }
 
     public Node getPlayerNode() {
@@ -67,6 +86,10 @@ public class Player {
 
     public float getPlayerHeight() {
         return this.playerHeight;
+    }
+    
+    public BetterCharacterControl getCharacterControl() {
+        return this.characterControl;
     }
 
     public void setPosition(Vector3f newPosition) {

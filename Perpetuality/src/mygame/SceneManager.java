@@ -45,6 +45,7 @@ public class SceneManager {
 
     public void switchScene(String sceneName) {
         if (currentScene != null) {
+            currentScene.cleanup();
             app.getStateManager().detach(currentScene);
         }
         

@@ -12,7 +12,6 @@ import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.input.controls.Trigger;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import java.util.ArrayList;
 
@@ -80,6 +79,12 @@ public class GameInputManager {
     
     private ArrayList<ExitTrigger> exitTriggers = new ArrayList<>();
     
+    // Movement
+    private boolean movingForward;
+    private boolean movingBackward;
+    private boolean movingLeft;
+    private boolean movingRight; 
+    
    // Callback interfaces
     public interface ActionHandler {
 
@@ -134,7 +139,8 @@ public class GameInputManager {
         inputManager.addListener(actionListener, MAPPING_CHANGEHEALTH, MAPPING_ITEM1, MAPPING_ITEM2, MAPPING_ITEM3);
         inputManager.addListener(analogListener, MAPPING_ROTATE);
         inputManager.addListener(cameraControlListener, MAPPING_LOOK_LEFT, MAPPING_LOOK_RIGHT, MAPPING_LOOK_UP, MAPPING_LOOK_DOWN);
-        inputManager.addListener(movementListener, MAPPING_FORWARD, MAPPING_BACKWARD, MAPPING_LEFT, MAPPING_RIGHT);
+        inputManager.addListener(actionListener, MAPPING_FORWARD, MAPPING_BACKWARD, MAPPING_LEFT, MAPPING_RIGHT);
+        //inputManager.addListener(movementListener, MAPPING_FORWARD, MAPPING_BACKWARD, MAPPING_LEFT, MAPPING_RIGHT);
     
         inputManager.addMapping(MAPPING_WALK, TRIGGER_WALK);
         inputManager.addListener(actionListener, MAPPING_WALK);
@@ -177,7 +183,7 @@ public class GameInputManager {
             inputManager.removeListener(actionListener);
             inputManager.removeListener(analogListener);
             inputManager.removeListener(cameraControlListener);
-            inputManager.removeListener(movementListener);
+            //inputManager.removeListener(movementListener);
             
             inputManager.deleteMapping(MAPPING_EXIT);
             inputManager.removeListener(exitActionListener);
@@ -186,34 +192,28 @@ public class GameInputManager {
 
     // Action listener to handle actions
     private final ActionListener actionListener = new ActionListener() {
-        @Override
+         @Override
         public void onAction(String name, boolean isPressed, float tpf) {
             if (!enabled) return;
-            
-            if (isPressed && actionHandler != null) {
-//                switch (name) {
-//                    case MAPPING_CHANGEHEALTH:
-//                        actionHandler.onChangeHealth();
-//                        break;
-//                    case MAPPING_ITEM1:
-//                        actionHandler.onUseItem(1);
-//                        break;
-//                    case MAPPING_ITEM2:
-//                        actionHandler.onUseItem(2);
-//                        break;
-//                    case MAPPING_ITEM3:
-//                        actionHandler.onUseItem(3);
-//                        break;
-//                    default:
-//                        break;
-//                }
+
+            switch (name) {
+                case MAPPING_FORWARD:
+                    movingForward = isPressed;
+                    break;
+                case MAPPING_BACKWARD:
+                    movingBackward = isPressed;
+                    break;
+                case MAPPING_LEFT:
+                    movingLeft = isPressed;
+                    break;
+                case MAPPING_RIGHT:
+                    movingRight = isPressed;
+                    break;
             }
-            if (MAPPING_WALK.equals(name)) {
-                if (isPressed) {
-                    animateModel.startWalking();
-                } else {
-                    animateModel.stopWalking();
-                }
+        
+            
+            if (movementHandler != null) {
+                movementHandler.onMove(name, isPressed ? 1 : 0, tpf);
             }
         }
     };
@@ -283,6 +283,7 @@ public class GameInputManager {
         }
     };
     
+    
     // Movement listener to handle movement input
     private final AnalogListener movementListener = new AnalogListener() {
         @Override
@@ -325,9 +326,6 @@ public class GameInputManager {
                         break; // Exit after the first successful trigger
                     }
                 }
-                if (!anyTriggerActivated) {
-                    System.out.println("Not near any exit.");
-                }
             }
         }
     };
@@ -336,15 +334,8 @@ public class GameInputManager {
         Vector3f playerPosition = player.getPlayerNode().getWorldTranslation();
         BoundingBox exitBox = new BoundingBox(exitPoint, 1f, 2f, 1f); // Adjust dimensions as needed
         
-        // Debug statements
-        System.out.println("Player position: " + playerPosition);
-        System.out.println("Exit bounding box center: " + exitBox.getCenter());
-        System.out.println("Exit bounding box extents: X=" + exitBox.getXExtent() + ", Y=" + exitBox.getYExtent() + ", Z=" + exitBox.getZExtent());
-        System.out.println("Exit bounding box min: " + exitBox.getMin(null));
-        System.out.println("Exit bounding box max: " + exitBox.getMax(null));
-        
         boolean contains = exitBox.contains(playerPosition);
-        System.out.println("Is player near exit? " + contains);
+
 
         return contains;
     }
