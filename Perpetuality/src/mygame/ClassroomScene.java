@@ -164,12 +164,8 @@ public class ClassroomScene extends AbstractAppState {
             this.player.setPosition(spawnPoint.getWorldTranslation());
             
             // Set player's rotation to match the spawn point's rotation
-            System.out.println("Spawnpoint translation: " + spawnPoint.getWorldTranslation() + "\nSpawnpoint rotation: " + spawnPoint.getWorldRotation());
             this.player.setCameraRotation(spawnPoint.getWorldRotation());
-        } else {
-            System.err.println("Player spawn point not found in scene!");
         }
-
         // Set up lights and other scene elements
         setupLighting();
         setupJumpscareScene();
@@ -349,7 +345,6 @@ public class ClassroomScene extends AbstractAppState {
                 if (targetModel != null) {
                     targetModel.setLocalTranslation(originalModelPosition);
                 }
-                System.out.println("Jumpscare reset to original settings.");
             }
         }
         

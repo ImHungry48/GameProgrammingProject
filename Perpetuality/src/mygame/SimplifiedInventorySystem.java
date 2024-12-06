@@ -49,7 +49,7 @@ public class SimplifiedInventorySystem extends AbstractAppState {
 
         // Initialize UI
         
-        initUI();
+        this.initUI();
         
         // Initialize Flashlight
         
@@ -92,6 +92,8 @@ public class SimplifiedInventorySystem extends AbstractAppState {
 
 
     private void initUI() {
+        
+        System.out.println("[SimplifiedInventorySystem] Initiating init UI");
 
         int screenHeight = app.getViewPort().getCamera().getHeight();
 

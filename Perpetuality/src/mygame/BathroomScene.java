@@ -67,7 +67,6 @@ public class BathroomScene extends AbstractAppState {
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app);
-        System.out.println("Initializing bathroom");
 
         gameInputManager.enable();
         eventSystem.startListening();
@@ -84,22 +83,15 @@ public class BathroomScene extends AbstractAppState {
         gameInputManager.setupExitTrigger(new ExitTrigger(
             EXIT_POINT_HALLWAY,
             () -> {
-                System.out.println("Entering Hallway...");
                 sceneManager.switchScene("Hallway");
-                if (this.bulletAppState == null) {
-                    System.out.println("[BathroomScene] Bullet app state is null.");
-                }
                 dialogBoxUI.hideDialog();
             },
             () -> {
-                System.out.println("Not near Hallway exit point.");
             }
         ));
 
         eventSystem.startListening();
         setupScene();
-        
-        bulletAppState.setDebugEnabled(true);
     }
 
     public void loadScene() {

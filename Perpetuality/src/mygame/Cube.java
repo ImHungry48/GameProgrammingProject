@@ -15,7 +15,7 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import java.util.Queue;
 
-public class Cube{
+public class Cube {
     private String type;
     private Node node;
     private Geometry geometry;
@@ -41,7 +41,7 @@ public class Cube{
                 mat.setColor("Color", ColorRGBA.Yellow);
                 break;
             default:
-                mat.setColor("Color", ColorRGBA.Green);
+                mat.setColor("Color", ColorRGBA.White);
                 break;
         }
         this.geometry.setMaterial(mat);
@@ -52,9 +52,6 @@ public class Cube{
         
         node.attachChild(this.geometry);
         node.setLocalTranslation(position);
-        
-        // TODO: Debug log
-        System.out.println("Cube has been created.");
     }
 
     public String getType() {

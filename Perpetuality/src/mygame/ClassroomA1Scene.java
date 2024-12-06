@@ -73,8 +73,6 @@ public class ClassroomA1Scene extends AbstractAppState {
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app);
-        System.out.println("Initializing bathroom");
-
         gameInputManager.enable();
 
         // Load the scene
@@ -89,21 +87,14 @@ public class ClassroomA1Scene extends AbstractAppState {
         gameInputManager.setupExitTrigger(new ExitTrigger(
             EXIT_POINT_HALLWAY,
             () -> {
-                System.out.println("Entering Hallway...");
                 sceneManager.switchScene("Hallway");
-                if (this.bulletAppState == null) {
-                    System.out.println("[BathroomScene] Bullet app state is null.");
-                }
                 dialogBoxUI.hideDialog();
             },
             () -> {
-                System.out.println("Not near Hallway exit point.");
             }
         ));
 
         setupScene();
-        
-        bulletAppState.setDebugEnabled(true);
     }
     
     private void loadScene() {
@@ -116,27 +107,12 @@ public class ClassroomA1Scene extends AbstractAppState {
         Spatial pageSpatial = sceneRoot.getChild("ExamPage");
         
         if (pageSpatial != null) {
-            System.out.println("Found page model: " + pageSpatial.getName());
-        
-            // Print the bounds of the page spatial
-            System.out.println("Bounds before update: " + pageSpatial.getWorldBound());
-
             // Force update the spatial's bounds
             pageSpatial.updateModelBound();
             pageSpatial.updateGeometricState();
 
-            // Check the updated bounds
-            System.out.println("Bounds after update: " + pageSpatial.getWorldBound());
-
-            // If bounds are still null, ensure the spatial has a mesh
-            if (pageSpatial.getWorldBound() == null) {
-                System.err.println("World bounds are still null after update. Check if ExamPage has a valid mesh.");
-            }
-
 //            page = new Page(pageSpatial);
 
-        } else {
-            System.err.println("Page model 'ExamPage' not found in the scene!");
         }
         
         setUpLighting();

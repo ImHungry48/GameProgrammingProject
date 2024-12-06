@@ -31,7 +31,7 @@ public class SceneLoader {
         this.assetManager = assetManager;
         this.rootNode = rootNode;
         this.gameManager = gameManager;
-        Vector3f vector1 = new Vector3f(1, 1, 1);
+        Vector3f vector1 = new Vector3f(5.2345686f, 1.25f, 0.8517339f);
         cube1 = new Cube("Pages", gameManager.getAssetManager(), vector1, this.gameManager);
         Vector3f vector2 = new Vector3f(-3.2234416f, 2.0797584f, 43.968933f);
         cube2 = new Cube("Pages", gameManager.getAssetManager(), vector2, this.gameManager);
@@ -39,8 +39,6 @@ public class SceneLoader {
         cube3 = new Cube("Pages", gameManager.getAssetManager(), vector1, this.gameManager);
         Vector3f doorVector = new Vector3f(-11.535556f, 2.09501f, -11.38224f);
         door = new Cube("Door", gameManager.getAssetManager(), doorVector, this.gameManager);
-       
-        
     }
 
     // Method to load a scene by path
@@ -65,17 +63,13 @@ public class SceneLoader {
         
         // Display cube based on scene is up
         if ("Scenes/ClassroomA1.j3o".equals(scenePath)) {
-            System.out.println("displaying cube 1");
             rootNode.attachChild(cube1.getNode());
         }
         // Display cube based on scene is up
         else if ("Scenes/Hallway.j3o".equals(scenePath)) {
-            System.out.println("displaying cube 2");
             rootNode.attachChild(cube2.getNode());
             rootNode.attachChild(door.getNode());
-        }
-        
-        
+        } 
     }
 
     // Method to unload the current scene
