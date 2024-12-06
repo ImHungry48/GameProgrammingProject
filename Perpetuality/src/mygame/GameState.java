@@ -122,8 +122,8 @@ public class GameState extends AbstractAppState {
 
         // Make sure the background music is non-positional and loops indefinitely
         backgroundMusic.setPositional(false);
-        backgroundMusic.setLooping(true);
-        backgroundMusic.setVolume(0.3f); // Adjust volume as needed
+        backgroundMusic.setLooping(false);
+        backgroundMusic.setVolume(1f); // Adjust volume as needed
 
         // Start playing the background music
         backgroundMusic.play();

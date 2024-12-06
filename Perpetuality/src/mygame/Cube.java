@@ -25,7 +25,7 @@ public class Cube {
         this.node = new Node();
 
         // Create the cube geometry
-        Box box = new Box(0.2f, 0.2f, 0.2f);
+        Box box = new Box(0.2f, 0.2f, 0.01f);
         this.geometry = new Geometry("Cube", box);
 
         // Set a different color depending on the type

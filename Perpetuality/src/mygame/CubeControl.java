@@ -1,5 +1,6 @@
 package mygame;
 
+import com.jme3.audio.AudioNode;
 import com.jme3.scene.control.AbstractControl;
 import com.jme3.scene.Node;
 
@@ -7,10 +8,12 @@ public class CubeControl extends AbstractControl {
 
     private Cube cube;
     private GameManager gameManager;
+    private AudioNode pickUpSound;
     
     public CubeControl(Cube cube, GameManager gameManager) {
         this.cube = cube;
         this.gameManager = gameManager;
+        this.pickUpSound = new AudioNode(gameManager.getAssetManager(), "Sound/pickup-sound.wav", false);
     }
 
     @Override
@@ -37,6 +40,7 @@ public class CubeControl extends AbstractControl {
             case "Pages":
                 // Call page function here
                 gameManager.getGameState().getInventory().addItem("page");
+                this.playPickUpSound();
                 break;
                 
             case "Door":
@@ -54,5 +58,13 @@ public class CubeControl extends AbstractControl {
         if (parent != null) {
             parent.detachChild(spatial);
         }
+    }
+    
+    private void playPickUpSound() {
+        pickUpSound.setPositional(false);
+        pickUpSound.setLooping(false);
+        pickUpSound.setVolume(2f);
+        
+        pickUpSound.play();
     }
 }

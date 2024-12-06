@@ -101,7 +101,7 @@ public class HallwayScene extends AbstractAppState {
         // Customize fog settings
         fogFilter.setFogDistance(50f); // Adjust based on hallway dimensions
         fogFilter.setFogDensity(0.5f); // Adjust for desired effect
-        fogFilter.setFogColor(ColorRGBA.Gray); // Match fog color to scene ambiance
+        fogFilter.setFogColor(new ColorRGBA(0.05f, 0.05f, 0.05f, 0.75f)); // Match fog color to scene ambiance
 
         fpp.addFilter(fogFilter);
         app.getViewPort().addProcessor(fpp);
