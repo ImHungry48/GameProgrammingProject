@@ -49,8 +49,6 @@ public class ClassroomA2Scene extends AbstractAppState {
     private List<RigidBodyControl> environmentColliders = new ArrayList<>();
     private static final Vector3f SPAWNPOINT = new Vector3f(5.267465f, 1.0222735f, 4.0206456f);
     
-    // NEW FIELD FOR PARTICLE
-//    private ParticleEmitter dustEmitter;
     private float angle = 0;
     
     private final Vector3f EXIT_POINT_HALLWAY = new Vector3f(5.767753f, 0.42144895f, 5.281859f);
@@ -103,38 +101,7 @@ public class ClassroomA2Scene extends AbstractAppState {
     
     private void setupScene() {
         
-        setUpLighting();
-        
-        // NEW FOR PARTICLE
-        // Descriptive name for emitter, and keep 20 particles of type triangle ready
-//        dustEmitter = new ParticleEmitter("dust emitter", Type.Triangle, 20);
-//        
-//        // Set material
-//        Material dustMat = new Material(gameManager.getAssetManager(),"Common/MatDefs/Misc/Particle.j3md");
-//        dustEmitter.setMaterial(dustMat);
-//        
-//        // Load smoke.png into the Texture property of the material
-//        dustMat.setTexture("Texture",gameManager.getAssetManager().loadTexture("Effects/smoke.png"));
-//        
-//        // Help with segmenting the image for smoke.png
-//        dustEmitter.setImagesX(2);
-//        dustEmitter.setImagesY(2);
-//        
-//        // Make dust cloud more swirly and random
-//        dustEmitter.setSelectRandomImage(true);
-//        dustEmitter.setRandomAngle(true);
-//        dustEmitter.getParticleInfluencer().setVelocityVariation(1f); // 1f means emits particle in all directions 360 degrees
-//        
-//        // Attach emitter to a node
-//        rootNode.attachChild(dustEmitter);
-//        
-//        // Can control various features of the dust
-//        dustEmitter.setStartSize(1);
-//        dustEmitter.setEndSize(3);
-//        dustEmitter.setStartColor(ColorRGBA.LightGray);
-//        dustEmitter.setEndColor(ColorRGBA.Yellow);
-
-    }
+        setUpLighting();    }
     
     private void setUpLighting() {
         PointLight pointlight = new PointLight();

@@ -70,6 +70,8 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     private boolean movingBackward = false;
     private boolean movingLeft = false;
     private boolean movingRight = false;
+    
+    private boolean gameStateAttached = false;
 
     // Field for Game Logic
     @Override
@@ -83,6 +85,8 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         
         bulletAppState = new BulletAppState();
         stateManager.attach(bulletAppState);
+        
+        bulletAppState.setDebugEnabled(false);
                 
         // Initialize player spatial
         Spatial playerSpatial = assetManager.loadModel("/Models/male_base_mesh/male_base_mesh.j3o");
@@ -116,9 +120,8 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         
         this.eventSystem = new EventSystem(player, null, respawnPosition);
         
-        this.gameState = new GameState();
-        stateManager.attach(gameState);
-        
+        this.gameState = new GameState(this);
+                
         /* SCENE LOADING */
 
         // Initialize SceneLoader
@@ -224,7 +227,7 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
                     // Check if the clicked object has a PageControl
                     PageControl pageControl = clicked.getControl(PageControl.class);
                     if (pageControl != null) {
-                        System.out.println("page found");// Trigger custom behavior for the Page
+                        // Trigger custom behavior for the Page
                     }
                     CubeControl control = clicked.getControl(CubeControl.class);
                     if (control != null) {
@@ -233,11 +236,14 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
 
                 }
             } else {
-                System.out.println("No collisions detected.");
             }
         } else {
             System.err.println("Current scene root node is null.");
         }
+    }
+    
+    public void attachGameState() {
+        stateManager.attach(gameState);
     }
 
     @Override

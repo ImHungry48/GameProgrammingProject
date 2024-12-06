@@ -48,7 +48,7 @@ public class BathroomScene extends AbstractAppState {
     private BulletAppState bulletAppState;
     private List<RigidBodyControl> environmentColliders = new ArrayList<>();
     
-    private final Vector3f SPAWNPOINT = new Vector3f(1.5810981f, 2f, -0.9333563f);
+    private final Vector3f SPAWNPOINT = new Vector3f(1.5810981f, 1f, -0.9333563f);
     private final Vector3f EXIT_POINT_HALLWAY = new Vector3f(2.3731039f, 0.2084856f, 0.040968657f);
 
     public BathroomScene(GameManager gameManager) {
@@ -103,6 +103,8 @@ public class BathroomScene extends AbstractAppState {
         
         // Display initial dialogue
         dialogBoxUI.showDialog("Did I get sick again?", 1.0f, false);
+        
+        this.gameState.enableBackgroundMusic();
     }
 
     @Override
@@ -113,21 +115,12 @@ public class BathroomScene extends AbstractAppState {
     }
     
     private void setPlayerSpawnPoint() {
-        if (gameState == null || gameState.getPlayerPosition() == null) {
-            // Set to the bathroom spawn point
-            player.getCharacterControl().warp(SPAWNPOINT);
+        // Set to the bathroom spawn point
+        player.getCharacterControl().warp(SPAWNPOINT);
 
-            // Optionally, set the player's view direction
-            player.getCharacterControl().setViewDirection(new Vector3f(0, 0, 1)); // Adjust as needed
-        } else {
-            // Set to the saved game state position
-            player.getCharacterControl().warp(gameState.getPlayerPosition());
-
-            // Restore the player's orientation if saved
-            if (gameState.getPlayerOrientation() != null) {
-                player.getYawNode().setLocalRotation(gameState.getPlayerOrientation());
-            }
-        }
+        // Set the player's view direction
+        player.getCharacterControl().setViewDirection(new Vector3f(0, 0, 1));
+        
     }
 
     private void checkFlashlightInteraction() {
@@ -230,8 +223,8 @@ public class BathroomScene extends AbstractAppState {
             bulletAppState.getPhysicsSpace().remove(collider);
         }
         environmentColliders.clear();
-        
-        System.out.println("[BathroomScene] Clearing exit triggers");
+    
+        player.getCharacterControl().setGravity(new Vector3f(0, -9.81f, 0)); // Set gravity
         gameInputManager.clearExitTriggers();
     }
 

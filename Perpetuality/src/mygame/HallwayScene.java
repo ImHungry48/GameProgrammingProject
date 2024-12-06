@@ -7,6 +7,7 @@ package mygame;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.asset.AssetManager;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
@@ -26,6 +27,8 @@ import com.jme3.util.SkyFactory;
 import java.util.ArrayList;
 import java.util.List;
 import com.jme3.post.filters.FogFilter;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.shape.Box;
 
 /**
  *
@@ -42,8 +45,12 @@ public class HallwayScene extends AbstractAppState {
     private final SceneManager sceneManager;
     private final GameInputManager gameInputManager;
     private final GameState gameState;
+    private final AssetManager assetManager;
     private BulletAppState bulletAppState;
     private List<RigidBodyControl> environmentColliders = new ArrayList<>();
+    
+    private Box boxMesh;
+    private Geometry boxGeometry;
     
     private static final Vector3f SPAWNPOINT = new Vector3f(-2.9842114f, 0.0f, -11.511498f);
     private static final Vector3f EXIT_POINT_CLASSROOM_A1 = new Vector3f(-2.7319417f, 0.0f, 9.236806f);
@@ -63,6 +70,7 @@ public class HallwayScene extends AbstractAppState {
         this.gameInputManager = gameManager.getGameInputManager();
         this.gameState = gameManager.getGameState();
         this.bulletAppState = gameManager.getBulletAppState();
+        this.assetManager = gameManager.getAssetManager();
     }
     
     @Override
@@ -80,19 +88,49 @@ public class HallwayScene extends AbstractAppState {
     }
     
     private void setupScene() {
-        //this.createSkybox();
-        
-//        // Fog Filter Setup
-//        FilterPostProcessor fpp = new FilterPostProcessor(app.getAssetManager());
-//        FogFilter fogFilter = new FogFilter();
-//
-//        // Customize fog settings
-//        fogFilter.setFogDistance(50f); // Adjust based on hallway dimensions
-//        fogFilter.setFogDensity(0.5f); // Adjust for desired effect
-//        fogFilter.setFogColor(ColorRGBA.Gray); // Match fog color to scene ambiance
-//
-//        fpp.addFilter(fogFilter);
-//        app.getViewPort().addProcessor(fpp);
+        this.createSkybox();
+        this.setUpFog(); 
+        this.setUpExtraWalls();
+    }
+    
+    private void setUpFog() {
+        // Fog Filter Setup
+        FilterPostProcessor fpp = new FilterPostProcessor(app.getAssetManager());
+        FogFilter fogFilter = new FogFilter();
+
+        // Customize fog settings
+        fogFilter.setFogDistance(50f); // Adjust based on hallway dimensions
+        fogFilter.setFogDensity(0.5f); // Adjust for desired effect
+        fogFilter.setFogColor(ColorRGBA.Gray); // Match fog color to scene ambiance
+
+        fpp.addFilter(fogFilter);
+        app.getViewPort().addProcessor(fpp);
+    }
+    
+    private void setUpExtraWalls() {
+        // Create a basic box mesh (1x1x1) centered at (0,0,0)
+        boxMesh = new Box(0.5f, 0.5f, 0.5f);
+
+        // Create a Geometry from the box mesh
+        boxGeometry = new Geometry("BlackBox", boxMesh);
+
+        // Position the box at the given coordinates
+        boxGeometry.setLocalTranslation(-1.1967232f, 1.2643232f, 17.709482f);
+
+        // Apply the specified scale to the geometry
+        // The scale is applied uniformly to the existing geometry, 
+        // so no need to recalculate half-extents here.
+        boxGeometry.setLocalScale(1.0f, 3.8552525f, 57.153694f);
+
+        // Create a simple black material
+        Material blackMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        blackMat.setColor("Color", ColorRGBA.Black);
+
+        // Assign the material to the geometry
+        boxGeometry.setMaterial(blackMat);
+
+        // Finally, attach it to the rootNode so it becomes visible in your scene
+        rootNode.attachChild(boxGeometry);
     }
     
     private void createSkybox() {
@@ -338,6 +376,11 @@ public class HallwayScene extends AbstractAppState {
         for (RigidBodyControl collider : environmentColliders) {
             bulletAppState.getPhysicsSpace().remove(collider);
         }
+        
+        if (boxGeometry.getParent() != null) {
+            boxGeometry.removeFromParent();
+        }
+        
         environmentColliders.clear();
         
         System.out.println("[HallwayScene] Clearing exit triggers");

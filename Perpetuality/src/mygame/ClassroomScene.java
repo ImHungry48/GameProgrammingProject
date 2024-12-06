@@ -5,6 +5,8 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.audio.AudioNode;
+import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.input.InputManager;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.PointLight;
@@ -18,6 +20,7 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Quad;
 import com.jme3.ui.Picture;
 
@@ -83,6 +86,9 @@ public class ClassroomScene extends AbstractAppState {
     private float staticTimeElapsed = 0; // Timer for static effect
     private float staticDuration = 2.0f; // Duration for the static effect
     private SceneManager sceneManager;
+    
+    private BulletAppState bulletAppState;
+    private Geometry floor;
 
     public ClassroomScene(GameManager gameManager) {
         this.sceneLoader = gameManager.getSceneLoader();
@@ -91,6 +97,7 @@ public class ClassroomScene extends AbstractAppState {
         this.sceneManager = gameManager.getSceneManager();
         this.gameState = gameManager.getGameState();
         this.gameManager = gameManager;
+        this.bulletAppState = gameManager.getBulletAppState();
     }
 
     @Override
@@ -150,27 +157,39 @@ public class ClassroomScene extends AbstractAppState {
         staticOverlay.setCullHint(Spatial.CullHint.Always);
     }
 
-
     public void loadScene() {
         sceneLoader.loadScene("Scenes/IntroScene.j3o", this::setupScene);
     }
 
     private void setupScene() {
-
-        // Find spawn point and set player position if necessary
-        Spatial spawnPoint = sceneLoader.getRootNode().getChild("Classroom_A1_Spawn");
+        // Scene loaded here
+        Spatial spawnPoint = sceneLoader.getRootNode().getChild("IntroSceneSpawn");
         if (spawnPoint != null) {
-            // Set player's position to the spawn point
-            this.player.setPosition(spawnPoint.getWorldTranslation());
-            
-            // Set player's rotation to match the spawn point's rotation
-            this.player.setCameraRotation(spawnPoint.getWorldRotation());
+            Box floorBox = new Box(9.498245f / 2, 2.0f / 2, 4.7543f / 2);
+            floor = new Geometry("Floor", floorBox); // Save the reference to floor
+            floor.setLocalTranslation(-3.167885f, -0.48948693f, -4.4394712f);
+
+            floor.addControl(new RigidBodyControl(0)); // zero mass = static object
+            bulletAppState.getPhysicsSpace().add(floor);
+
+            Vector3f spawnPosition = spawnPoint.getWorldTranslation();
+            Quaternion spawnRotation = spawnPoint.getWorldRotation();
+
+            // Now that physics is on, this setPosition call will actually warp the physics body
+            player.setPosition(spawnPosition);
+            player.setCameraRotation(spawnRotation);
+
+            System.out.println("Player position after setup: " + player.getPlayerNode().getLocalTranslation());
+        } else {
+            System.err.println("Spawn point not found!");
         }
-        // Set up lights and other scene elements
+
+        // Set up lighting, audio, etc.
         setupLighting();
         setupJumpscareScene();
         setupAudio();
     }
+
     
     private void setupLighting() {
         PointLight pl = new PointLight();
@@ -199,7 +218,6 @@ public class ClassroomScene extends AbstractAppState {
 
     @Override
     public void update(float tpf) {
-        transitionToBathroom();
         this.elapsedTime += tpf;
 
         if (!fadeInComplete) {
@@ -515,11 +533,30 @@ public class ClassroomScene extends AbstractAppState {
     @Override
     public void cleanup() {
         super.cleanup();
+        
+        if (floor != null) {
+            // Get the floor's RigidBodyControl
+            RigidBodyControl floorControl = floor.getControl(RigidBodyControl.class);
+            if (floorControl != null) {
+                bulletAppState.getPhysicsSpace().remove(floorControl);
+                floor.removeControl(floorControl);
+            }
+
+            // Remove floor from the scene graph
+            if (floor.getParent() != null) {
+                floor.removeFromParent();
+            }
+
+            floor = null; // Clear the reference
+        }
+        
         if (fadeOverlay.getParent() != null) {
             fadeOverlay.removeFromParent();
         }
+        
         app.getFlyByCamera().setEnabled(true);
-        // Re-enable any inputs or settings you changed
+        
+        this.gameManager.attachGameState();
     }
    
 }

@@ -10,6 +10,7 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  *
@@ -18,6 +19,7 @@ import java.util.HashMap;
 public class SceneManager {
 
     private final HashMap<String, AbstractAppState> scenes = new HashMap<>();
+    private final HashSet<String> visitedPlaces = new HashSet<>();
     
     private SimpleApplication app;
     private AppStateManager stateManager;
@@ -61,6 +63,14 @@ public class SceneManager {
     
     public Node getRootNode() {
         return this.rootNode;
+    }
+    
+    public boolean isFirstTime(String placeName) {
+        return !visitedPlaces.contains(placeName);
+    }
+    
+    public void markVisited(String placeName) {
+        visitedPlaces.add(placeName);
     }
     
 }

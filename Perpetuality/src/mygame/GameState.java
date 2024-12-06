@@ -19,6 +19,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Quad;
+import com.jme3.audio.AudioNode;
 
 public class GameState extends AbstractAppState {
     private float health = 100;
@@ -41,10 +42,16 @@ public class GameState extends AbstractAppState {
     private float maxHealthBarWidth = 200; // Maximum width in pixels
     private float healthBarHeight = 20;    // Height in pixels
     private BitmapText healthText;
+    
+    private boolean backgroundMusicEnabled = false;
+    private AudioNode backgroundMusic;
+    
+    private GameManager gameManager;
 
-    public GameState() {
-        System.out.println("[GameState] Inventory system put in place.");
+    public GameState(GameManager gameManager) {
         this.inventory = new SimplifiedInventorySystem();
+        this.gameManager = gameManager;
+        backgroundMusic = new AudioNode(this.gameManager.getAssetManager(), "Sound/horror-background-atmosphere.wav", false);
     }
 
     @Override
@@ -64,8 +71,8 @@ public class GameState extends AbstractAppState {
     @Override
     public void update(float tpf) {
         if (!gameOver) {
-            if (this.health > 0 && !inventory.getFlashLight().checkIfOn()) {
-                this.health -= 0.001f;
+            if ((this.health > 0 && !inventory.getFlashLight().checkIfOn())) {
+                this.health -= .01f;
                 updateHealthBar();
             }
 
@@ -110,6 +117,28 @@ public class GameState extends AbstractAppState {
         return false;
     }
     
+    public void enableBackgroundMusic() {
+        backgroundMusicEnabled = true;
+
+        // Make sure the background music is non-positional and loops indefinitely
+        backgroundMusic.setPositional(false);
+        backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(0.3f); // Adjust volume as needed
+
+        // Start playing the background music
+        backgroundMusic.play();
+    }
+    
+    public void disableBackgroundMusic() {
+        if (!backgroundMusicEnabled) return;
+        
+        backgroundMusic.setPositional(false);
+        backgroundMusic.setLooping(false);
+        backgroundMusic.setVolume(0f);
+        
+        backgroundMusic.pause();
+    }
+    
     public void displayGameOverScreen(boolean isWin) {
         // Create a transparent background
         Quad backgroundQuad = new Quad(app.getCamera().getWidth(), app.getCamera().getHeight());
@@ -118,6 +147,7 @@ public class GameState extends AbstractAppState {
         bgMat.setColor("Color", new ColorRGBA(0, 0, 0, 0.5f)); // Semi-transparent black
         background.setMaterial(bgMat);
         background.setLocalTranslation(0, 0, 0);
+        disableBackgroundMusic();
         app.getGuiNode().attachChild(background);
 
         // Display the Win/Lose Message

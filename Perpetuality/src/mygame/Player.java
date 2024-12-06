@@ -23,6 +23,8 @@ public class Player {
     private float eyeOffset = 0.01f;
     private BetterCharacterControl characterControl;
     private BulletAppState bulletAppState;
+    
+    private boolean usePhysics = true;
 
     public Player(Spatial playerSpatial, Camera cam, BulletAppState bulletAppState) {
         this.bulletAppState = bulletAppState;
@@ -92,10 +94,19 @@ public class Player {
         return this.characterControl;
     }
 
+
     public void setPosition(Vector3f newPosition) {
-        playerNode.setLocalTranslation(newPosition);
-        playerBounds.setCenter(newPosition);
+        if (usePhysics && characterControl != null) {
+            characterControl.warp(newPosition); // For physics-enabled movement
+        } else {
+            playerNode.setLocalTranslation(newPosition); // Direct translation for static positioning
+        }
+
+        System.out.println("Player node set to position: " + playerNode.getLocalTranslation());
+        System.out.println("Camera world position: " + camNode.getWorldTranslation());
+        playerBounds.setCenter(newPosition); // Update bounding box
     }
+
 
     public void setCameraRotation(Quaternion rotation) {
         // Decompose the rotation into yaw and pitch
@@ -104,11 +115,7 @@ public class Player {
         float pitch = angles[0]; // Pitch rotation around X-axis
 
         yawNode.setLocalRotation(new Quaternion().fromAngles(0, yaw, 0));
-        pitchNode.setLocalRotation(new Quaternion().fromAngles(pitch, 0, 0));
-        
-        System.out.println("YawNode translation: " + yawNode.getLocalTranslation() + "\nYawNode rotation: " + yawNode.getLocalRotation());
-        System.out.println("PitchNode translation: " + pitchNode.getLocalTranslation() + "\nPitchNode rotation: " + pitchNode.getLocalRotation());
-        
+        pitchNode.setLocalRotation(new Quaternion().fromAngles(pitch, 0, 0));        
     }
    
 }
