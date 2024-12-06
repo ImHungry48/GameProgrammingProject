@@ -117,6 +117,7 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         this.eventSystem = new EventSystem(player, null, respawnPosition);
         
         this.gameState = new GameState();
+        stateManager.attach(gameState);
         
         /* SCENE LOADING */
 
@@ -315,7 +316,7 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         if (characterControl != null) {
             Vector3f dir = yawNode.getWorldRotation().mult(Vector3f.UNIT_Z).normalizeLocal();
             Vector3f left = yawNode.getWorldRotation().mult(Vector3f.UNIT_X).normalizeLocal();
-            float moveSpeed = 100f; // Adjust speed as needed
+            float moveSpeed = 200f; // Adjust speed as needed
 
             Vector3f walkDirection = new Vector3f(0, 0, 0);
             if (movingForward) {

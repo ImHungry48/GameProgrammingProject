@@ -13,6 +13,7 @@ import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.input.controls.ActionListener;
+import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
@@ -24,7 +25,7 @@ import com.jme3.texture.Texture;
 import com.jme3.util.SkyFactory;
 import java.util.ArrayList;
 import java.util.List;
-//import com.jme3.post.filters.FogFilter;
+import com.jme3.post.filters.FogFilter;
 
 /**
  *
@@ -67,15 +68,11 @@ public class HallwayScene extends AbstractAppState {
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app);
-        if (this.bulletAppState == null) {
-            System.out.println("[HallwayScene] this.bulletAppState is null");
-        }
         this.loadScene();
         this.createEnvironmentColliders();
         this.setPlayerSpawnPoint();
         this.setupScene();
         setupExitTriggers();
-        System.out.println("Initializing");
     }
     
     public void loadScene() {
@@ -83,10 +80,10 @@ public class HallwayScene extends AbstractAppState {
     }
     
     private void setupScene() {
-        this.createSkybox();
+        //this.createSkybox();
         
-        // Fog Filter Setup
-        FilterPostProcessor fpp = new FilterPostProcessor(app.getAssetManager());
+//        // Fog Filter Setup
+//        FilterPostProcessor fpp = new FilterPostProcessor(app.getAssetManager());
 //        FogFilter fogFilter = new FogFilter();
 //
 //        // Customize fog settings
@@ -112,7 +109,7 @@ public class HallwayScene extends AbstractAppState {
             app.getAssetManager(),
             west, east, north, south, up, down
         );
-
+        
         // Attach the sky to the root node
         rootNode.attachChild(sky);
     }
@@ -122,11 +119,9 @@ public class HallwayScene extends AbstractAppState {
         gameInputManager.setupExitTrigger(new ExitTrigger(
             EXIT_POINT_CLASSROOM_A1,
             () -> {
-                System.out.println("Entering Classroom A1...");
                 sceneManager.switchScene("ClassroomA1");
             },
             () -> {
-                System.out.println("Not near Classroom A1 exit point.");
             }
         ));
 
@@ -134,11 +129,9 @@ public class HallwayScene extends AbstractAppState {
         gameInputManager.setupExitTrigger(new ExitTrigger(
             EXIT_POINT_CLASSROOM_A2,
             () -> {
-                System.out.println("Entering Classroom A2...");
                 sceneManager.switchScene("ClassroomA2");
             },
             () -> {
-                System.out.println("Not near Classroom A2 exit point.");
             }
         ));
 
@@ -146,11 +139,9 @@ public class HallwayScene extends AbstractAppState {
         gameInputManager.setupExitTrigger(new ExitTrigger(
             EXIT_POINT_CLASSROOM_A3,
             () -> {
-                System.out.println("Entering Classroom A3...");
                 sceneManager.switchScene("ClassroomA3");
             },
             () -> {
-                System.out.println("Not near Classroom A3 exit point.");
             }
         ));
 
@@ -158,11 +149,9 @@ public class HallwayScene extends AbstractAppState {
         gameInputManager.setupExitTrigger(new ExitTrigger(
             EXIT_POINT_BATHROOM,
             () -> {
-                System.out.println("Entering Bathroom...");
                 sceneManager.switchScene("Bathroom");
             },
             () -> {
-                System.out.println("Not near Bathroom exit point.");
             }
         ));
     }
@@ -231,17 +220,22 @@ public class HallwayScene extends AbstractAppState {
     };
     
     private boolean isNearExitPoint(Vector3f playerPosition, String room) {
-        // Create a stub exit point
-        Vector3f exitPoint = new Vector3f(0, 0, 0);
-        
+        Vector3f exitPoint = new Vector3f(0, 0, 0); // Default value
         switch (room) {
-            case "Bathroom": exitPoint = this.EXIT_POINT_BATHROOM;
-            case "ClassroomA1": exitPoint = this.EXIT_POINT_CLASSROOM_A1;
-            case "ClassroomA2": exitPoint = this.EXIT_POINT_CLASSROOM_A2;
-            case "ClassroomA3": exitPoint = this.EXIT_POINT_CLASSROOM_A3;
+            case "Bathroom":
+                exitPoint = this.EXIT_POINT_BATHROOM;
+                break;
+            case "ClassroomA1":
+                exitPoint = this.EXIT_POINT_CLASSROOM_A1;
+                break;
+            case "ClassroomA2":
+                exitPoint = this.EXIT_POINT_CLASSROOM_A2;
+                break;
+            case "ClassroomA3":
+                exitPoint = this.EXIT_POINT_CLASSROOM_A3;
+                break;
         }
 
-        // Check if the player is close to an exit point
         BoundingBox exitBox = new BoundingBox(exitPoint, 1f, 2f, 1f);
         return exitBox.contains(playerPosition);
     }
@@ -346,6 +340,7 @@ public class HallwayScene extends AbstractAppState {
         }
         environmentColliders.clear();
         
+        System.out.println("[HallwayScene] Clearing exit triggers");
         gameInputManager.clearExitTriggers();
     }
 }

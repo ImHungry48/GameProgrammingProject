@@ -312,6 +312,12 @@ public class GameInputManager {
         exitTriggers.add(exitTrigger);
     }
     
+    public void printExitTriggers() {
+        for (ExitTrigger trigger: exitTriggers) {
+            System.out.println("[GameInputManager]" + trigger.getPosition());
+        }
+    }
+    
     private final ActionListener exitActionListener = new ActionListener() {
         @Override
         public void onAction(String name, boolean isPressed, float tpf) {

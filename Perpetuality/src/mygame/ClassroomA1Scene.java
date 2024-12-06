@@ -50,10 +50,10 @@ public class ClassroomA1Scene extends AbstractAppState {
     private static final Vector3f SPAWNPOINT = new Vector3f(5.267465f, 1.0222735f, 4.0206456f);
     
     // NEW FIELD FOR PARTICLE
-//    private ParticleEmitter dustEmitter;
+    private ParticleEmitter dustEmitter;
     private float angle = 0;
     
-    private final Vector3f EXIT_POINT_HALLWAY = new Vector3f(-3.3919864f, 0.8689593f, -3.9807236f);
+    private final Vector3f EXIT_POINT_HALLWAY = new Vector3f(5.767753f, 0.42144895f, 5.281859f);
     
     private Page page;
     
@@ -87,12 +87,14 @@ public class ClassroomA1Scene extends AbstractAppState {
         gameInputManager.setupExitTrigger(new ExitTrigger(
             EXIT_POINT_HALLWAY,
             () -> {
-                sceneManager.switchScene("Hallway");
+                this.sceneManager.switchScene("Hallway");
                 dialogBoxUI.hideDialog();
             },
             () -> {
             }
         ));
+        
+        this.gameInputManager.printExitTriggers();
 
         setupScene();
     }
@@ -103,70 +105,53 @@ public class ClassroomA1Scene extends AbstractAppState {
     
     private void setupScene() {
         
-        Node sceneRoot = this.rootNode;
-        Spatial pageSpatial = sceneRoot.getChild("ExamPage");
-        
-        if (pageSpatial != null) {
-            // Force update the spatial's bounds
-            pageSpatial.updateModelBound();
-            pageSpatial.updateGeometricState();
-
-//            page = new Page(pageSpatial);
-
-        }
-        
         setUpLighting();
         
         // NEW FOR PARTICLE
         // Descriptive name for emitter, and keep 20 particles of type triangle ready
-//        dustEmitter = new ParticleEmitter("dust emitter", Type.Triangle, 20);
-//        
-//        // Set material
-//        Material dustMat = new Material(gameManager.getAssetManager(),"Common/MatDefs/Misc/Particle.j3md");
-//        dustEmitter.setMaterial(dustMat);
-//        
-//        // Load smoke.png into the Texture property of the material
-//        dustMat.setTexture("Texture",gameManager.getAssetManager().loadTexture("Effects/smoke.png"));
-//        
-//        // Help with segmenting the image for smoke.png
-//        dustEmitter.setImagesX(2);
-//        dustEmitter.setImagesY(2);
-//        
-//        // Make dust cloud more swirly and random
-//        dustEmitter.setSelectRandomImage(true);
-//        dustEmitter.setRandomAngle(true);
-//        dustEmitter.getParticleInfluencer().setVelocityVariation(1f); // 1f means emits particle in all directions 360 degrees
-//        
-//        // Attach emitter to a node
-//        rootNode.attachChild(dustEmitter);
-//        
-//        // Can control various features of the dust
-//        dustEmitter.setStartSize(1);
-//        dustEmitter.setEndSize(3);
-//        dustEmitter.setStartColor(ColorRGBA.LightGray);
-//        dustEmitter.setEndColor(ColorRGBA.Yellow);
+        dustEmitter = new ParticleEmitter("dust emitter", Type.Triangle, 20);
+        
+        // Set material
+        Material dustMat = new Material(gameManager.getAssetManager(),"Common/MatDefs/Misc/Particle.j3md");
+        dustEmitter.setMaterial(dustMat);
+        
+        // Load smoke.png into the Texture property of the material
+        dustMat.setTexture("Texture",gameManager.getAssetManager().loadTexture("Effects/smoke.png"));
+        
+        // Help with segmenting the image for smoke.png
+        dustEmitter.setImagesX(2);
+        dustEmitter.setImagesY(2);
+        
+        // Make dust cloud more swirly and random
+        dustEmitter.setSelectRandomImage(true);
+        dustEmitter.setRandomAngle(true);
+        dustEmitter.getParticleInfluencer().setVelocityVariation(1f); // 1f means emits particle in all directions 360 degrees
+        
+        // Attach emitter to a node
+        rootNode.attachChild(dustEmitter);
+        
+        // Can control various features of the dust
+        dustEmitter.setStartSize(1);
+        dustEmitter.setEndSize(3);
+        dustEmitter.setStartColor(ColorRGBA.LightGray);
+        dustEmitter.setEndColor(ColorRGBA.Yellow);
 
     }
     
     private void setUpLighting() {
         PointLight pointlight = new PointLight();
-        pointlight.setColor(ColorRGBA.DarkGray);
+        pointlight.setColor(new ColorRGBA(0.2f, 0.2f, 0.2f, 0.75f));
         pointlight.setPosition(new Vector3f(0f, 2f, 0f));
     }
     
     @Override
-    public void update(float tpf) {
-        // make the emitter fly in horizontal circles
-//        float player_x = gameState.getPlayerPosition().x;
-//        float player_y = gameState.getPlayerPosition().y;
-//        float player_z = gameState.getPlayerPosition().z;
-        
+    public void update(float tpf) {        
         angle += tpf;
         angle %= FastMath.TWO_PI;
         // radius is currently 3
         float x = FastMath.cos(angle) * 3;
         float y = FastMath.sin(angle) * 3;
-//        dustEmitter.setLocalTranslation(0, 1, 0);
+        dustEmitter.setLocalTranslation(0, 1, 0);
         
     }
     
@@ -294,6 +279,13 @@ public class ClassroomA1Scene extends AbstractAppState {
             bulletAppState.getPhysicsSpace().remove(collider);
         }
         environmentColliders.clear();
+        
+        // Detach and clean up the dustEmitter
+        if (dustEmitter != null) {
+            dustEmitter.killAllParticles(); // Stops all particles
+            rootNode.detachChild(dustEmitter); // Detach from the scene graph
+            dustEmitter = null; // Clear the reference
+        }
         
         gameInputManager.clearExitTriggers();
     }

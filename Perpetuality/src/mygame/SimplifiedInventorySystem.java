@@ -40,6 +40,7 @@ public class SimplifiedInventorySystem extends AbstractAppState {
     
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
+        System.out.println("[SimplifiedInventorySystem] Initializing inventory.");
         super.initialize(stateManager, app);
         this.app = (SimpleApplication) app;
         

@@ -33,7 +33,7 @@ public class SceneLoader {
         this.gameManager = gameManager;
         Vector3f vector1 = new Vector3f(5.2345686f, 1.25f, 0.8517339f);
         cube1 = new Cube("Pages", gameManager.getAssetManager(), vector1, this.gameManager);
-        Vector3f vector2 = new Vector3f(-3.2234416f, 2.0797584f, 43.968933f);
+        Vector3f vector2 = new Vector3f(-3.2234416f, 2.0797584f, 30.968933f);
         cube2 = new Cube("Pages", gameManager.getAssetManager(), vector2, this.gameManager);
         Vector3f vector3 = new Vector3f(1, 1, 1);
         cube3 = new Cube("Pages", gameManager.getAssetManager(), vector1, this.gameManager);

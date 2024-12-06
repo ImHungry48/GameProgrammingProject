@@ -26,28 +26,23 @@ public class CubeControl extends AbstractControl {
     public void onClick() {
         switch (cube.getType()) {
             case "Consumable":
-                System.out.println("Taken consumable");
                 gameManager.getGameState().getInventory().addItem("consumable");
                 break;
                 
             case "Battery":
-                System.out.println("Taken battery");
                 // Call battery function here
                 gameManager.getGameState().getInventory().addItem("battery");
                 break;
                 
             case "Pages":
-                System.out.println("Taken page");
                 // Call page function here
                 gameManager.getGameState().getInventory().addItem("page");
                 break;
                 
             case "Door":
                 // Check if game is able to finish
-                System.out.println("Clicked door");
-                if (!gameManager.getGameState().checkWin()) {
+                if (!gameManager.getGameState().checkPagesGathered()) {
                     // Game is not finish so just end method early
-                    System.out.println("Not enough pages");
                     return;
                 }
                 gameManager.getGameState().displayGameOverScreen(true);

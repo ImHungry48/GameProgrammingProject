@@ -43,6 +43,7 @@ public class GameState extends AbstractAppState {
     private BitmapText healthText;
 
     public GameState() {
+        System.out.println("[GameState] Inventory system put in place.");
         this.inventory = new SimplifiedInventorySystem();
     }
 
@@ -50,9 +51,11 @@ public class GameState extends AbstractAppState {
     public void initialize(AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app);
         this.app = (SimpleApplication) app;
+        this.inventory.initialize(stateManager, app);
 
         
         stateManager.attach(this.inventory);
+        
 
         // Initialize Health Bar
         initHealthBar();
@@ -72,7 +75,9 @@ public class GameState extends AbstractAppState {
                 displayGameOverScreen(false); // Player lost
             }
 
-            checkWin();
+            if (checkPagesGathered()) {
+                displayGameOverScreen(true); // Player gathered all pages and won
+            }
         }
     }
     
@@ -96,7 +101,7 @@ public class GameState extends AbstractAppState {
         }
     }
     
-    public boolean checkWin() {
+    public boolean checkPagesGathered() {
         int pages = getInventory().getPagesCount();
         if (pages == requiredNumPages) {
             gameOver = true;

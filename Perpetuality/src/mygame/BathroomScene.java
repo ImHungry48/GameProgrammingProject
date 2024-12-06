@@ -231,6 +231,7 @@ public class BathroomScene extends AbstractAppState {
         }
         environmentColliders.clear();
         
+        System.out.println("[BathroomScene] Clearing exit triggers");
         gameInputManager.clearExitTriggers();
     }
 

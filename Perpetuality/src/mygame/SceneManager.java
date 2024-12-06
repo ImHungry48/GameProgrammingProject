@@ -57,8 +57,6 @@ public class SceneManager {
         } else {
             System.err.println("Scene: " + sceneName + " not found!");
         }
-        
-        
     }
     
     public Node getRootNode() {

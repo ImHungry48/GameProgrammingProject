@@ -36,5 +36,9 @@ public class ExitTrigger {
             if (onExitFailure != null) onExitFailure.run();
         }
     }
+    
+    public Vector3f getPosition() {
+        return this.exitPoint;
+    }
 }
 

@@ -102,7 +102,6 @@ public class DialogBox {
         Ray ray = new Ray(viewPort.getCamera().getLocation(), viewPort.getCamera().getDirection());
         rootNode.collideWith(ray, results);  // Use rootNode instead of guiNode
 
-        System.out.println("handle interaction called");
         if (results.size() > 0) {
             Geometry target = results.getClosestCollision().getGeometry();
 
