@@ -97,8 +97,6 @@ public class BathroomScene extends AbstractAppState {
         ));
 
         eventSystem.startListening();
-
-        System.out.println("Setting up scene dialog");
         setupScene();
         
         bulletAppState.setDebugEnabled(true);

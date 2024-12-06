@@ -83,7 +83,7 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         
         bulletAppState = new BulletAppState();
         stateManager.attach(bulletAppState);
-        
+                
         // Initialize player spatial
         Spatial playerSpatial = assetManager.loadModel("/Models/male_base_mesh/male_base_mesh.j3o");
         
