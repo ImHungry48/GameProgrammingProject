@@ -26,6 +26,8 @@ public class SceneLoader {
     private Cube cube3;
     private Cube door;
     
+    private Robot robot;
+    
 
     public SceneLoader(AssetManager assetManager, Node rootNode, GameManager gameManager) {
         this.assetManager = assetManager;
@@ -39,6 +41,7 @@ public class SceneLoader {
         cube3 = new Cube("Pages", gameManager.getAssetManager(), vector1, this.gameManager);
         Vector3f doorVector = new Vector3f(-11.535556f, 2.09501f, -11.38224f);
         door = new Cube("Door", gameManager.getAssetManager(), doorVector, this.gameManager);
+
     }
 
     // Method to load a scene by path
@@ -64,11 +67,14 @@ public class SceneLoader {
         // Display cube based on scene is up
         if ("Scenes/ClassroomA1.j3o".equals(scenePath)) {
             rootNode.attachChild(cube1.getNode());
+            rootNode.detachChild(gameManager.getRobot().getPlayer());
         }
         // Display cube based on scene is up
         else if ("Scenes/Hallway.j3o".equals(scenePath)) {
             rootNode.attachChild(cube2.getNode());
             rootNode.attachChild(door.getNode());
+            rootNode.attachChild(gameManager.getRobot().getPlayer());
+            gameManager.getRobot().moveTo(new Vector3f(-11.535556f, 0f, -11.38224f));
         } 
     }
 

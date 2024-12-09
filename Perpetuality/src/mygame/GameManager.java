@@ -72,6 +72,9 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     private boolean movingRight = false;
     
     private boolean gameStateAttached = false;
+    
+    // Robot
+    private Robot robot;
 
     // Field for Game Logic
     @Override
@@ -157,6 +160,9 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         // Attach a cursor to the screen
         // attachCenterMark();
         attachCrosshair();
+        
+        Spatial model = assetManager.loadModel("Models/Oto/Enemy.j3o");
+        robot = new Robot(model, new Vector3f(-11.535556f, 0f, -11.38224f));
     }  
     
     public AppStateManager getStateManager() {
@@ -165,6 +171,10 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     
     public Node getRootNode() {
         return this.rootNode;
+    }
+    
+    public Robot getRobot() {
+        return this.robot;
     }
     
     public DialogBoxUI getDialogBoxUI() {
@@ -222,6 +232,7 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         if (currentSceneRoot != null) {
             currentSceneRoot.collideWith(ray, results);
             if (results.size() > 0) {
+                System.out.println(cam.getLocation());
                 Spatial clicked = results.getClosestCollision().getGeometry();
                 if (clicked != null) {
                     // Check if the clicked object has a PageControl
@@ -257,9 +268,13 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         // Update the physics space
         bulletAppState.getPhysicsSpace().update(tpf);
         
-        //updateWalkDirection(tpf);
+        robot.update(cam.getLocation(), tpf);
         
-        //flashlight.update(cam.getLocation(), cam.getDirection());
+        if (robot.getDistance(cam.getLocation()) < 1.5f) {
+            gameState.displayGameOverScreen(false);
+        }
+        
+        
     }
 
     @Override
