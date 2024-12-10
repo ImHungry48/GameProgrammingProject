@@ -290,6 +290,13 @@ Loads separate scenes to optimize the game
 
 We scheduled regular Zoom meetings to discuss implementation progress and the assignment of different tasks. We mainly worked on our own and then reconvened when we were done with our individual tasks. (Note: Due to some issues with model incompatibility, I (Chenjia) had to implement features and functionalities in separate files first before incorporating them into the actual game. Alaisha and Michael helped significantly with these laborious refactoring processes, and I am very very grateful for their help ).
 
+## Future Work: 
+- Expanded Story Elements: Introduce additional dialog boxes to create a richer, more immersive narrative experience. This would allow for a more complete and engaging storyline.
+- Larger and More Diverse Environments: Expand the game world by including more classrooms and incorporating new scenes such as a library, cafeteria, dormitories, and other key locations to enhance exploration and variety.
+- Interactive NPCs and Objects: Add more non-player characters (NPCs) with interactive elements, as well as objects that players can engage with to create a more dynamic and engaging environment.
+- Enhanced Robot Chasing Mechanism: Implement a robust pathfinding algorithm to make the robot's movements more strategic and challenging, improving gameplay difficulty and excitement.
+- "Juicy" Gameplay Features: Add more atmospheric elements such as jumpscares and advanced visual/audio effects to heighten the tension and thrill of the game, creating a more compelling player experience.
+
 
 
 
