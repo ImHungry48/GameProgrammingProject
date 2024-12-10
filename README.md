@@ -299,6 +299,13 @@ We scheduled regular Zoom meetings to discuss implementation progress and the as
 - "Juicy" Gameplay Features: Add more atmospheric elements such as jumpscares and advanced visual/audio effects to heighten the tension and thrill of the game, creating a more compelling player experience.
 
 
+## Model Credits:
+"School_[hallway]" (https://skfb.ly/oytWP) by Comicaroid is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+"Baño Crema" (https://skfb.ly/oFWFH) by arq.manuelrodriguez is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+"Battery - Batarya" (https://skfb.ly/PUxu) by Veysel Gök is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+"LowPolly Water Bottle" (https://skfb.ly/6TuWQ) by Gabriel Tarzia is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+"Low-poly Papers Set" (https://skfb.ly/o8yVS) by Hox_Lira is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+
 
 
 
