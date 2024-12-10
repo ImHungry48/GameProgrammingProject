@@ -4,6 +4,7 @@ import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.audio.AudioNode;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
 import com.jme3.material.Material;
@@ -25,16 +26,25 @@ public class DialogBoxUI extends AbstractAppState {
     private final float boxHeight = 150; // Height of the dialog box
     private boolean isVisible = false;
     
+    private String fullText = ""; // Full dialog text
+    private int currentCharIndex = 0; // Current character index to display
+    private float charDisplayInterval = 0.05f; // Time interval between characters
+    private float charDisplayElapsed = 0; // Time elapsed since last character display
+    private AudioNode typeSound; // Sound effect for character typing    
+    
     // Shaking animation
     private boolean isShaking = false;
     private float shakeTimeElapsed = 0;
     private float shakeDuration = 1.0f;
     private float shakeIntensity = 5.0f;
     private float originalX, originalY;
+    
+    private boolean finishedDisplaying;
 
     public DialogBoxUI(Application app) {
         this.app = (SimpleApplication) app;
         this.guiNode = this.app.getGuiNode();
+        this.finishedDisplaying = false;
     }
 
     @Override
@@ -44,6 +54,7 @@ public class DialogBoxUI extends AbstractAppState {
         // Create and initialize the dialog box components
         initDialogBackground();
         initDialogText();
+        initTypeSound();
         hideDialog(); // Initially hide the dialog box
     }
 
@@ -58,14 +69,13 @@ public class DialogBoxUI extends AbstractAppState {
 
         // Position the background at the bottom center of the screen
         int screenWidth = app.getContext().getSettings().getWidth();
-        int screenHeight = app.getContext().getSettings().getHeight();
         dialogBackground.setLocalTranslation((screenWidth - boxWidth) / 2, 20, 0);
 
         guiNode.attachChild(dialogBackground);
     }
 
     private void initDialogText() {
-        BitmapFont font = app.getAssetManager().loadFont("Interface/Fonts/Default.fnt");
+        BitmapFont font = app.getAssetManager().loadFont("Interface/Fonts/Alegreya.fnt");
 
         // Initialize the text
         dialogText = new BitmapText(font, false);
@@ -84,14 +94,25 @@ public class DialogBoxUI extends AbstractAppState {
         
         guiNode.attachChild(dialogText);
     }
+    
+    public void initTypeSound() {
+        typeSound = new AudioNode(app.getAssetManager(), "Sound/text-sound.wav", false);
+        typeSound.setPositional(false);
+        typeSound.setLooping(false);
+        typeSound.setVolume(1.0f);
+    }
 
-    public void showDialog(String text, float sizeMultiplier, boolean shake) {
-        dialogText.setText(text);
+    public void showDialog(String text, float sizeMultiplier, boolean shake) {        
+        fullText = text;
+        currentCharIndex = 0;
+        charDisplayElapsed = 0;
+        finishedDisplaying = false;
+        
+        dialogText.setText("");
         
         BitmapFont font = app.getAssetManager().loadFont("Interface/Fonts/Default.fnt");
         dialogText.setSize(font.getCharSet().getRenderedSize() * sizeMultiplier);
         
-  
         dialogBackground.setCullHint(Geometry.CullHint.Never);
         dialogText.setCullHint(Geometry.CullHint.Never);
         isVisible = true;
@@ -123,6 +144,26 @@ public class DialogBoxUI extends AbstractAppState {
                 dialogText.setLocalTranslation(originalX + offsetX, originalY + offsetY, 1);
             }
         }
+        
+        if (isVisible && currentCharIndex < fullText.length()) {
+            charDisplayElapsed += tpf;
+
+            if (charDisplayElapsed >= charDisplayInterval && currentCharIndex < fullText.length()) {
+                // Reveal the next character
+                dialogText.setText(fullText.substring(0, currentCharIndex + 1));
+                currentCharIndex++;
+
+                // Play type sound
+                typeSound.playInstance();
+
+                // Reset timer
+                charDisplayElapsed = 0;
+            }
+            
+            if (currentCharIndex >= fullText.length()) {
+                finishedDisplaying = true;
+            }
+        }
     }
 
     public boolean isDialogVisible() {
@@ -146,6 +187,10 @@ public class DialogBoxUI extends AbstractAppState {
     public void showDialogWithShake(String text, float sizeMultiplier, float shakeDuration, float shakeIntensity) {
         showDialog(text, sizeMultiplier, true);
         startShake(shakeDuration, shakeIntensity);
+    }
+    
+    public boolean isFinishedDisplaying() {
+        return this.finishedDisplaying;
     }
 
 }

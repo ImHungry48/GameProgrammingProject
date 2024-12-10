@@ -100,6 +100,18 @@ public class ClassroomScene extends AbstractAppState {
     private BitmapText skipText;
     
     private boolean skipped = false;
+    
+    private int currentDialogIndex = 0; // Tracks the current dialog in the sequence
+    private boolean isDialogActive = true; // Tracks if dialog is currently active
+    
+    private final String[] dialogSequence = {
+    "Alright students. You have one hour to complete the exam. Keep your eyes on your own paper.",
+    "[I can't believe this is happening. I've barely studied for this.]",
+    "Your exam will begin soon. Remember, no talking. If you are caught cheating, you will be disqualified.",
+    "[I can't even read this.]",
+    "I'm gonna be sick.",
+    "HEY!" // This dialog triggers the jumpscare
+    };
 
     public ClassroomScene(GameManager gameManager) {
         this.sceneLoader = gameManager.getSceneLoader();
@@ -108,8 +120,7 @@ public class ClassroomScene extends AbstractAppState {
         this.sceneManager = gameManager.getSceneManager();
         this.gameState = gameManager.getGameState();
         this.gameManager = gameManager;
-        this.bulletAppState = gameManager.getBulletAppState();
-        
+        this.bulletAppState = gameManager.getBulletAppState();      
     }
 
     @Override
@@ -126,13 +137,24 @@ public class ClassroomScene extends AbstractAppState {
         // Map SPACE key for skipping
         this.app.getInputManager().addMapping("SkipScene", new KeyTrigger(KeyInput.KEY_SPACE));
         this.app.getInputManager().addListener(skipListener, "SkipScene");
+        
+        // Map a key or mouse button to progress the dialog
+        this.inputManager.addMapping("NextDialog", new KeyTrigger(KeyInput.KEY_RETURN)); // Enter key
+        this.inputManager.addListener(dialogListener, "NextDialog");
 
         initializeFadeOverlay();
         initializeStaticOverlay();
         loadScene();
         setupCam();
         disablePlayerMovement();
+        showNextDialog(); // Start with the first dialog
     }
+    
+    private final ActionListener dialogListener = (name, isPressed, tpf) -> {
+        if (!isPressed && name.equals("NextDialog") && isDialogActive) {
+            showNextDialog();
+        }
+    };
 
     private void initializeFadeOverlay() {
         int screenWidth = app.getContext().getSettings().getWidth();
@@ -212,6 +234,7 @@ public class ClassroomScene extends AbstractAppState {
     }
 
     public void loadScene() {
+        System.out.println("[ClassroomScene.java] Loading the scene.");
         sceneLoader.loadScene("Scenes/IntroScene.j3o", this::setupScene);
     }
 
@@ -267,28 +290,34 @@ public class ClassroomScene extends AbstractAppState {
         this.originalYawRotation = player.getYawNode().getLocalRotation().clone();
         this.originalPitchRotation = player.getPitchNode().getLocalRotation().clone();
     }
-
+    
+    /*
     @Override
     public void update(float tpf) {
-        if (skipped) transitionToBathroom();
+        if (skipped) {
+            transitionToBathroom();
+        }
+
         this.elapsedTime += tpf;
 
         if (!fadeInComplete) {
             updateFadeIn(tpf);
         } else if (!transitionTriggered) {
+            // Show the first dialog
             if (elapsedTime > 10 && !dialogShown1) {
                 dialogBoxUI.showDialog("Alright students. You have one hour to complete the exam. Keep your eyes on your own paper.", 1.5f, false);
-                dialogShown1 = true; // Flag to ensure this executes only once
+                dialogShown1 = true;
             }
 
-            if (elapsedTime > 15 && !dialogShown2) {
+            // Wait for the first dialog to finish displaying before moving to the next
+            if (dialogShown1 && dialogBoxUI.isDialogVisible() && dialogBoxUI.isFinishedDisplaying() && elapsedTime > 15 && !dialogShown2) {
+                dialogBoxUI.hideDialog();
+                dialogBoxUI.showDialog("[I can't believe this is happening. I've barely studied for this.]", 1.5f, false);
+                dialogShown2 = true;
+
                 // Start camera rotation
                 this.lookingDown = true;
                 this.rotationTimeElapsed = 0;
-                
-                dialogBoxUI.hideDialog();
-                dialogBoxUI.showDialog("[I can't believe this is happening. I've barely studied for this.]", 1.5f, false);
-                dialogShown2 = true; // Ensure this executes only once
             }
 
             // Handle camera rotation downward
@@ -313,71 +342,49 @@ public class ClassroomScene extends AbstractAppState {
                 }
             }
 
-            if (this.elapsedTime > 20 && !dialogShown3) {
-                this.dialogBoxUI.hideDialog();
-                this.dialogBoxUI.showDialog("Your exam will begin soon. Remember, no talking. If you are caught cheating, you will be disqualified.", 1.5f, false);
-                this.dialogShown3 = true;
+            // Show the next dialog after checking finishedDisplaying
+            if (dialogShown2 && dialogBoxUI.isDialogVisible() && dialogBoxUI.isFinishedDisplaying() && elapsedTime > 20 && !dialogShown3) {
+                dialogBoxUI.hideDialog();
+                dialogBoxUI.showDialog("Your exam will begin soon. Remember, no talking. If you are caught cheating, you will be disqualified.", 1.5f, false);
+                dialogShown3 = true;
             }
 
-            if (elapsedTime > 23 && !dialogShown4) {
-                // Start camera rotation
+            if (dialogShown3 && dialogBoxUI.isDialogVisible() && dialogBoxUI.isFinishedDisplaying() && elapsedTime > 23 && !dialogShown4) {
+                dialogBoxUI.hideDialog();
+                dialogBoxUI.showDialog("[I can't even read this.]", 1.5f, false);
+                dialogShown4 = true;
+
                 this.lookingDown = true;
                 this.rotationTimeElapsed = 0;
-                
-                this.dialogBoxUI.hideDialog();
-                this.dialogBoxUI.showDialog("[I can't even read this.]", 1.5f, false);
-                this.dialogShown4 = true;
-            }
-            
-            // Handle camera rotation downward
-            if (this.lookingDown) {
-                this.rotationTimeElapsed += tpf;
-                if (this.rotationTimeElapsed < 5.0f) { // Rotate for 1 second
-                    this.rotateCameraToLookDown(tpf);
-                } else {
-                    this.lookingDown = false;
-                    this.lookingUp = true;
-                    this.rotationTimeElapsed = 0;
-                }
             }
 
-            // Handle camera rotation upward
-            if (lookingUp) {
-                rotationTimeElapsed += tpf;
-                if (rotationTimeElapsed < 3.0f) { // Rotate back up for 1 second
-                    rotateCameraToLookUp(tpf);
-                } else {
-                    lookingUp = false;
-                }
-            }
-
-            if (elapsedTime > 30 && !dialogShown5) {
+            if (elapsedTime > 30 && dialogShown4 && dialogBoxUI.isDialogVisible() && dialogBoxUI.isFinishedDisplaying() && !dialogShown5) {
                 dialogBoxUI.hideDialog();
                 dialogBoxUI.showDialog("I'm gonna be sick.", 1.5f, false);
                 dialogShown5 = true;
             }
 
-            if (elapsedTime > 32 && !jumpscareStarted) {
-                jumpscareStarted = true; // Set the flag to prevent re-triggering
+            if (elapsedTime > 32 && dialogShown5 && dialogBoxUI.isDialogVisible() && dialogBoxUI.isFinishedDisplaying() && !jumpscareStarted) {
+                jumpscareStarted = true;
                 dialogBoxUI.hideDialog();
                 dialogBoxUI.showDialog("HEY!", 3.0f, true);
                 dialogBoxUI.startShake(2.0f, 10.0f);
 
                 jumpscareTriggered = true;
                 jumpscareElapsed = 0;
-                
-                // Play jumpscare sound
+
                 if (jumpscareSound != null) {
                     jumpscareSound.play();
                 }
             }
         }
-        
+
+        // Handle jumpscare logic
         if (jumpscareTriggered) {
             jumpscareElapsed += tpf;
 
             if (jumpscareElapsed <= jumpscareDuration) {
-                // Interpolate the FOV for zoom
+                // Jumpscare zoom logic
                 float zoomProgress = jumpscareElapsed / jumpscareDuration;
                 float currentFOV = FastMath.interpolateLinear(zoomProgress, originalFOV, targetFOV);
 
@@ -386,10 +393,8 @@ public class ClassroomScene extends AbstractAppState {
                     (float) app.getContext().getSettings().getHeight(),
                     1f, 1000f);
 
-                // Adjust camera to look at the target model
                 adjustCameraToLookAtModel();
 
-                // Shake the target model
                 if (targetModel != null) {
                     float offsetX = (float) (Math.random() * 2 - 1) * 0.1f;
                     float offsetY = (float) (Math.random() * 2 - 1) * 0.1f;
@@ -398,7 +403,7 @@ public class ClassroomScene extends AbstractAppState {
                     targetModel.setLocalTranslation(originalModelPosition.add(offsetX, offsetY, offsetZ));
                 }
             } else {
-                // Reset after the jumpscare
+                // Reset jumpscare
                 dialogBoxUI.hideDialog();
                 jumpscareTriggered = false;
                 jumpscareElapsed = 0;
@@ -409,7 +414,6 @@ public class ClassroomScene extends AbstractAppState {
                     (float) app.getContext().getSettings().getHeight(),
                     1f, 1000f);
 
-                // Reset camera orientation
                 player.getYawNode().setLocalRotation(originalYawRotation);
                 player.getPitchNode().setLocalRotation(originalPitchRotation);
 
@@ -418,31 +422,126 @@ public class ClassroomScene extends AbstractAppState {
                 }
             }
         }
-        
+
+        // Handle static overlay
         if (staticTriggered) {
             staticTimeElapsed += tpf;
 
             if (staticOverlay != null) {
-                animateStatic(tpf);  
+                animateStatic(tpf);
             }
 
             if (staticTimeElapsed > staticDuration) {
-                // End the static effect
                 hideStaticOverlay();
                 stateManager.attach(gameManager.getGameState());
-                transitionToBathroom(); // Transition after static effect
+                transitionToBathroom();
             }
         }
 
-        
-        if (transitionTriggered) {
-            if (!resetElapsed) {
-                elapsedTime = 0;
-                resetElapsed = true; // Ensure reset happens only once
+        if (transitionTriggered && !resetElapsed) {
+            elapsedTime = 0;
+            resetElapsed = true;
+        }
+    }
+    */
+
+    private void showNextDialog() {
+        if (currentDialogIndex < dialogSequence.length) {
+            String dialogText = dialogSequence[currentDialogIndex];
+            dialogBoxUI.showDialog(dialogText, 1.5f, false);
+
+            // Trigger specific actions based on dialog index
+            if (currentDialogIndex == 1) {
+                // Start looking down after this dialog
+                startCameraLookingDown();
+            } else if (currentDialogIndex == 4) {
+                // Prepare for jumpscare
+                prepareForJumpscare();
+            } else if (currentDialogIndex == 5) {
+                // Trigger jumpscare
+                triggerJumpscare();
             }
 
-            if (elapsedTime > 5) {
-                // Add transition logic here
+            currentDialogIndex++;
+        } else {
+            // If all dialogs are finished, proceed with the scene
+            isDialogActive = false;
+            dialogBoxUI.hideDialog();
+            transitionToBathroom();
+        }
+    }
+
+    private void startCameraLookingDown() {
+        this.lookingDown = true;
+        this.rotationTimeElapsed = 0;
+    }
+
+    private void prepareForJumpscare() {
+        // Prepare any necessary variables for the jumpscare
+        jumpscareStarted = false; // Reset jumpscare state
+        jumpscareElapsed = 0;
+    }
+
+    private void triggerJumpscare() {
+        jumpscareStarted = true;
+        dialogBoxUI.hideDialog();
+        dialogBoxUI.showDialog("HEY!", 3.0f, true);
+        dialogBoxUI.startShake(2.0f, 10.0f);
+
+        if (jumpscareSound != null) {
+            jumpscareSound.play();
+        }
+    }
+
+    @Override
+    public void update(float tpf) {
+        if (skipped) {
+            transitionToBathroom();
+        }
+        
+        if (!fadeInComplete) {
+            updateFadeIn(tpf);
+        }
+
+        if (jumpscareStarted) {
+            jumpscareElapsed += tpf;
+
+            if (jumpscareElapsed <= jumpscareDuration) {
+                // Handle jumpscare zoom and camera adjustments
+                float zoomProgress = jumpscareElapsed / jumpscareDuration;
+                float currentFOV = FastMath.interpolateLinear(zoomProgress, originalFOV, targetFOV);
+
+                app.getCamera().setFrustumPerspective(currentFOV,
+                    (float) app.getContext().getSettings().getWidth() /
+                    (float) app.getContext().getSettings().getHeight(),
+                    1f, 1000f);
+
+                adjustCameraToLookAtModel();
+
+                if (targetModel != null) {
+                    float offsetX = (float) (Math.random() * 2 - 1) * 0.1f;
+                    float offsetY = (float) (Math.random() * 2 - 1) * 0.1f;
+                    float offsetZ = (float) (Math.random() * 2 - 1) * 0.1f;
+
+                    targetModel.setLocalTranslation(originalModelPosition.add(offsetX, offsetY, offsetZ));
+                }
+            } else {
+                // End jumpscare and proceed to static overlay
+                jumpscareStarted = false;
+                showStaticOverlay();
+            }
+        }
+
+        if (staticTriggered) {
+            staticTimeElapsed += tpf;
+
+            if (staticOverlay != null) {
+                animateStatic(tpf);
+            }
+
+            if (staticTimeElapsed > staticDuration) {
+                hideStaticOverlay();
+                transitionToBathroom();
             }
         }
     }
