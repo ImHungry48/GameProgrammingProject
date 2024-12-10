@@ -62,6 +62,7 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
     private SceneLoader sceneLoader;
     private ClassroomScene classroomScene;
     private DialogBoxUI dialogBoxUI;
+    private DialogBoxUI exitDialog;
     private SceneManager sceneManager;
     
     // Collisions and movement
@@ -133,6 +134,8 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         // Initialize DialogBox
         this.dialogBoxUI = new DialogBoxUI(this);
         this.dialogBoxUI.initialize(stateManager, this);
+        this.exitDialog = new DialogBoxUI(this);
+        this.exitDialog.initialize(stateManager, this);
         this.stateManager.attach(dialogBoxUI);
         
         this.sceneManager = new SceneManager(this);
@@ -279,6 +282,13 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         
         if (robot.getDistance(cam.getLocation()) < 1.5f) {
             gameState.displayGameOverScreen(false);
+        }
+        
+        if (gameInputManager.nearExit()) {
+            exitDialog.showDialog("Enter?", 1.5f, false);
+        }
+        else {
+            exitDialog.hideDialog();
         }
         
         
