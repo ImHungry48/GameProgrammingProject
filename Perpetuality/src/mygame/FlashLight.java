@@ -35,7 +35,7 @@ public class FlashLight {
         flashLight.setSpotRange(70f);
         flashLight.setSpotInnerAngle(15f * FastMath.DEG_TO_RAD);
         flashLight.setSpotOuterAngle(35f * FastMath.DEG_TO_RAD);
-        flashLight.setColor(ColorRGBA.White.mult(2.0f));  // Adjust brightness
+        flashLight.setColor(ColorRGBA.White.mult(1.0f));  // Adjust brightness
 
         // Initialize shadow renderer for the flashlight
         shadowRenderer = new SpotLightShadowRenderer(assetManager, 1024);

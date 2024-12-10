@@ -42,7 +42,6 @@ public class BathroomScene extends AbstractAppState {
     
     private SceneLoader sceneLoader;
     private DialogBoxUI dialogBoxUI;
-    private boolean flashlightPickedUp = false;
     
     private Node rootNode;
     private BulletAppState bulletAppState;
@@ -127,21 +126,6 @@ public class BathroomScene extends AbstractAppState {
         // Set the player's view direction
         player.getCharacterControl().setViewDirection(new Vector3f(0, 0, 1));
         
-    }
-
-    private void checkFlashlightInteraction() {
-        CollisionResults results = new CollisionResults();
-        Ray ray = new Ray(sceneLoader.getRootNode().getLocalTranslation(), Vector3f.UNIT_Z);
-        sceneLoader.getRootNode().collideWith(ray, results);
-
-        if (results.size() > 0) {
-            Geometry target = results.getClosestCollision().getGeometry();
-            if ("Flashlight".equals(target.getName())) {
-                dialogBoxUI.showDialog("You picked up the flashlight.", 1.0f, false);
-                flashlightPickedUp = true;
-                sceneLoader.getRootNode().detachChild(target);
-            }
-        }
     }
 
     public void createEnvironmentColliders() {

@@ -40,6 +40,9 @@ public class Player {
         // Attach the player's spatial model to the player node
         this.playerNode.attachChild(playerSpatial);
 
+        // Configure the camera's near clipping plane
+        //cam.setFrustumPerspective(45f, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000f);
+        
         // Calculate player height and bounds
         playerSpatial.updateModelBound();
         BoundingBox playerBox = (BoundingBox) playerSpatial.getWorldBound();
