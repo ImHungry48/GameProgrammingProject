@@ -178,8 +178,6 @@ public class ClassroomScene extends AbstractAppState {
             // Now that physics is on, this setPosition call will actually warp the physics body
             player.setPosition(spawnPosition);
             player.setCameraRotation(spawnRotation);
-
-            System.out.println("Player position after setup: " + player.getPlayerNode().getLocalTranslation());
         } else {
             System.err.println("Spawn point not found!");
         }
@@ -218,6 +216,7 @@ public class ClassroomScene extends AbstractAppState {
 
     @Override
     public void update(float tpf) {
+        transitionToBathroom();
         this.elapsedTime += tpf;
 
         if (!fadeInComplete) {

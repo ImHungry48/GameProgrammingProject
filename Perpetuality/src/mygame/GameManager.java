@@ -209,6 +209,11 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         return this.bulletAppState;
     }
     
+    public void createControlsUI() {
+        ToggleControlsUI controlsUI = new ToggleControlsUI();
+        stateManager.attach(controlsUI);
+
+    }
     private final ActionListener actionListener = new ActionListener() {
         @Override
         public void onAction(String name, boolean isPressed, float tpf) {
@@ -264,6 +269,8 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         if (classroomScene != null) {
             this.classroomScene.update(tpf);
         }
+        
+        //player.updateCameraPosition();
         
         // Update the physics space
         bulletAppState.getPhysicsSpace().update(tpf);

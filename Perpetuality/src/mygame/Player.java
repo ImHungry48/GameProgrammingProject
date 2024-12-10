@@ -12,6 +12,12 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.control.CameraControl.ControlDirection;
 import com.jme3.bullet.control.BetterCharacterControl;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.PhysicsRayTestResult;
+import com.jme3.collision.CollisionResult;
+import com.jme3.collision.CollisionResults;
+import com.jme3.math.Ray;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Player {
     private Node playerNode;
@@ -23,6 +29,7 @@ public class Player {
     private float eyeOffset = 0.01f;
     private BetterCharacterControl characterControl;
     private BulletAppState bulletAppState;
+    private boolean updateCamera = false;
     
     private boolean usePhysics = true;
 
@@ -90,6 +97,10 @@ public class Player {
         return this.playerHeight;
     }
     
+    public void enableCamera() {
+        this.updateCamera = true;
+    }
+    
     public BetterCharacterControl getCharacterControl() {
         return this.characterControl;
     }
@@ -117,5 +128,38 @@ public class Player {
         yawNode.setLocalRotation(new Quaternion().fromAngles(0, yaw, 0));
         pitchNode.setLocalRotation(new Quaternion().fromAngles(pitch, 0, 0));        
     }
-   
+    
+    public void updateCameraPosition() {
+        Vector3f desiredCameraPosition = camNode.getWorldTranslation();
+        Vector3f playerPosition = playerNode.getWorldTranslation();
+
+        // Ray direction
+        Vector3f direction = desiredCameraPosition.subtract(playerPosition).normalizeLocal();
+
+        // Ray test
+        List<PhysicsRayTestResult> results = new ArrayList<>();
+        bulletAppState.getPhysicsSpace().rayTest(playerPosition, desiredCameraPosition, results);
+
+        if (!results.isEmpty()) {
+            // Find the closest collision
+            PhysicsRayTestResult closestResult = results.stream()
+                .min((r1, r2) -> Float.compare(r1.getHitFraction(), r2.getHitFraction()))
+                .orElse(null);
+
+            if (closestResult != null) {
+                // Calculate collision distance
+                float collisionDistance = closestResult.getHitFraction() * desiredCameraPosition.distance(playerPosition);
+                float minimumCameraDistance = 1.0f; // Minimum distance between camera and player
+
+                // Adjust camera position only if collision is too close
+                if (collisionDistance < minimumCameraDistance) {
+                    Vector3f adjustedPosition = playerPosition.add(direction.mult(collisionDistance - 0.1f));
+                    camNode.setLocalTranslation(playerNode.worldToLocal(adjustedPosition, null));
+                }
+            }
+        } else {
+            System.out.println("Results is empty.");
+        }
+    }
+
 }

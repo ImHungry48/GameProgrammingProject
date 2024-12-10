@@ -50,6 +50,8 @@ public class BathroomScene extends AbstractAppState {
     
     private final Vector3f SPAWNPOINT = new Vector3f(1.5810981f, 1f, -0.9333563f);
     private final Vector3f EXIT_POINT_HALLWAY = new Vector3f(2.3731039f, 0.2084856f, 0.040968657f);
+    
+    private float elapsedTime = 0f;
 
     public BathroomScene(GameManager gameManager) {
         this.gameManager = gameManager;
@@ -67,6 +69,7 @@ public class BathroomScene extends AbstractAppState {
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app);
+        player.enableCamera();
 
         gameInputManager.enable();
         eventSystem.startListening();
@@ -84,7 +87,6 @@ public class BathroomScene extends AbstractAppState {
             EXIT_POINT_HALLWAY,
             () -> {
                 sceneManager.switchScene("Hallway");
-                dialogBoxUI.hideDialog();
             },
             () -> {
             }
@@ -92,6 +94,15 @@ public class BathroomScene extends AbstractAppState {
 
         eventSystem.startListening();
         setupScene();
+    }
+    
+    @Override
+    public void update(float tpf) {
+        elapsedTime += tpf;
+        
+        if (elapsedTime >= 4.0f) {
+            this.dialogBoxUI.hideDialog();
+        }
     }
 
     public void loadScene() {
@@ -105,13 +116,8 @@ public class BathroomScene extends AbstractAppState {
         dialogBoxUI.showDialog("Did I get sick again?", 1.0f, false);
         
         this.gameState.enableBackgroundMusic();
-    }
-
-    @Override
-    public void update(float tpf) {
-        if (!flashlightPickedUp) {
-            checkFlashlightInteraction();
-        }
+        
+        gameManager.createControlsUI();
     }
     
     private void setPlayerSpawnPoint() {
