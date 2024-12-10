@@ -2,7 +2,7 @@
 Genre: Psychological Horror, Puzzle
 
 ## Game Summary
-In Perpetuality, players navigate a surreal and unsettling labyrinth within a mysterious university building, representing the fractured psyche of a computer science student. Each level or phase is a different dream or psychological state, mirroring the student's academic pressures, fears, and emotional turmoil. To escape this labyrinth, players must interact with various NPCs, including faculty members, fellow students, and the school mascot. The journey is both a literal and metaphorical exploration of internal struggles, focusing on maintaining sanity amidst an ever-shifting, nightmarish environment.
+In Perpetuality, players navigate a surreal and unsettling labyrinth within a mysterious university building, representing the fractured psyche of a computer science student. Each level or phase is a different dream or psychological state, mirroring the student's academic pressures, fears, and emotional turmoil. To escape this labyrinth, players must explore various scenes and collect the scattered "pages". The journey is both a literal and metaphorical exploration of internal struggles, focusing on maintaining sanity amidst an ever-shifting, nightmarish environment.
 
 ## Narrative Overview
 You play as an unnamed computer science student trapped within the labyrinthine corridors of a university that distorts and manifests their mental state. Each dream phase evokes different aspects of academic life and psychological stress, creating a unique and eerie setting with every progression. The goal is to escape by solving puzzles, interacting with characters, and managing sanity—all while avoiding the malevolent presence of the school mascot, who embodies the student's deepest fears.
@@ -24,8 +24,9 @@ Perpetuality draws inspiration from psychological horror games that emphasize at
 
 ## Gameplay Mechanics
 ### Sanity Management
-- Increasing Sanity: Interact with objects that trigger calming memories, such as notes, photos, or music. Successfully figuring out the puzzle also increases sanity.
-- Decreasing Sanity: First, student is not in a safe room (the current saferoom is the bathroom). Second, if student interacts with objects in an incorrect way (or with an incorrect object). Third, if student encounters the monster.
+- Maintaining Sanity: Sanity stays the same while the flashlight is turned on. Players can use batteries to recharge the flashlight.
+- Increasing Sanity: Interact with objects that trigger calming memories, such as notes, photos, music, or other consumables.
+- Decreasing Sanity: Sanity automatically decreases if the flashlight is not turned on; Sanity decreases drastically if player is captured by the monster mascot.
 
 ### Progression
 - Navigate through multiple dream phases, each representing different psychological states. Different dream phases likely correspond to different scenes.
