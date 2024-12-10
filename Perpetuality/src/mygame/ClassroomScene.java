@@ -7,7 +7,12 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.font.BitmapFont;
+import com.jme3.font.BitmapText;
 import com.jme3.input.InputManager;
+import com.jme3.input.KeyInput;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.PointLight;
 import com.jme3.light.SpotLight;
@@ -89,6 +94,12 @@ public class ClassroomScene extends AbstractAppState {
     
     private BulletAppState bulletAppState;
     private Geometry floor;
+    
+    private Node guiNode;
+    private Geometry skipBackground;
+    private BitmapText skipText;
+    
+    private boolean skipped = false;
 
     public ClassroomScene(GameManager gameManager) {
         this.sceneLoader = gameManager.getSceneLoader();
@@ -98,6 +109,7 @@ public class ClassroomScene extends AbstractAppState {
         this.gameState = gameManager.getGameState();
         this.gameManager = gameManager;
         this.bulletAppState = gameManager.getBulletAppState();
+        
     }
 
     @Override
@@ -107,6 +119,13 @@ public class ClassroomScene extends AbstractAppState {
         this.inputManager = this.app.getInputManager();
         this.rootNode = this.app.getRootNode();
         this.stateManager = stateManager;
+        this.guiNode = this.app.getGuiNode();
+        
+        initializeSkipUI();
+        
+        // Map SPACE key for skipping
+        this.app.getInputManager().addMapping("SkipScene", new KeyTrigger(KeyInput.KEY_SPACE));
+        this.app.getInputManager().addListener(skipListener, "SkipScene");
 
         initializeFadeOverlay();
         initializeStaticOverlay();
@@ -135,6 +154,41 @@ public class ClassroomScene extends AbstractAppState {
 
         app.getGuiNode().attachChild(fadeOverlay);
     }
+    
+    private void initializeSkipUI() {
+        // Background
+        int screenWidth = app.getContext().getSettings().getWidth();
+        int screenHeight = app.getContext().getSettings().getHeight();
+
+        Quad quad = new Quad(300, 50); // Adjust size
+        skipBackground = new Geometry("SkipBackground", quad);
+
+        Material bgMaterial = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+        bgMaterial.setColor("Color", new ColorRGBA(0, 0, 0, 0.7f)); // Black with transparency
+        skipBackground.setMaterial(bgMaterial);
+
+        // Position the background in the top-right corner
+        skipBackground.setLocalTranslation(screenWidth - 310, screenHeight - 60, 0);
+        guiNode.attachChild(skipBackground);
+
+        // Text
+        BitmapFont font = app.getAssetManager().loadFont("Interface/Fonts/Default.fnt");
+        skipText = new BitmapText(font, false);
+        skipText.setSize(font.getCharSet().getRenderedSize());
+        skipText.setText("Press SPACE to Skip");
+        skipText.setLocalTranslation(screenWidth - 300, screenHeight - 20, 1); // Adjust position
+        guiNode.attachChild(skipText);
+    }
+
+    private final ActionListener skipListener = new ActionListener() {
+        @Override
+        public void onAction(String name, boolean isPressed, float tpf) {
+            if (!isPressed && name.equals("SkipScene") && !skipped) {
+                skipped = true;
+                transitionToBathroom();
+            }
+        }
+    };
     
     private void initializeStaticOverlay() {
         int screenWidth = app.getContext().getSettings().getWidth();
@@ -216,7 +270,7 @@ public class ClassroomScene extends AbstractAppState {
 
     @Override
     public void update(float tpf) {
-        transitionToBathroom();
+        if (skipped) transitionToBathroom();
         this.elapsedTime += tpf;
 
         if (!fadeInComplete) {
@@ -457,7 +511,22 @@ public class ClassroomScene extends AbstractAppState {
     }
     
     private void transitionToBathroom() {
+        cleanupSkipUI();
+        stateManager.detach(this);
         sceneManager.switchScene("Bathroom");
+    }
+    
+    private void cleanupSkipUI() {
+        if (skipBackground != null && skipBackground.getParent() != null) {
+            guiNode.detachChild(skipBackground);
+        }
+        if (skipText != null && skipText.getParent() != null) {
+            guiNode.detachChild(skipText);
+        }
+
+        // Remove SPACE input mapping
+        app.getInputManager().deleteMapping("SkipScene");
+        app.getInputManager().removeListener(skipListener);
     }
     
     private void disablePlayerMovement() {
