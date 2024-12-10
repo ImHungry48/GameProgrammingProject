@@ -26,6 +26,10 @@ public class SceneLoader {
     private Cube cube3;
     private Cube door;
     
+    private Cube potion1;
+    private Cube potion2;
+    private Cube potion3;
+    
     private Robot robot;
     
 
@@ -37,10 +41,11 @@ public class SceneLoader {
         cube1 = new Cube("Pages", gameManager.getAssetManager(), vector1, this.gameManager);
         Vector3f vector2 = new Vector3f(-3.2234416f, 2.0797584f, 30.968933f);
         cube2 = new Cube("Pages", gameManager.getAssetManager(), vector2, this.gameManager);
-        Vector3f vector3 = new Vector3f(1, 1, 1);
         cube3 = new Cube("Pages", gameManager.getAssetManager(), vector1, this.gameManager);
-        Vector3f doorVector = new Vector3f(-11.535556f, 2.09501f, -11.38224f);
-        door = new Cube("Door", gameManager.getAssetManager(), doorVector, this.gameManager);
+        Vector3f potion1Vector = new Vector3f(0.13707986f, 1.0693324f, -0.15020779f);
+        potion1 = new Cube("Consumable", gameManager.getAssetManager(), potion1Vector, this.gameManager);
+        Vector3f potion2Vector = new Vector3f(-3.60243f, 1.0285867f, 0.9824556f);
+        potion2 = new Cube("Consumable", gameManager.getAssetManager(), potion2Vector, this.gameManager);
 
     }
 
@@ -67,15 +72,30 @@ public class SceneLoader {
         // Display cube based on scene is up
         if ("Scenes/ClassroomA1.j3o".equals(scenePath)) {
             rootNode.attachChild(cube1.getNode());
-            rootNode.detachChild(gameManager.getRobot().getPlayer());
+            gameManager.getRobot().moveTo(new Vector3f(-14.9359527f, 1.1378932f, -4.020808674f));
+            
+        }
+        else if ("Scenes/ClassroomA2.j3o".equals(scenePath)) {
+            gameManager.getRobot().moveTo(new Vector3f(-10.9359527f, 1.1378932f, -4.020808674f));
+        }
+        else if ("Scenes/ClassroomA3.j3o".equals(scenePath)) {
+            gameManager.getRobot().moveTo(new Vector3f(-8.9359527f, 1.1378932f, -4.020808674f));
+            rootNode.attachChild(cube3.getNode());
         }
         // Display cube based on scene is up
         else if ("Scenes/Hallway.j3o".equals(scenePath)) {
+            rootNode.detachChild(cube1.getNode());
+            rootNode.detachChild(cube3.getNode());
             rootNode.attachChild(cube2.getNode());
-            rootNode.attachChild(door.getNode());
             rootNode.attachChild(gameManager.getRobot().getPlayer());
+            rootNode.attachChild(potion2.getNode());
             gameManager.getRobot().moveTo(new Vector3f(-11.535556f, 0f, -11.38224f));
         } 
+        else if ("Scenes/Bathroom.j3o".equals(scenePath)) {
+//            rootNode.attachChild(potion1.getNode());
+            rootNode.detachChild(gameManager.getRobot().getPlayer());
+        }
+        
     }
 
     // Method to unload the current scene

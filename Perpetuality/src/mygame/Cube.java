@@ -32,7 +32,7 @@ public class Cube {
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         switch (type) {
             case "Consumable":
-                mat.setColor("Color", ColorRGBA.Gray);
+                mat.setColor("Color", ColorRGBA.Green);
                 break;
             case "Door":
                 mat.setColor("Color", ColorRGBA.Blue);

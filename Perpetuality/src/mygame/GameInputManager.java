@@ -18,15 +18,6 @@ import java.util.ArrayList;
 public class GameInputManager {
 
 
-    private final static Trigger TRIGGER_ROTATE = new MouseButtonTrigger(MouseInput.BUTTON_RIGHT);
-    private final static Trigger TRIGGER_ITEM1 = new KeyTrigger(KeyInput.KEY_1);
-    private final static Trigger TRIGGER_ITEM2 = new KeyTrigger(KeyInput.KEY_2);
-    private final static Trigger TRIGGER_ITEM3 = new KeyTrigger(KeyInput.KEY_3);
-    private final static String MAPPING_CHANGEHEALTH = "Change Health";
-    private final static String MAPPING_ROTATE = "Rotate";
-    private final static String MAPPING_ITEM1 = "Use Item 1";
-    private final static String MAPPING_ITEM2 = "Use Item 2";
-    private final static String MAPPING_ITEM3 = "Use Item 3";
 
     // Definitions for mouse triggers for first-person look
     private final static Trigger TRIGGER_LOOK_LEFT = new MouseAxisTrigger(MouseInput.AXIS_X, true);
@@ -118,11 +109,6 @@ public class GameInputManager {
 
     // Initialize input mappings
     public void initInputMappings() {
-        // Map actions
-        inputManager.addMapping(MAPPING_ROTATE, TRIGGER_ROTATE);
-        inputManager.addMapping(MAPPING_ITEM1, TRIGGER_ITEM1);
-        inputManager.addMapping(MAPPING_ITEM2, TRIGGER_ITEM2);
-        inputManager.addMapping(MAPPING_ITEM3, TRIGGER_ITEM3);
 
         // Map look controls
         inputManager.addMapping(MAPPING_LOOK_LEFT, TRIGGER_LOOK_LEFT);
@@ -136,8 +122,6 @@ public class GameInputManager {
         inputManager.addMapping(MAPPING_RIGHT, TRIGGER_RIGHT);
 
         // Register listeners
-        inputManager.addListener(actionListener, MAPPING_CHANGEHEALTH, MAPPING_ITEM1, MAPPING_ITEM2, MAPPING_ITEM3);
-        inputManager.addListener(analogListener, MAPPING_ROTATE);
         inputManager.addListener(cameraControlListener, MAPPING_LOOK_LEFT, MAPPING_LOOK_RIGHT, MAPPING_LOOK_UP, MAPPING_LOOK_DOWN);
         inputManager.addListener(actionListener, MAPPING_FORWARD, MAPPING_BACKWARD, MAPPING_LEFT, MAPPING_RIGHT);
         //inputManager.addListener(movementListener, MAPPING_FORWARD, MAPPING_BACKWARD, MAPPING_LEFT, MAPPING_RIGHT);
@@ -165,11 +149,6 @@ public class GameInputManager {
             enabled = false;
 
             // Remove mappings and listeners
-            inputManager.deleteMapping(MAPPING_CHANGEHEALTH);
-            inputManager.deleteMapping(MAPPING_ROTATE);
-            inputManager.deleteMapping(MAPPING_ITEM1);
-            inputManager.deleteMapping(MAPPING_ITEM2);
-            inputManager.deleteMapping(MAPPING_ITEM3);
             inputManager.deleteMapping(MAPPING_LOOK_LEFT);
             inputManager.deleteMapping(MAPPING_LOOK_RIGHT);
             inputManager.deleteMapping(MAPPING_LOOK_UP);
@@ -225,9 +204,7 @@ public class GameInputManager {
             if (!enabled) return;
 
             if (analogHandler != null) {
-                if (name.equals(MAPPING_ROTATE)) {
-                    analogHandler.onRotate(intensity, tpf);
-                }
+                
             }
         }
     };
@@ -335,6 +312,15 @@ public class GameInputManager {
             }
         }
     };
+    
+    public boolean nearExit() {
+        for (ExitTrigger trigger : exitTriggers) {
+            if (trigger.isPlayerNear(player)) {
+                return true;
+            }
+        }
+        return false;
+    }
     
     private boolean isPlayerNearExit() {
         Vector3f playerPosition = player.getPlayerNode().getWorldTranslation();
