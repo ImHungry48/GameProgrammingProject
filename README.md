@@ -298,7 +298,7 @@ Loads separate scenes to optimize the game
 We scheduled regular Zoom meetings to discuss implementation progress and the assignment of different tasks. We mainly worked on our own and then reconvened when we were done with our individual tasks. (Note: Due to some issues with model incompatibility, I (Chenjia) had to implement features and functionalities in separate files first before incorporating them into the actual game. Alaisha and Michael helped significantly with these laborious refactoring processes, and I am very very grateful for their help ).
 
 ## Download:
-
+https://github.com/ImHungry48/GameProgrammingProject/tree/main/Perpetuality/dist
 
 ## Future Work: 
 - Expanded Story Elements: Introduce additional dialog boxes to create a richer, more immersive narrative experience. This would allow for a more complete and engaging storyline.
