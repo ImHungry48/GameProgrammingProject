@@ -31,7 +31,6 @@ import com.jme3.util.SkyFactory;
  */
 public class Sky extends SimpleApplication {
     
-    
     private Geometry geom;
     
     // NEW FOR SKY
