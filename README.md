@@ -268,6 +268,10 @@ Loads separate scenes to optimize the game
   ![Screenshot 2024-12-03 184017](https://github.com/user-attachments/assets/942d2a44-7772-424a-ab9b-b843001045aa)
   ![Screenshot 2024-12-03 193359](https://github.com/user-attachments/assets/4665b06c-d954-4260-bc0d-112c973777ef)
 
+## Gameplay Videos
+    [![Death](https://img.youtube.com/vi/7qUDWMG3hCM/0.jpg)](https://www.youtube.com/watch?v=7qUDWMG3hCM)
+    [![Death](https://img.youtube.com/vi/1kp302bNTx0/0.jpg)](https://www.youtube.com/watch?v=1kp302bNTx0)
+    [![Win](https://img.youtube.com/vi/KUBMqXNbvIQ/0.jpg)](https://www.youtube.com/watch?v=KUBMqXNbvIQ)
 
 ## Member Contribution
 - Alaisha Barber:
