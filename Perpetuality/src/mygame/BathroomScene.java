@@ -100,6 +100,7 @@ public class BathroomScene extends AbstractAppState {
         elapsedTime += tpf;
         
         if (elapsedTime >= 4.0f) {
+            System.out.println("Hiding dialog box.");
             this.dialogBoxUI.hideDialog();
         }
     }

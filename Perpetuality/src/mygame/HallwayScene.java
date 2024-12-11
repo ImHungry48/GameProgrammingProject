@@ -135,12 +135,12 @@ public class HallwayScene extends AbstractAppState {
     
     private void createSkybox() {
         // Load the textures for the skybox
-        Texture west = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_west.jpg");
-        Texture east = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_east.jpg");
-        Texture north = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_north.jpg");
-        Texture south = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_south.jpg");
-        Texture up = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_up.jpg");
-        Texture down = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_down.jpg");
+        Texture west = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_north2.jpg");
+        Texture east = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_east2.jpg");
+        Texture north = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_north2.jpg");
+        Texture south = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_east2.jpg");
+        Texture up = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_east2.jpg");
+        Texture down = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_north2.jpg");
 
         // Use SkyFactory to create a sky
         Spatial sky = SkyFactory.createSky(

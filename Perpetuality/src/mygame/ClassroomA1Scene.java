@@ -52,10 +52,6 @@ public class ClassroomA1Scene extends AbstractAppState {
     
     private WaterPuddle waterPuddle;
     
-    // NEW FIELD FOR PARTICLE
-    private ParticleEmitter dustEmitter;
-    private float angle = 0;
-    
     private final Vector3f EXIT_POINT_HALLWAY = new Vector3f(5.767753f, 0.42144895f, 5.281859f);
     
     private Page page;
@@ -112,41 +108,7 @@ public class ClassroomA1Scene extends AbstractAppState {
     }
     
     private void setupScene() {
-        
         setUpLighting();
-        
-        // Descriptive name for emitter, and keep 20 particles of type triangle ready
-        dustEmitter = new ParticleEmitter("dust emitter", Type.Triangle, 20);
-        
-        // Set material
-        Material dustMat = new Material(gameManager.getAssetManager(),"Common/MatDefs/Misc/Particle.j3md");
-        dustEmitter.setMaterial(dustMat);
-        
-        // Load smoke.png into the Texture property of the material
-        dustMat.setTexture("Texture",gameManager.getAssetManager().loadTexture("Effects/smoke.png"));
-        
-        // Help with segmenting the image for smoke.png
-        dustEmitter.setImagesX(2);
-        dustEmitter.setImagesY(2);
-        
-        // Make dust cloud more swirly and random
-        dustEmitter.setSelectRandomImage(true);
-        dustEmitter.setRandomAngle(true);
-        dustEmitter.setLocalTranslation(new Vector3f(5.2345686f, 1.25f, 0.8517339f)); // Set position
-        dustEmitter.setStartSize(0.5f);  // Start size of the particles
-        dustEmitter.setEndSize(1.5f);    // End size of the particles
-        dustEmitter.setParticlesPerSec(1f); // Emit 1 particle per second
-        dustEmitter.setGravity(0, -0.1f, 0); // Simulate light gravity for a falling effect
-        dustEmitter.setLowLife(2f);      // Particles live for at least 2 seconds
-        dustEmitter.setHighLife(3f);     // Particles live for up to 3 seconds
-        dustEmitter.setStartColor(ColorRGBA.LightGray);
-        dustEmitter.setEndColor(ColorRGBA.Yellow);
-        dustEmitter.getParticleInfluencer().setVelocityVariation(0.2f); // Slight random velocity
-
-
-        // Attach emitter to a node
-        rootNode.attachChild(dustEmitter);   
-
     }
     
     private void setUpLighting() {
@@ -156,14 +118,7 @@ public class ClassroomA1Scene extends AbstractAppState {
     }
     
     @Override
-    public void update(float tpf) {        
-        angle += tpf;
-        angle %= FastMath.TWO_PI;
-        // radius is currently 3
-        float x = FastMath.cos(angle) * 3;
-        float y = FastMath.sin(angle) * 3;
-        dustEmitter.setLocalTranslation(0, 1, 0);
-        
+    public void update(float tpf) {                
     }
     
     private void setPlayerSpawnPoint() {
@@ -290,13 +245,6 @@ public class ClassroomA1Scene extends AbstractAppState {
             bulletAppState.getPhysicsSpace().remove(collider);
         }
         environmentColliders.clear();
-        
-        // Detach and clean up the dustEmitter
-        if (dustEmitter != null) {
-            dustEmitter.killAllParticles(); // Stops all particles
-            rootNode.detachChild(dustEmitter); // Detach from the scene graph
-            dustEmitter = null; // Clear the reference
-        }
         
         // Check if the puddle is still attached
         if (waterPuddle != null && waterPuddle.getPuddleGeometry().getParent() != null) {
