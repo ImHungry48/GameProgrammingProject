@@ -92,6 +92,8 @@ public class GameManager extends SimpleApplication implements ActionHandler, Ana
         
         bulletAppState.setDebugEnabled(false);
                 
+        assetManager.registerLocator("assets/", com.jme3.asset.plugins.FileLocator.class);
+        
         // Initialize player spatial
         Spatial playerSpatial = assetManager.loadModel("/Models/male_base_mesh/male_base_mesh.j3o");
         
