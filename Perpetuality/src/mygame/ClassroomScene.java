@@ -85,6 +85,7 @@ public class ClassroomScene extends AbstractAppState {
     
     private Quaternion originalYawRotation;
     private Quaternion originalPitchRotation;
+    private Quaternion originalCameraRotation;
     
     private Geometry staticOverlay; // Geometry for static overlay
     private boolean staticTriggered = false; // Trigger for static effect
@@ -141,6 +142,10 @@ public class ClassroomScene extends AbstractAppState {
         // Map a key or mouse button to progress the dialog
         this.inputManager.addMapping("NextDialog", new KeyTrigger(KeyInput.KEY_RETURN)); // Enter key
         this.inputManager.addListener(dialogListener, "NextDialog");
+        
+        originalCameraPosition = app.getCamera().getLocation().clone();
+        originalCameraRotation = app.getCamera().getRotation().clone();
+        
 
         initializeFadeOverlay();
         initializeStaticOverlay();
@@ -155,6 +160,20 @@ public class ClassroomScene extends AbstractAppState {
             showNextDialog();
         }
     };
+    
+    private void resetCamera() {
+        // Reset the FOV
+        app.getCamera().setFrustumPerspective(
+            originalFOV,
+            (float) app.getContext().getSettings().getWidth() /
+            (float) app.getContext().getSettings().getHeight(),
+            1f, 1000f
+        );
+
+        // Reset position and rotation
+        app.getCamera().setLocation(originalCameraPosition);
+        app.getCamera().setRotation(originalCameraRotation);
+    }
 
     private void initializeFadeOverlay() {
         int screenWidth = app.getContext().getSettings().getWidth();
@@ -439,7 +458,6 @@ public class ClassroomScene extends AbstractAppState {
         player.getPitchNode().setLocalRotation(pitchRotation);
     }
 
-
     private void updateFadeIn(float tpf) {
         fadeAlpha -= tpf / 9.0f; // Adjust fade duration as needed
         if (fadeAlpha <= 0) {
@@ -457,6 +475,7 @@ public class ClassroomScene extends AbstractAppState {
     
     private void transitionToBathroom() {
         cleanupSkipUI();
+        resetCamera();
         this.dialogBoxUI.hideDialog();
         stateManager.detach(this);
         sceneManager.switchScene("Bathroom");

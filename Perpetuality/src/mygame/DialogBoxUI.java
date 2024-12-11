@@ -99,7 +99,7 @@ public class DialogBoxUI extends AbstractAppState {
         typeSound = new AudioNode(app.getAssetManager(), "Sound/text-sound.wav", false);
         typeSound.setPositional(false);
         typeSound.setLooping(false);
-        typeSound.setVolume(1.0f);
+        typeSound.setVolume(0.5f);
     }
 
     public void showDialog(String text, float sizeMultiplier, boolean shake) {        
