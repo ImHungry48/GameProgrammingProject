@@ -270,7 +270,9 @@ Loads separate scenes to optimize the game
 
 ## Gameplay Videos
     [![Death](https://img.youtube.com/vi/7qUDWMG3hCM/0.jpg)](https://www.youtube.com/watch?v=7qUDWMG3hCM)
+    
     [![Death](https://img.youtube.com/vi/1kp302bNTx0/0.jpg)](https://www.youtube.com/watch?v=1kp302bNTx0)
+    
     [![Win](https://img.youtube.com/vi/KUBMqXNbvIQ/0.jpg)](https://www.youtube.com/watch?v=KUBMqXNbvIQ)
 
 ## Member Contribution
